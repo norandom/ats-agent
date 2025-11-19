@@ -25,7 +25,7 @@ Examples:
 
     parser.add_argument(
         "cv_path",
-        help="Path to the CV PDF file"
+        help="Path to the CV PDF or DOCX file"
     )
 
     parser.add_argument(
@@ -40,6 +40,13 @@ Examples:
         choices=["en", "de", "auto"],
         default="auto",
         help="CV language: 'en' (English), 'de' (German/Deutsch), or 'auto' (auto-detect, default)"
+    )
+    
+    parser.add_argument(
+        "--model",
+        dest="model",
+        default=None,
+        help="OpenAI model to use (e.g., 'gpt-4o', 'gpt-4o-mini'). Overrides OPENAI_MODEL env var."
     )
 
     parser.add_argument(
@@ -88,7 +95,7 @@ Examples:
 
     # Initialize agent and score CV
     print(f"\nInitializing ATS CV Agent...")
-    agent = ATSCVAgent()
+    agent = ATSCVAgent(model=args.model)
 
     # Determine language
     language = None if args.language == "auto" else args.language
@@ -113,15 +120,9 @@ Examples:
 
     # Exit with appropriate code
     if result.get("success"):
-        score = result.get("ats_analysis", {}).get("overall_score", 0)
-        if score >= 80:
-            sys.exit(0)  # Excellent
-        elif score >= 60:
-            sys.exit(0)  # Good
-        else:
-            sys.exit(0)  # Needs improvement (still exit 0 as the tool worked)
+        sys.exit(0)  # Successful analysis
     else:
-        sys.exit(1)  # Error occurred
+        sys.exit(1)  # Error occurred during analysis
 
 
 if __name__ == "__main__":

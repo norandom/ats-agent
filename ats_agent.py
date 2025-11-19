@@ -4,7 +4,7 @@ import os
 import json
 from typing import Optional
 from openai import OpenAI
-from cv_parser import extract_text_from_pdf, analyze_cv_structure, detect_language
+from cv_parser import extract_text_from_file, analyze_cv_structure, detect_language
 from german_cv_knowledge import (
     GERMAN_CV_CONVENTIONS,
     GERMAN_ATS_REQUIREMENTS,
@@ -21,19 +21,21 @@ from ats_industry_standards import (
 class ATSCVAgent:
     """Agent for scoring CV compatibility with Applicant Tracking Systems."""
 
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         """
         Initialize the ATS CV Agent.
 
         Args:
             api_key: OpenAI API key (if not provided, reads from environment)
+            model: OpenAI model to use (e.g., "gpt-4o", "gpt-4o-mini").
+                   Defaults to "gpt-4o" or OPENAI_MODEL environment variable.
         """
         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        self.model = "gpt-4o"  # Using GPT-4 for better analysis
+        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4o") # Using GPT-4o by default, or env var
 
     def score_cv(
         self,
-        pdf_path: str,
+        file_path: str, # Changed from pdf_path to file_path
         job_description: Optional[str] = None,
         language: Optional[str] = None
     ) -> dict:
@@ -41,21 +43,21 @@ class ATSCVAgent:
         Score a CV for ATS compatibility.
 
         Args:
-            pdf_path: Path to the CV PDF file
+            file_path: Path to the CV file (PDF or DOCX)
             job_description: Optional job description for context-based scoring
             language: Optional language code ('en', 'de', etc.). Auto-detected if not provided.
 
         Returns:
             Dictionary containing scores, analysis, and improvement suggestions
         """
-        # Step 1: Extract text from PDF
-        print(f"Parsing CV from: {pdf_path}")
-        parsed_cv = extract_text_from_pdf(pdf_path)
+        # Step 1: Extract text from file
+        print(f"Parsing CV from: {file_path}")
+        parsed_cv = extract_text_from_file(file_path) # Changed to extract_text_from_file
 
         if not parsed_cv["success"]:
             return {
                 "success": False,
-                "error": f"Failed to parse PDF: {parsed_cv['error']}"
+                "error": f"Failed to parse file: {parsed_cv['error']}"
             }
 
         cv_text = parsed_cv["full_text"]
@@ -77,7 +79,7 @@ class ATSCVAgent:
         # Step 5: Combine results
         result = {
             "success": True,
-            "file_path": pdf_path,
+            "file_path": file_path,
             "language": language,
             "parsing_summary": {
                 "page_count": parsed_cv["page_count"],

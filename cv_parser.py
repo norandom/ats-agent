@@ -3,6 +3,8 @@
 import pymupdf
 from langdetect import detect, DetectorFactory
 from typing import Optional
+from docx import Document
+import os
 
 # Set seed for consistent language detection
 DetectorFactory.seed = 0
@@ -10,18 +12,10 @@ DetectorFactory.seed = 0
 
 def extract_text_from_pdf(pdf_path: str) -> dict:
     """
-    Extract text content from a PDF CV.
-
-    Args:
-        pdf_path: Path to the PDF file
-
-    Returns:
-        Dictionary with extracted text and metadata
+    Extract text content from a PDF file.
     """
     try:
         doc = pymupdf.open(pdf_path)
-
-        # Extract text from all pages
         full_text = ""
         page_texts = []
 
@@ -33,9 +27,7 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
             })
             full_text += page_text + "\n"
 
-        # Get document metadata
         metadata = doc.metadata
-
         doc.close()
 
         return {
@@ -55,6 +47,55 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
         }
 
 
+def extract_text_from_docx(docx_path: str) -> dict:
+    """
+    Extract text content from a DOCX file.
+    """
+    try:
+        doc = Document(docx_path)
+        full_text = []
+        for para in doc.paragraphs:
+            full_text.append(para.text)
+        
+        # Heuristic for page count in DOCX, not accurate but gives a rough idea
+        # Could be improved with more sophisticated methods if needed
+        word_count = len(" ".join(full_text).split())
+        page_count_estimate = max(1, word_count // 500) # Estimate 500 words per page
+
+        return {
+            "success": True,
+            "full_text": "\n".join(full_text).strip(),
+            "page_count": page_count_estimate,
+            "pages": [{"page_number": i + 1, "text": p} for i, p in enumerate(full_text)], # Simplified
+            "metadata": {}, # DOCX metadata is different, can be extracted if needed
+            "file_path": docx_path
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "file_path": docx_path
+        }
+
+
+def extract_text_from_file(file_path: str) -> dict:
+    """
+    Extract text content from a PDF or DOCX file based on file extension.
+    """
+    file_extension = os.path.splitext(file_path)[1].lower()
+
+    if file_extension == ".pdf":
+        return extract_text_from_pdf(file_path)
+    elif file_extension == ".docx":
+        return extract_text_from_docx(file_path)
+    else:
+        return {
+            "success": False,
+            "error": "Unsupported file type. Only PDF and DOCX are supported.",
+            "file_path": file_path
+        }
+
+
 def detect_language(text: str) -> str:
     """
     Detect the language of the CV text.
@@ -66,7 +107,7 @@ def detect_language(text: str) -> str:
         Language code ('en', 'de', etc.) or 'unknown'
     """
     try:
-        if len(text.strip()) < 50:
+        if len(text.strip()) < 20:
             return "unknown"
         return detect(text)
     except Exception:
@@ -92,13 +133,18 @@ def analyze_cv_structure(text: str, language: Optional[str] = None) -> dict:
         language = detect_language(text)
 
     # Basic structural analysis
+    import re
+    # Simple phone regex: looks for patterns like +1-555..., (123) 456..., or groups of digits separated by dashes/spaces
+    # This is a basic heuristic, not a perfect validator
+    phone_pattern = r'(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}'
+    
     analysis = {
         "total_lines": len(lines),
         "non_empty_lines": len(non_empty_lines),
         "total_characters": len(text),
         "total_words": len(text.split()),
         "has_email": "@" in text and "." in text,
-        "has_phone": any(char.isdigit() for char in text),
+        "has_phone": bool(re.search(phone_pattern, text)),
         "has_urls": "http" in text.lower() or "www." in text.lower(),
         "detected_language": language
     }
