@@ -71,7 +71,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 1, 3.3_
   - _Requirements: 2.6, 6.2, 6.3, 6.4, 6.6, 7.3_
 
-- [ ] 4. Integrate the portable profile flow
+- [x] 4. Integrate the portable profile flow
 - [x] 4.1 Integrate intake, evidence handoff and correction
   - Connect selection, version dispatch, structural/semantic validation and private evidence handoff using the designed result contracts.
   - Connect accepted intake/corrections to scoped persistence; exercise task-required pointers without adding offer-fit scoring or document responsibilities.
@@ -80,7 +80,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 3.1, 3.3, 3.5_
   - _Requirements: 1.1, 2.4, 3.1, 4.1, 4.4, 4.5, 4.6, 5.4, 6.1, 6.3, 6.6, 6.7, 7.1_
 
-- [ ] 4.2 Integrate authorized legacy migration
+- [x] 4.2 Integrate authorized legacy migration
   - Validate a synthetic legacy input, present conversion findings and bind migration authorization to its destination and reviewed proposal.
   - Persist the current version through the same update protocol while retaining original bytes, source history and the opaque legacy snapshot.
   - Done when the migrated profile passes both checks, all legacy values can be recovered, and declined or invalid migration leaves original bytes unchanged.
