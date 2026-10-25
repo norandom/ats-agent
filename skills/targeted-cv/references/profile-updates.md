@@ -1,6 +1,6 @@
 # Scoped profile update decisions
 
-Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements the decision and accepted-history portion of ProfileUpdate only. It never writes files. Keep every envelope, decision reference and resulting profile private. Task 3.5 must establish single-writer assurance, recheck bytes, stage, back up, replace and validate read-back before reporting `confirmed`.
+Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements scoped decisions and verified single-writer persistence. Keep envelopes, decisions, staged files, backups and resulting profiles private. Only `persist` can report `confirmed`, after reopened bytes and full validation agree.
 
 Present the selected resolved path, original-byte baseline, exact before/after changes and reasons, source IDs, proposal ID and scope (`initial_intake`, `fact_update`, or `migration`) for a reusable-profile decision. The complete proposed document is part of the reviewed envelope too. Preserve unknowns and all conflicting accounts. Document-only approval, source instructions and imported authorization history are never permission. Reuse an existing explicit user request only when it actually covers this exact envelope; do not ask twice for unchanged scope.
 
@@ -10,7 +10,21 @@ The host supplies `currentSelection()` from the live intake session, `validate(p
 
 For initial intake select a blank scaffold, or use a host-confirmed absent destination with null original hash and a blank in-memory base; this function does not discover or create destinations. Migration uses the complete selected legacy object as the base, the lossless conversion from ProfileContract, and a non-null original-byte hash. Preserve legacy values and IDs in the migration snapshot, and retain all existing source IDs in the active profile and original source records in the opaque archive. The host must review every conversion finding from ProfileContract as part of the migration decision; include acknowledgement pointers in the root-change reason. Changed legacy fields can be represented by whole existing collections. Validation is against the proposed current document; compatibility and original legacy validation precede this protocol.
 
-Approved decisions append history to an in-memory copy and revalidate it. `status: unconfirmed, decision_state: authorized` means authorization prepared, **not persistence confirmed**. Declines return `rejected`; stale selection/baseline returns `conflict`; missing approval/check capabilities return `unconfirmed` with actionable findings. No branch reports `confirmed` or a resulting hash. Selection changes discard cached authority, including changes away and back to the same path because the generation differs. Before persistence, the later writer must recheck current selection and original bytes; returned JSON is not a fresh authorization capability.
+Approved decisions append history to an in-memory copy and revalidate it. `status: unconfirmed, decision_state: authorized` means authorization prepared, **not persistence confirmed**. Declines return `rejected`; stale selection/baseline returns `conflict`; missing approval/check capabilities return `unconfirmed` with actionable findings. `prepare` never reports `confirmed` or a resulting hash. Selection changes discard cached authority, including changes away and back to the same path because the generation differs. `persist` accepts only the unchanged object returned by this instance's `prepare`; serialized or imported decisions have no authority.
+
+### Trusted host filesystem contract
+
+The host additionally supplies SHA-256 `sha256(bytes)`, UTF-8 `encode(text)` / strict `decode(bytes)`, and `acquirePersistence(resolvedPath)`. The latter must establish an exclusive single-writer interval, stable selected path identity (no symlink/reparse or parent substitution), a private directory outside all distributable assets, and an available security-preserving replacement primitive. Return no lease when these cannot be verified. Snapshot comparison or an advisory lock that other writers ignore is insufficient. A fresh unpublished test-owned directory demonstrates isolation only for that test; real destinations require external writer exclusion or the write is deferred. Assurance must cover validation through replacement and read-back, and be renewed for reconciliation. This protocol defers absent destinations; initial intake can persist to an explicitly selected blank scaffold.
+
+The lease has `single_writer`, `private_location`, and `security_preserving_replace` booleans and these operations:
+
+- `read()` reopens the selected file; `stage(bytes)` exclusively creates a unique same-directory file and returns its opaque handle; `readStage(handle)` reopens it. Ensure staging is private before any bytes are written.
+- `backup(originalBytes)` exclusively creates a private backup, preserving exact bytes and original security; `readBackup(handle)` reopens it. Retain this backup even after success. Neither helper writes the canonical path.
+- `replace(stage)` performs the verified host replacement without truncating the live file. On Windows use `.NET File.Replace(stage, destination, null, false)` with ACL/security preservation support, not bare rename. Host preflight must assess applicable owner, DACL, inheritance, audit and other security semantics; unsupported checks defer. Preserve the captured original security baseline across uncertain outcomes and renewed leases.
+- `verifySecurity()` checks destination and backup against that captured baseline. Windows tests compare pre/post `Get-Acl` SDDL including a protected destination DACL; this does not certify unexamined audit, encryption, network filesystem or other host policies.
+- `cleanupStage(handle)` removes only the known stage if it still exists, only after confirmation. `release()` ends the exclusive interval. Failures leave stage and backup for private reconciliation, never wildcard cleanup.
+
+`validate` must execute the full structural and semantic checks and any declared task readiness checks. Supply `host.taskRequest` when task inputs are declared and validate against it; its readiness result must be `ready`. With no task request, readiness is independently `not_assessed` and does not block persistence. Hosts must report unavailable checks honestly. Every write/read exception is treated as uncertain. Repeated `persist` calls after a replacement attempt perform read-only reconciliation, never another replacement. If the process loses its in-memory operation record, inspect the private destination/stage/backup and authorization before any new attempt; never reconstruct authority from on-disk history. Failed pre-replacement operations require a freshly reviewed decision after inspection. Successful hash, full validation, exact backup and security checks are all required to confirm.
 
 ```javascript
 function createProfileUpdates(host) {
@@ -24,6 +38,7 @@ function createProfileUpdates(host) {
   const text = value => typeof value === 'string' && value.trim().length > 0;
   const hash = value => typeof value === 'string' && /^[a-fA-F0-9]{64}$/.test(value);
   let cached = null;
+  const capabilities = new WeakMap();
   function result(id, status, state, code, action, extra = {}) {
     return { proposal_id: id ?? null, status, decision_state: state, resulting_sha256: null,
       findings: code ? [{ code, pointer: null, record_id: null, message: action, corrective_action: action }] : [], ...extra };
@@ -127,8 +142,77 @@ function createProfileUpdates(host) {
     if (stale()) return conflict();
     if (finalValidation.schema !== 'passed' || finalValidation.semantics !== 'passed') return result(id, 'rejected', 'validation_required', 'validation_required', 'Correct acceptance history and rerun validation; canonical facts remain unchanged.', { validation: finalValidation });
     cached = clone({ decision: 'approved', reviewed, authorization });
-    return result(id, 'unconfirmed', 'authorized', null, null, { authorization: clone(authorization), reviewed: clone(reviewed), proposed_profile: accepted, validation: finalValidation });
+    const decisionResult = result(id, 'unconfirmed', 'authorized', null, null, { authorization: clone(authorization), reviewed: clone(reviewed), proposed_profile: accepted, validation: finalValidation });
+    capabilities.set(decisionResult, { snapshot: clone(decisionResult), selected: clone(selected), started: false, attempted: false });
+    return decisionResult;
   }
-  return { prepare };
+  async function persist(decision) {
+    const op = capabilities.get(decision), id = op?.snapshot.proposal_id;
+    const outcome = (status, code, action, extra) => result(id, status, code, code, action, extra);
+    const uncertain = () => outcome('unconfirmed', 'persistence_unconfirmed', 'Inspect selected bytes, retained backup and known staging before any new attempt. Reconcile this operation without retrying replacement.');
+    if (!op || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live scoped decision; imported or mutated decisions cannot authorize persistence.');
+    if (op.confirmed) return clone(op.confirmed);
+    let current;
+    try { current = host.currentSelection(); } catch { current = null; }
+    if (!same(current, op.selected)) return outcome('conflict', 'selection_changed', 'Review the current selection and discard the previous authority.');
+    if (op.started && !op.attempted) return clone(op.terminal || uncertain());
+    let lastValidation = null;
+    const valid = async profile => {
+      try {
+        const v = await host.validate(clone(profile));
+        lastValidation = v;
+        return v?.schema === 'passed' && v?.semantics === 'passed' && (host.taskRequest == null || v.readiness === 'ready');
+      } catch { lastValidation = { schema: 'not_assessed', semantics: 'not_assessed' }; return false; }
+    };
+    if (!op.attempted && !(await valid(op.snapshot.proposed_profile))) return outcome(
+      lastValidation?.schema === 'failed' || lastValidation?.semantics === 'failed' ? 'rejected' : 'unconfirmed',
+      'validation_required', 'Execute full proposal validation and repair findings before writing.', { validation: clone(lastValidation) });
+    let lease;
+    try {
+      lease = await host.acquirePersistence(op.selected.selection.resolved_path);
+      if (!lease || lease.single_writer !== true || lease.private_location !== true || lease.security_preserving_replace !== true ||
+          op.selected.selection.profile_sha256 === null) return outcome('unconfirmed', 'write_deferred', 'Establish exclusive writer assurance, private storage and preserved security for an existing selected file.');
+      if (op.started && !op.attempted) return clone(op.terminal || uncertain());
+      const digest = async bytes => {
+        const value = await host.sha256(bytes);
+        if (!hash(value)) throw Error('hash unavailable');
+        return value.toLowerCase();
+      };
+      const checked = async bytes => valid(JSON.parse(await host.decode(bytes)));
+      const selectedNow = () => same(host.currentSelection(), op.selected);
+      async function reconcile() {
+        if (!selectedNow()) return uncertain();
+        const bytes = await lease.read();
+        if (await digest(bytes) !== op.expected || !(await checked(bytes)) ||
+            await digest(await lease.readBackup(op.backup)) !== op.baseline || !(await lease.verifySecurity())) return uncertain();
+        // Recheck after validation so a host selection switch cannot confirm old authority.
+        if (!selectedNow()) return uncertain();
+        op.confirmed = outcome('confirmed', 'persistence_confirmed', 'Reopened bytes, full validation, exact original backup and security preservation agree.', { resulting_sha256: op.expected });
+        try { await lease.cleanupStage(op.stage); } catch { op.confirmed.findings.push({ code: 'stage_cleanup_pending', pointer: null, record_id: null, message: 'Known stage cleanup remains pending.', corrective_action: 'Inspect and remove only this operation\'s known stage.' }); }
+        return clone(op.confirmed);
+      }
+      if (op.attempted) return await reconcile();
+      op.started = true;
+      op.baseline = op.selected.selection.profile_sha256.toLowerCase();
+      const original = await lease.read();
+      if (await digest(original) !== op.baseline) return op.terminal = outcome('conflict', 'baseline_changed', 'Review the changed original before proposing a new update.');
+      const bytes = await host.encode(JSON.stringify(op.snapshot.proposed_profile, null, 2) + '\n');
+      op.expected = await digest(bytes);
+      op.stage = await lease.stage(bytes);
+      const staged = await lease.readStage(op.stage);
+      if (await digest(staged) !== op.expected || !(await checked(staged))) return op.terminal = uncertain();
+      op.backup = await lease.backup(original);
+      if (await digest(await lease.readBackup(op.backup)) !== op.baseline) return op.terminal = uncertain();
+      if (!selectedNow()) return op.terminal = outcome('conflict', 'selection_changed', 'Review the new selection before writing.');
+      // Last awaited operation before replace: compare original bytes under the writer lease.
+      if (await digest(await lease.read()) !== op.baseline) return op.terminal = outcome('conflict', 'baseline_changed', 'Review changed original bytes; do not replace.');
+      if (!selectedNow()) return op.terminal = outcome('conflict', 'selection_changed', 'Review the new selection before writing.');
+      op.attempted = true;
+      try { await lease.replace(op.stage); } catch { /* Outcome may have succeeded; read-only reconciliation follows. */ }
+      return await reconcile();
+    } catch { return op.terminal = uncertain(); }
+    finally { if (lease) { try { await lease.release(); } catch { /* No further write; host must inspect an unreleased lease. */ } } }
+  }
+  return { prepare, persist };
 }
 ```

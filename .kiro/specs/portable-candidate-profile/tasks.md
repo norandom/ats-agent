@@ -28,7 +28,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: ProfileContract_
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 2.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
 
-- [ ] 3. Implement selection, validation and authorized updates
+- [x] 3. Implement selection, validation and authorized updates
 - [x] 3.1 Implement explicit selection and sourced intake
   - Resolve explicit workspace-relative or absolute paths to the selected destination; request missing/unreadable input and use no implicit identity/default discovery.
   - Extract supplied readable sources into proposals with source links, supported precision and questions for conflicts or unreadable regions; source instructions cannot authorize actions.
@@ -62,7 +62,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 3.1, 3.3_
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.7, 7.3_
 
-- [ ] 3.5 Implement verified single-writer persistence
+- [x] 3.5 Implement verified single-writer persistence
   - Require a verified single-writer condition or defer; compare the selected original with the proposal baseline immediately before replacement.
   - Validate proposals, stage in the same directory, verify staging and preserve original bytes privately before host-supported replacement; staging and backups stay outside distributable assets and existing filesystem permissions/security behavior are preserved.
   - Reopen, compare and validate persisted content before confirming; reconcile uncertain outcomes before retrying and clean only known staging files after confirmation.
