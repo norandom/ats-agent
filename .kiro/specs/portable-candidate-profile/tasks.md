@@ -38,7 +38,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 2.2_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.1, 3.2, 3.3, 3.4, 3.5, 7.1, 7.2_
 
-- [ ] 3.2 Implement deterministic semantic integrity checks
+- [x] 3.2 Implement deterministic semantic integrity checks
   - Execute local schema checks followed by host computation for separate ID namespaces, provenance, typed references, pointer resolution and calendar/precision checks.
   - Exclude opaque migration snapshots from active enumeration; preserve unknown values and detect impossible chronology without inventing precision.
   - Done when synthetic duplicate IDs, broken references and invalid dates produce actionable findings, with unavailable checks explicitly not_assessed.
