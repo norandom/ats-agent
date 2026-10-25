@@ -11,7 +11,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Requirements: 4.1, 6.6, 7.4, 7.5_
 
 - [ ] 2. Establish versioned facts and evidence semantics
-- [ ] 2.1 Create the current schema and preserve the legacy validator
+- [x] 2.1 Create the current schema and preserve the legacy validator
   - Move the existing legacy schema unchanged; create closed current-version definitions and the null-valued blank scaffold with all designed collections.
   - Represent stable identifiers, nullable facts, source metadata, evidence, conflicts, review dispositions, migration snapshots and authorized change history.
   - Update known links to moved authoritative assets as part of relocation; eliminate duplicate authoritative copies without changing private instances.
@@ -121,6 +121,3 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: Verification_
   - _Depends: 4.1, 4.2_
   - _Requirements: 1.1, 2.6, 4.1, 4.4, 6.6, 7.4, 7.5_
-
-
-

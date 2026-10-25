@@ -1,0 +1,2 @@
+# Preserve the retained legacy validator byte-for-byte across checkouts.
+skills/targeted-cv/schemas/cv-facts-v1.schema.json -text whitespace=cr-at-eol

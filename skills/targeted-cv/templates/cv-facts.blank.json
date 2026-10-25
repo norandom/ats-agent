@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "candidate": {
+    "id": "candidate",
+    "name": null,
+    "phone": null,
+    "email": null,
+    "postal_address": null,
+    "location": {
+      "city": null,
+      "country": null
+    },
+    "links": [],
+    "source_ids": []
+  },
+  "sources": [],
+  "profile": [],
+  "employment": [],
+  "education": [],
+  "professional_development": [],
+  "skill_groups": [],
+  "projects": [],
+  "volunteering": [],
+  "languages": [],
+  "review_questions": [],
+  "evidence": [],
+  "conflicts": [],
+  "change_history": [],
+  "migration_origin": null
+}

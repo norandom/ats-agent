@@ -1,0 +1,959 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Portable CV facts v2",
+  "description": "Structural profile contract. Schema conformance does not establish semantic validity or task readiness. Unknown facts are null; archived JSON values remain opaque.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "candidate": {
+      "$ref": "#/$defs/candidate"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "profile": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "employment": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/employment"
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/education"
+      }
+    },
+    "professional_development": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/development"
+      }
+    },
+    "skill_groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skillGroup"
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/project"
+      }
+    },
+    "volunteering": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/volunteering"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/language"
+      }
+    },
+    "review_questions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewQuestion"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conflict"
+      }
+    },
+    "change_history": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/changeHistory"
+      }
+    },
+    "migration_origin": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/migrationOrigin"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "candidate",
+    "sources",
+    "profile",
+    "employment",
+    "education",
+    "professional_development",
+    "skill_groups",
+    "projects",
+    "volunteering",
+    "languages",
+    "review_questions",
+    "evidence",
+    "conflicts",
+    "change_history",
+    "migration_origin"
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "partialDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "receivedAt": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "string",
+          "format": "date-time"
+        }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "pointer": {
+      "type": "string",
+      "pattern": "^(?:/(?:[^~/]|~[01])*)*$"
+    },
+    "jsonValue": {
+      "anyOf": [
+        {
+          "type": [
+            "null",
+            "boolean",
+            "number",
+            "string"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        }
+      ]
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "city",
+        "country"
+      ]
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "url"
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postal_address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/link"
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "phone",
+        "email",
+        "postal_address",
+        "location",
+        "links",
+        "source_ids"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "type": {
+          "enum": [
+            "candidate_supplied_cv",
+            "user_answer",
+            "document",
+            "other"
+          ]
+        },
+        "origin": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "received_at": {
+          "$ref": "#/$defs/receivedAt"
+        },
+        "as_of": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "verification": {
+          "enum": [
+            "user_reported",
+            "document_supplied",
+            "independently_verified",
+            "unknown"
+          ]
+        },
+        "verification_basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "origin",
+        "locator",
+        "received_at",
+        "as_of",
+        "verification",
+        "verification_basis"
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "source_ids"
+      ]
+    },
+    "employment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "employer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "end": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "as_of": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "employer",
+        "title",
+        "location",
+        "start",
+        "end",
+        "current",
+        "as_of",
+        "claims",
+        "source_ids"
+      ]
+    },
+    "education": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "qualification": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "institution": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "end": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "completion_status": {
+          "enum": [
+            "completed",
+            "in_progress",
+            "not_completed",
+            null
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "qualification",
+        "institution",
+        "start",
+        "end",
+        "completion_status",
+        "source_ids"
+      ]
+    },
+    "development": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "organization": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "since": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "valid_until": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "organization",
+        "since",
+        "valid_until",
+        "source_ids"
+      ]
+    },
+    "skillGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "claims"
+      ]
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "end": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "employer_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "start",
+        "end",
+        "employer_id",
+        "source_ids"
+      ]
+    },
+    "volunteering": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "since": {
+          "$ref": "#/$defs/partialDate"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "since",
+        "source_ids"
+      ]
+    },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proficiency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cefr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "language",
+        "proficiency",
+        "cefr",
+        "source_ids"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "field_pointer": {
+          "$ref": "#/$defs/pointer"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "uncertain",
+            "absent",
+            "transferable",
+            "confirmed_gap"
+          ]
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "record_id",
+        "field_pointer",
+        "status",
+        "rationale",
+        "source_ids"
+      ]
+    },
+    "alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/jsonValue"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      },
+      "required": [
+        "value",
+        "source_ids"
+      ]
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "field_pointer": {
+          "$ref": "#/$defs/pointer"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/alternative"
+          }
+        },
+        "status": {
+          "enum": [
+            "open",
+            "resolved"
+          ]
+        },
+        "resolution_source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "selected_alternative": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "record_id",
+        "field_pointer",
+        "alternatives",
+        "status",
+        "resolution_source_ids",
+        "selected_alternative"
+      ]
+    },
+    "reviewQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "related_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "question": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "open",
+            "answered",
+            "skipped",
+            "not_applicable",
+            "confirmed_gap"
+          ]
+        },
+        "answer_source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "answer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "related_ids",
+        "question",
+        "disposition",
+        "answer_source_ids",
+        "answer"
+      ]
+    },
+    "migrationOrigin": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from_version": {
+          "type": "string"
+        },
+        "source_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "original_profile": {
+          "$ref": "#/$defs/jsonValue"
+        }
+      },
+      "required": [
+        "from_version",
+        "source_sha256",
+        "original_profile"
+      ]
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "scope": {
+          "enum": [
+            "initial_intake",
+            "fact_update",
+            "migration"
+          ]
+        },
+        "request_reference": {
+          "type": "string"
+        },
+        "approved_at": {
+          "$ref": "#/$defs/dateTime"
+        },
+        "proposal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resolved_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "request_reference",
+        "approved_at",
+        "proposal_id",
+        "resolved_path"
+      ]
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pointer": {
+          "$ref": "#/$defs/pointer"
+        },
+        "before": {
+          "$ref": "#/$defs/jsonValue"
+        },
+        "after": {
+          "$ref": "#/$defs/jsonValue"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pointer",
+        "before",
+        "after",
+        "reason"
+      ]
+    },
+    "changeHistory": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "proposal_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "base_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authorization": {
+          "$ref": "#/$defs/authorization"
+        },
+        "accepted_at": {
+          "$ref": "#/$defs/dateTime"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/change"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "proposal_id",
+        "base_sha256",
+        "authorization",
+        "accepted_at",
+        "source_ids",
+        "changes"
+      ]
+    }
+  }
+}

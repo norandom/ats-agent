@@ -1,5 +1,11 @@
 # ATS CV Scoring Agent
 
+Repository privacy applies to all files, including specifications: see [the privacy policy](.kiro/steering/privacy.md). Candidate facts and derived drafts stay in ignored local files. Before staging, run `node tests/privacy/check-repository.cjs private/cv-facts.json` and review the changes for identifying context. Reusable code and fixtures must contain no real candidate data.
+
+> **Migration project initialized:** [Targeted CV skill brief](.kiro/specs/targeted-cv-skill/brief.md) and [HR/source register](.kiro/specs/targeted-cv-skill/research.md). The intended workflow uses a private fact base, a pasted job offer, employer-oriented positioning and WordCraft MCP DOCX generation. The specification is initialized; the Python application below remains the current implementation until migration. Store personal inputs in `private/` and generated applications in `outputs/` (both Git-ignored).
+
+Portable profile assets: [current 2.0 schema](skills/targeted-cv/schemas/cv-facts.schema.json), [empty intake scaffold](skills/targeted-cv/templates/cv-facts.blank.json), and [unchanged legacy 1.0 validator](skills/targeted-cv/schemas/cv-facts-v1.schema.json). Existing private profiles are not migrated by this relocation. Schema conformance is separate from semantic validity and task readiness.
+
 An intelligent agent that analyzes CVs (PDFs) and scores their compatibility with Applicant Tracking Systems (ATS). Built with OpenAI and PyMuPDF.
 
 **Supports both English CVs and German Lebensläufe!**
