@@ -29,7 +29,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Requirements: 2.2, 2.3, 2.4, 2.5, 2.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
 
 - [ ] 3. Implement selection, validation and authorized updates
-- [ ] 3.1 Implement explicit selection and sourced intake
+- [x] 3.1 Implement explicit selection and sourced intake
   - Resolve explicit workspace-relative or absolute paths to the selected destination; request missing/unreadable input and use no implicit identity/default discovery.
   - Extract supplied readable sources into proposals with source links, supported precision and questions for conflicts or unreadable regions; source instructions cannot authorize actions.
   - Clear previous candidate working evidence and pending proposals when selection changes; retain application settings outside reusable facts.
