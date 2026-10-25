@@ -10,7 +10,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: Verification_
   - _Requirements: 4.1, 6.6, 7.4, 7.5_
 
-- [ ] 2. Establish versioned facts and evidence semantics
+- [x] 2. Establish versioned facts and evidence semantics
 - [x] 2.1 Create the current schema and preserve the legacy validator
   - Move the existing legacy schema unchanged; create closed current-version definitions and the null-valued blank scaffold with all designed collections.
   - Represent stable identifiers, nullable facts, source metadata, evidence, conflicts, review dispositions, migration snapshots and authorized change history.
@@ -20,7 +20,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 1_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 7.1, 7.4_
 
-- [ ] 2.2 Implement compatibility, evidence interpretation and lossless migration rules
+- [x] 2.2 Implement compatibility, evidence interpretation and lossless migration rules
   - Define version dispatch and explicit migration proposals; unsupported versions never fall through to the current validator.
   - Preserve source meaning, verification basis, date precision, observation limits, all conflict alternatives and question dispositions without treating unknowns as gaps.
   - Retain the complete opaque legacy snapshot and original-byte hash, map equivalent labels and receipt dates without fabricating observation dates, and report unmappable active fields.
