@@ -4,3 +4,8 @@ __pycache__
 *.pyc
 *.pdf
 *.log
+
+# Candidate facts, source CVs, job offers and generated application artifacts
+/private/
+/outputs/
+/examples/

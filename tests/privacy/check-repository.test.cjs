@@ -1,0 +1,10 @@
+const assert = require('node:assert/strict');
+const {identifiers, containsIdentifier} = require('./check-repository.cjs');
+const terms = identifiers({candidate: {name: 'Alex Fictional', email: 'alex@example.invalid', phone: '+49 000 1234567'}, employment: [{employer: 'Imaginary Moon Agency'}]}, ['invented private phrase']);
+assert(containsIdentifier('ALEX   FICTIONAL', terms));
+assert(containsIdentifier('Contact +49 (000) 123-4567', terms));
+assert(containsIdentifier('Worked at Imaginary Moon Agency.', terms));
+assert(containsIdentifier('invented private phrase', terms));
+assert(!containsIdentifier('Generic requirement: read an explicit facts file.', terms));
+assert.deepEqual(identifiers({candidate: {name: null}, employment: []}), []);
+console.log('PASS: synthetic identity, contact normalization, employer, extra phrase and negative checks');

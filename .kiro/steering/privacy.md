@@ -1,0 +1,13 @@
+# Repository privacy boundary
+
+This policy applies to the entire shareable repository, including Kiro briefs, requirements, designs, tasks, research, reviews, steering, skill instructions, scripts, fixtures, logs, screenshots and release assets.
+
+- Never copy a real candidate's identity, contacts, employers, career history, qualifications, metrics, quoted answers or identifying combinations into these assets. Removing the name alone is not anonymization. Describe requirements generically and use wholly fictional fixtures.
+- Keep real source documents, structured facts, answers, translations, editorial plans, claim maps, review results and generated documents in ignored `private/`, `examples/` or `outputs/`, or explicitly selected locations outside the repository. Keep identifying machine paths and filenames private too.
+- The explicitly selected structured facts file is the canonical source for candidate content. Persist confirmed corrections there with provenance before regenerating. Scripts and skill instructions contain no candidate defaults. Private editorial plans may select, translate and phrase sourced facts, but must reference those facts and be regenerated when the facts hash changes. A valid reference alone does not prove semantic accuracy; the host must review claims.
+- Missing facts trigger intake or a question, never reconstruction from specifications, previous sessions, host identity or hardcoded prose.
+- Specifications describe structure and behavior, never the current applicant. Keep candidate-specific acceptance results and debugging excerpts private. Durable work-state notes must also remain generic.
+- Before staging or release, review every changed asset and run the local privacy check against the private facts file. Check staged content as well as the working tree. Git ignore alone cannot protect tracked files, forced additions, Git history or archives. Package an explicit allowlist and inspect the resulting archive separately.
+- A matching scan is a blocker, not proof of a leak's intent. Review and remove personal content before sharing. Do not silently rewrite published history; report any historical exposure without reproducing its contents.
+
+Local check: `node tests/privacy/check-repository.cjs private/cv-facts.json`. Optional second argument: an ignored JSON array of additional identifying phrases. The checker reads identifiers at runtime, prints only file paths and never stores a candidate denylist in the repository. It checks known names, contacts, employer names and supplied phrases; it cannot recognize all paraphrases, biographical combinations or embedded binary metadata. Human privacy review remains required.
