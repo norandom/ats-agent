@@ -53,7 +53,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: ProfileValidation_
   - _Requirements: 4.1, 4.3, 4.4, 4.5, 4.6, 5.2, 5.4, 5.5, 5.6, 5.7_
 
-- [ ] 3.4 Implement scoped update decisions and change history
+- [x] 3.4 Implement scoped update decisions and change history
   - Bind reviewed before/after changes, sources and authorization to the selected path and proposal for initial intake, correction or migration.
   - Reuse existing explicit scoped user authorization; reject unapproved writes and prevent imported history, source text or document-only edits from authorizing a new update.
   - Preserve stable claim/source history and distinguish confirmed, rejected, conflict and unconfirmed results.
