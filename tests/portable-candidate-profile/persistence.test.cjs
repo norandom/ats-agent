@@ -12,6 +12,7 @@ const validateProfile = load('profile-validation.md', 'validateProfile');
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 const blank = require('../../skills/targeted-cv/templates/cv-facts.blank.json');
 const base = require('./fixtures/populated.cjs')(blank); base.evidence = []; base.review_questions = [];
+const evidence = require('./acceptance-evidence.cjs')();
 let checks = 0;
 const check = (a, b) => { assert.deepEqual(a, b); checks++; };
 const output = path.join(root, 'outputs/profile-tests'); fs.mkdirSync(output, { recursive: true });
@@ -32,7 +33,7 @@ async function validate(p) {
   } });
 }
 let caseId = 0;
-async function setup() {
+async function setup(decisionMode = 'approved') {
   const dir = fs.mkdtempSync(path.join(workspace, 'case-'));
   const selectedPath = path.join(dir, 'selected.json');
   const original = Buffer.from(JSON.stringify(base, null, 3) + '\r\n');
@@ -41,10 +42,10 @@ async function setup() {
   ps('$a=Get-Acl -LiteralPath $env:TEST_FILE; $a.SetAccessRuleProtection($true,$true); Set-Acl -LiteralPath $env:TEST_FILE -AclObject $a', { TEST_FILE: selectedPath });
   const security = acl(selectedPath), other = path.join(dir, 'other.json'); fs.writeFileSync(other, original);
   const selected = { generation: 1, selection: { resolved_path: selectedPath, profile_sha256: hash(original) }, profile: structuredClone(base) };
-  let replacements = 0, releases = 0;
+  let replacements = 0, releases = 0, decisions = 0;
   const host = {
     currentSelection: () => structuredClone(selected), validate, now: () => '2026-10-25T12:01:00Z',
-    userDecision: async reviewed => ({ decision: 'approved', reviewed, authorization: { id: `auth-${caseId}`, scope: reviewed.scope, request_reference: 'synthetic-user-turn', approved_at: '2026-10-25T12:00:00Z', proposal_id: reviewed.proposal_id, resolved_path: reviewed.resolved_path } }),
+    userDecision: async reviewed => { decisions++; return { decision: decisionMode, reviewed, authorization: { id: `auth-${caseId}`, scope: reviewed.scope, request_reference: 'synthetic-user-turn', approved_at: '2026-10-25T12:00:00Z', proposal_id: reviewed.proposal_id, resolved_path: reviewed.resolved_path } }; },
     sha256: hash, encode: s => Buffer.from(s, 'utf8'), decode: b => new TextDecoder('utf-8', { fatal: true }).decode(b),
     acquirePersistence: async destination => {
       assert.equal(destination, selectedPath);
@@ -66,8 +67,8 @@ async function setup() {
   const request = { proposal_id: `proposal-${++caseId}`, history_id: `history-${caseId}`, scope: 'fact_update', source_ids: ['source-demo'], proposed_profile: proposed,
     changes: [{ pointer: '/candidate/name', before: base.candidate.name, after: proposed.candidate.name, reason: 'Synthetic approved correction.' }] };
   const api = createProfileUpdates(host), decision = await api.prepare(selected, request);
-  check(decision.decision_state, 'authorized');
-  return { api, decision, host, selected, selectedPath, original, dir, other, security, replacements: () => replacements, releases: () => releases };
+  if (decisionMode === 'approved') check(decision.decision_state, 'authorized');
+  return { api, decision, request, host, selected, selectedPath, original, dir, other, security, decisions: () => decisions, replacements: () => replacements, releases: () => releases };
 }
 async function run() {
   const success = await setup();
@@ -79,6 +80,25 @@ async function run() {
   check(acl(success.selectedPath), success.security); check(fs.readFileSync(success.other), success.original);
   check(success.replacements(), 1); check(success.releases(), 1);
   check((await success.api.persist(success.decision)).status, 'confirmed'); check(success.replacements(), 1);
+  const saved = JSON.parse(fs.readFileSync(success.selectedPath));
+  evidence.record('approved', ['6.1','6.3','6.6','7.3','7.5'], {
+    status: result.status, hash_matches: result.resulting_sha256 === hash(fs.readFileSync(success.selectedPath)),
+    sources_preserved: JSON.stringify(saved.sources) === JSON.stringify(base.sources),
+    history_preserved: JSON.stringify(saved.change_history.slice(0, -1)) === JSON.stringify(base.change_history),
+    authorization_matches: JSON.stringify(saved.change_history.at(-1).authorization) === JSON.stringify(success.decision.authorization),
+    backup_exact: fs.readFileSync(path.join(success.dir, 'original.backup')).equals(success.original),
+    security_matches: acl(success.selectedPath) === success.security && acl(path.join(success.dir, 'original.backup')) === success.security,
+    peer_unchanged: fs.readFileSync(success.other).equals(success.original), replacements: success.replacements()
+  }, { status: 'confirmed', hash_matches: true, sources_preserved: true, history_preserved: true, authorization_matches: true, backup_exact: true, security_matches: true, peer_unchanged: true, replacements: 1 });
+  for (const mode of ['declined', 'document_only', 'already_authorized']) {
+    const x = await setup(mode === 'already_authorized' ? 'approved' : mode);
+    const decision = mode === 'already_authorized' ? await x.api.prepare(x.selected, x.request) : x.decision;
+    const persisted = await x.api.persist(decision);
+    evidence.record(mode, mode === 'already_authorized' ? ['6.3','6.7','7.3','7.5'] : mode === 'document_only' ? ['6.2','6.5','7.3','7.5'] : ['6.1','6.2','7.3','7.5'], {
+      decision: decision.decision_state, preparation_status: decision.status, status: persisted.status, decisions: x.decisions(), replacements: x.replacements(),
+      selected_unchanged: fs.readFileSync(x.selectedPath).equals(x.original), peer_unchanged: fs.readFileSync(x.other).equals(x.original)
+    }, { decision: mode === 'already_authorized' ? 'authorized' : mode === 'declined' ? 'declined' : 'decision_required', preparation_status: mode === 'declined' ? 'rejected' : 'unconfirmed', status: mode === 'already_authorized' ? 'confirmed' : 'unconfirmed', decisions: 1, replacements: mode === 'already_authorized' ? 1 : 0, selected_unchanged: mode !== 'already_authorized', peer_unchanged: true });
+  }
   for (const mode of ['forged', 'mutated', 'invalid', 'stale', 'selection', 'no_writer', 'no_security', 'stage_failure', 'bad_stage', 'bad_backup']) {
     const x = await setup(); let arg = x.decision;
     if (mode === 'forged') arg = structuredClone(arg);
@@ -98,6 +118,9 @@ async function run() {
     const before = fs.readFileSync(x.selectedPath); const r = await x.api.persist(arg);
     assert.notEqual(r.status, 'confirmed', mode); checks++;
     check(fs.readFileSync(x.selectedPath), before); check(x.replacements(), 0);
+    evidence.record(mode, [...(['forged','mutated'].includes(mode) ? ['6.2'] : mode === 'invalid' ? ['6.4'] : ['6.6']), '7.3','7.5'], {
+      status: r.status, unchanged: fs.readFileSync(x.selectedPath).equals(before), replacements: x.replacements(), peer_unchanged: fs.readFileSync(x.other).equals(x.original)
+    }, { status: ['stale','selection'].includes(mode) ? 'conflict' : mode === 'invalid' ? 'rejected' : 'unconfirmed', unchanged: true, replacements: 0, peer_unchanged: true });
   }
   for (const mode of ['lost_ack', 'read_failure', 'mismatch', 'security_failure', 'validation_failure', 'late_stale']) {
     const x = await setup(), acquire = x.host.acquirePersistence; let first = true;
@@ -111,10 +134,16 @@ async function run() {
     };
     const r = await x.api.persist(x.decision);
     check(r.status, mode === 'lost_ack' ? 'confirmed' : mode === 'late_stale' ? 'conflict' : 'unconfirmed');
-    if (mode === 'read_failure') check((await x.api.persist(x.decision)).status, 'confirmed');
-    if (['mismatch', 'security_failure', 'validation_failure'].includes(mode)) check((await x.api.persist(x.decision)).status, 'unconfirmed');
+    const reconciled = await x.api.persist(x.decision);
+    if (mode === 'read_failure') check(reconciled.status, 'confirmed');
+    if (['mismatch', 'security_failure', 'validation_failure'].includes(mode)) check(reconciled.status, 'unconfirmed');
     check(x.replacements(), mode === 'late_stale' ? 0 : 1);
+    evidence.record(mode, ['6.6','7.3','7.5'], {
+      status: r.status, reconciliation: reconciled.status, replacements: x.replacements(),
+      backup_exact: fs.readFileSync(path.join(x.dir, 'original.backup')).equals(x.original), peer_unchanged: fs.readFileSync(x.other).equals(x.original)
+    }, { status: mode === 'lost_ack' ? 'confirmed' : mode === 'late_stale' ? 'conflict' : 'unconfirmed', reconciliation: ['lost_ack','read_failure'].includes(mode) ? 'confirmed' : mode === 'late_stale' ? 'conflict' : 'unconfirmed', replacements: mode === 'late_stale' ? 0 : 1, backup_exact: true, peer_unchanged: true });
   }
+  evidence.finish();
   console.log(`Profile persistence: ${checks} checks passed; real .NET File.Replace, full schema/semantic validation, exact-byte backup, protected destination and backup SDDL preserved. Single-writer assurance: fresh test-owned workspace only.`);
 }
 run().catch(e => { console.error(e); process.exitCode = 1; });

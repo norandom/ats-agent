@@ -106,7 +106,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: Verification_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.1, 3.2, 3.3, 3.4, 3.5, 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 5.3 Exercise authorization and persistence failures
+- [x] 5.3 Exercise authorization and persistence failures
   - Execute approved, declined, already-authorized, document-only and invalid updates; verify source history and exact selected-file behavior.
   - Inject staging failure, changed baseline and read-back mismatch; exercise unavailable single-writer assurance and ambiguous persistence without blind retry.
   - Done when confirmed writes have read-back evidence, rejected/stale writes preserve originals, uncertain writes are reported honestly, and private backups and filesystem security behavior remain preserved.

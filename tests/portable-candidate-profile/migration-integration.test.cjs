@@ -17,6 +17,7 @@ const legacy = JSON.parse(original);
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 let checks = 0, validations = 0, replacements = 0, decisions = 0, leases = 0;
 const check = (actual, expected) => { assert.deepEqual(actual, expected); checks++; };
+const evidence = require('./acceptance-evidence.cjs')();
 function ps(script, env) {
   const result = spawnSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', '$ErrorActionPreference="Stop"; ' + script], { encoding: 'utf8', windowsHide: true, env: { ...process.env, ...env } });
   assert.equal(result.status, 0, result.stderr); return result.stdout.trim();
@@ -137,6 +138,15 @@ async function run() {
   check(final.change_history[0].authorization, authorized.authorization);
   check(final.change_history[0].changes, request.changes); check(final.change_history[0].source_ids, request.source_ids);
   check(acl(selectedPath), security); check(acl(backups[0].file), security); check(fs.readFileSync(other), original);
+  evidence.record('migration_preserved', ['2.6','6.3','6.6','7.3','7.5'], {
+    status: result.status, validation: [finalReport.schema, finalReport.semantics],
+    original_preserved: JSON.stringify(final.migration_origin.original_profile) === JSON.stringify(legacy),
+    sources_preserved: JSON.stringify(final.migration_origin.original_profile.sources) === JSON.stringify(legacy.sources),
+    findings_acknowledged: migration.required_acknowledgements.every(p => acknowledged.includes(p)),
+    backup_exact: fs.readFileSync(backups[0].file).equals(original), security_matches: acl(selectedPath) === security && acl(backups[0].file) === security,
+    peer_unchanged: fs.readFileSync(other).equals(original), replacements
+  }, { status: 'confirmed', validation: ['passed','passed'], original_preserved: true, sources_preserved: true, findings_acknowledged: true, backup_exact: true, security_matches: true, peer_unchanged: true, replacements: 1 });
+  evidence.finish();
   console.log('Migration integration: ' + checks + ' checks passed; ' + validations + ' actual schema runs; one confirmed Windows replacement with exact backup and protected DACL read-back. Synthetic workspace assurance only.');
 }
 run().catch(error => { console.error(error); process.exitCode = 1; });
