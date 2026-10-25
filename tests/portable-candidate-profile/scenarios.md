@@ -36,3 +36,21 @@ Checks report `passed`, `failed` or `not_assessed`. Nonzero validator exit statu
 The unique synthetic workspace establishes single-writer isolation only for these probes. A successful rename proves that primitive is available, not atomic compare-and-swap, authorization, full profile persistence or security preservation. Existing-destination permissions/ACL preservation is `not_assessed`, and `profile_write` remains `deferred`. Before a real write, the host must independently establish exclusive writing and security-preserving replacement, execute the update protocol, then reopen and validate. If capabilities are unavailable, retain the proposal privately without replacing the selected profile. If an attempted replacement or read-back is ambiguous, report `unconfirmed` and inspect the destination before retrying.
 
 Later task scenarios extend this file with unrelated fictional candidates, requirement-linked actual observations, authorization decisions and failure injection. They must distinguish schema conformance, semantic validity, readiness and persistence. Task 1 does not claim those later acceptance criteria have passed.
+
+## Integrated current-profile intake and correction (task 4.1)
+
+Run `node tests/portable-candidate-profile/integration.test.cjs` on Windows with the verified Node, PowerShell and pinned uvx validator available. The test extracts the identical JavaScript blocks from all four references. Its host-reviewed source fixture is a recorded semantic interpretation, not an automatic prose extractor. It creates only fresh synthetic files under ignored `outputs/profile-tests/integration-*`; original backups and validation inputs remain there for inspection. No real private input is read.
+
+| Requirements | Observed scenario assertions |
+| --- | --- |
+| 1.1, 2.4, 4.1 | Explicit blank selection, exact version dispatch, actual local schema validation and executable semantic checks on selected, proposed, staged and reopened JSON |
+| 3.1 | Existing reviewed source spans produce intake; a new supplied user-answer span produces the correction through the same intake block |
+| 4.4, 4.5 | Title pointer returns separate passed schema/semantics and incomplete readiness while the title conflict is open; the finding names the pointer and corrective action |
+| 4.6, 5.4 | Private handoff retains unresolved conflict alternatives/questions; after sourced resolution the title task becomes ready while optional qualification date and CEFR remain null and the unrelated education question stays unresolved |
+| 6.1, 6.3, 6.7 | Trusted synthetic user decisions bind exact intake/correction envelopes; repeating unchanged preparation reuses authority, with two decisions for two scopes; history retains both decisions and correction sources |
+| 6.6 | Both writes report confirmed only after real .NET replacement, reopened hash/full validation, original-byte backup and protected destination/backup SDDL comparison; reselection supplies the updated baseline |
+| 7.1 | All application settings remain in the separate session envelope and absent from persisted facts; unselected synthetic bytes stay unchanged |
+
+The focused run passes 96 assertions with 18 actual schema-validator executions. Complementary regression commands are `node tests/portable-candidate-profile/intake.test.cjs`, `node tests/portable-candidate-profile/validation.test.cjs`, `node tests/portable-candidate-profile/evidence.test.cjs` and `node tests/portable-candidate-profile/updates.test.cjs`; the evidence suite covers all evidence-state distinctions. `persistence.test.cjs` separately owns write-failure injection. Task 4.1 does not exercise authorized legacy migration or claim complete feature acceptance.
+
+Writer exclusion here is limited to the fresh unpublished test-owned directory. The Windows security observation covers the tested protected DACL/SDDL and backup, not unexamined audit, encryption or network filesystem policies. Actual destinations still require the full host assurance contract or a deferred write.

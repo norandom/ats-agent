@@ -72,7 +72,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Requirements: 2.6, 6.2, 6.3, 6.4, 6.6, 7.3_
 
 - [ ] 4. Integrate the portable profile flow
-- [ ] 4.1 Integrate intake, evidence handoff and correction
+- [x] 4.1 Integrate intake, evidence handoff and correction
   - Connect selection, version dispatch, structural/semantic validation and private evidence handoff using the designed result contracts.
   - Connect accepted intake/corrections to scoped persistence; exercise task-required pointers without adding offer-fit scoring or document responsibilities.
   - Done when one synthetic intake-to-readiness-to-correction scenario runs through the reference protocols with traceable results and no WordCraft or legacy scorer dependency.
