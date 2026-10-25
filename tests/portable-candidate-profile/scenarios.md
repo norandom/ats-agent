@@ -54,3 +54,38 @@ Run `node tests/portable-candidate-profile/integration.test.cjs` on Windows with
 The focused run passes 96 assertions with 18 actual schema-validator executions. Complementary regression commands are `node tests/portable-candidate-profile/intake.test.cjs`, `node tests/portable-candidate-profile/validation.test.cjs`, `node tests/portable-candidate-profile/evidence.test.cjs` and `node tests/portable-candidate-profile/updates.test.cjs`; the evidence suite covers all evidence-state distinctions. `persistence.test.cjs` separately owns write-failure injection. Task 4.1 does not exercise authorized legacy migration or claim complete feature acceptance.
 
 Writer exclusion here is limited to the fresh unpublished test-owned directory. The Windows security observation covers the tested protected DACL/SDDL and backup, not unexamined audit, encryption or network filesystem policies. Actual destinations still require the full host assurance contract or a deferred write.
+
+## Structural, semantic and readiness edge cases (task 5.1)
+
+Canonical command: `node tests/portable-candidate-profile/edge-cases.test.cjs`.
+
+Observed on 2026-10-25: **32 named outcomes passed, with 29 actual pinned check-jsonschema 0.38.2 executions**. The runner reuses the wholly fictional populated fixture and executes the unchanged blocks from `candidate-profile.md` and `profile-validation.md`. This closes the cross-layer evidence gap left by the focused semantic/evidence tests, whose schema-pass adapters isolate those algorithms. It adds no production helper or alternate semantic implementation.
+
+Each run writes synthetic inputs, actual validator JSON diagnostics and `evidence.json` into a fresh ignored `outputs/profile-tests/edge-cases-*` directory. Evidence records case IDs, requirement numbers, expected and observed separate states, actionable findings, validator exit status and whether reference semantics executed. It is saved after each scenario, including a failing scenario; a failed or incomplete run is not acceptance evidence. The command fails if a required real validator is missing, interrupted or returns unexpected output. Raw diagnostics stay private; the summary contains no candidate facts or absolute paths.
+
+In the table, `P`, `F`, and `NA` mean passed, failed and not assessed; the triple is **schema / semantics / readiness**. A readiness result applies only to the declared pointer, never to an entire application.
+
+| Case IDs | Requirements | Observed result and evidence |
+| --- | --- | --- |
+| `valid`, `blank` | 2.1–2.3, 4.1, 4.4, 5.1 | P/P/ready for supplied name; P/P/incomplete plus `task_incomplete` for blank name |
+| `malformed-json` | 4.1, 4.3 | Selection returns `parse_invalid`, repair action, no loaded profile; NA/NA/NA and validator never called |
+| `unsupported-version` | 2.4, 2.5 | NA/NA/NA, `unsupported_version` with migration/recovery action; version 99.0 never reaches current validator |
+| `malformed-record` | 4.1, 4.3 | F/NA/NA; actual validator rejects null candidate object and maps its diagnostic to `/candidate` |
+| `duplicate-id`, `missing-source`, `wrong-kind` | 4.2, 4.3, 5.1 | P/F/NA; `duplicate_id` or `broken_reference` identifies affected ID/reference field and repair action |
+| `invalid-calendar`, `impossible-chronology` | 3.4, 4.3 | P/F/NA; impossible leap day and disjoint reversed date intervals produce precise findings |
+| `mixed-precision` | 3.4, 5.3 | P/P/ready for name with `ambiguous_chronology`; year/day precision remains unchanged, not guessed |
+| `null-end` | 4.5, 5.3 | P/P/incomplete for required current state; both end and current remain null |
+| `bounded-current`, `undated-current` | 4.5, 5.7 | P/P/ready for bounded historical assertion, versus P/P/incomplete when no observation date exists; both include `observation_limit` |
+| `verification-upgrade` | 5.2 | P/F/NA; unsupported independent verification produces `verification_basis_required` |
+| `evidence-supported`, `evidence-transferable` | 4.4, 4.5, 5.4 | P/P/ready; evidence view preserves supplied distinctions without offer-fit inference |
+| `evidence-uncertain`, `evidence-absent`, `evidence-confirmed_gap` | 4.4, 4.5, 5.4 | P/P/incomplete for affected required name; evidence view retains each distinct state |
+| `question-answered`, `question-skipped`, `question-not_applicable` | 5.5 | P/P/ready; sourced answer or nonblocking disposition and related IDs survive handoff; skipping is not a gap |
+| `question-confirmed_gap` | 5.5 | P/P/incomplete for affected required record; user source and confirmed-gap disposition retained |
+| `conflict-open`, `conflict-resolved`, `conflict-mismatch` | 3.3, 4.3, 4.5, 5.6 | Open required qualification P/P/incomplete; sourced equal resolution P/P/ready retaining both alternatives; mismatched canonical value P/F/NA |
+| `required-missing`, `optional-unknown` | 2.3, 4.4–4.6 | Required email P/P/incomplete with pointer/action; required name P/P/ready while optional email, CEFR and education end remain null |
+| `validator-unavailable` | 4.1, 4.4 | Actual nonexistent executable produces ENOENT and NA/NA/NA with `check_unavailable`; no schema-pass substitute |
+| `semantics-unavailable`, `no-task` | 4.1, 4.4 | Injected semantic exception after actual schema success yields P/NA/NA; no task yields P/P/NA |
+
+`bounded-current` deliberately uses an old observation year. Ready means the historical assertion is available with that recorded limit; the request contract has no evaluation-date field and does **not** establish present-day employment. Semantic unavailability is explicit fault injection, not an observation that host computation is unavailable in this environment. These tests validate supplied structure and recorded semantics; they do not authenticate source truth, interpret arbitrary prose or prove present-day freshness.
+
+The complementary regression commands were also executed: `node tests/portable-candidate-profile/validation.test.cjs` (183 checks, three real schema executions), `node tests/portable-candidate-profile/evidence.test.cjs` (131 checks), `node tests/portable-candidate-profile/migration.test.cjs` (58 assertions, two real schema checks), and `node tests/portable-candidate-profile/intake.test.cjs` (53 assertions, two real schema checks). They retain detailed namespace, pointer, question-evidence, chronology and migration coverage without duplicating all permutations in this acceptance recorder. The unchanged 59-execution schema contract suite is not claimed as rerun for task 5.1. Candidate isolation, hostile-source scenarios, persistence-failure acceptance and complete feature acceptance remain tasks 5.2–5.4.

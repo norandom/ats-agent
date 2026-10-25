@@ -89,7 +89,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Requirements: 2.5, 2.6, 6.1, 6.2, 6.4, 6.6, 6.7_
 
 - [ ] 5. Verify profile boundaries and failure behavior
-- [ ] 5.1 Exercise structural, semantic and readiness edge cases
+- [x] 5.1 Exercise structural, semantic and readiness edge cases
   - Add and execute synthetic valid/blank/malformed/unsupported-version cases and duplicate IDs, missing/wrong-kind references, invalid dates and mixed-precision chronology cases.
   - Exercise null end dates, stale/undated current assertions, unsupported verification upgrades, evidence states, answered/skipped/gap questions and unresolved/resolved conflicts.
   - Check required pointers, optional unknowns and unavailable validators separately; capture actual outcomes and actionable findings.
