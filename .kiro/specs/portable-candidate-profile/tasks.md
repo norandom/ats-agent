@@ -98,7 +98,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 4.2_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.3, 3.4, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
 
-- [ ] 5.2 Exercise candidate isolation and hostile or incomplete sources
+- [x] 5.2 Exercise candidate isolation and hostile or incomplete sources
   - Run two unrelated synthetic candidates through the same protocols with explicit destinations; check missing paths, absent input and changing selections.
   - Exercise instruction-like source text, unreadable regions and partial qualifications without allowing workflow changes or invented facts.
   - Inspect reusable assets for candidate data and machine-specific defaults; verify only the selected synthetic profile changes and application settings remain separate.
