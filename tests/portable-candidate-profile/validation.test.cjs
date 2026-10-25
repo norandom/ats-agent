@@ -93,11 +93,13 @@ async function run() {
   } };
   for (const p of [blank, populated(blank)]) await check(async () => assert.equal(p.schema_version, '2.0'));
   await check(async () => assert.equal((await validateProfile(blank, real)).semantics, 'passed'));
-  await check(async () => assert.equal((await validateProfile(populated(blank), real)).semantics, 'passed'));
+  const ready = await validateProfile(populated(blank), real, { task_id: 'synthetic-name', required: [{ record_id: 'candidate', pointer: '/candidate/name', reason: 'Fictional identity display.' }] });
+  await check(async () => assert.equal(ready.semantics, 'passed'));
+  await check(async () => assert.equal(ready.readiness, 'ready'));
   const malformed = structuredClone(blank); malformed.candidate = null;
   const rejected = await validateProfile(malformed, real);
   await check(async () => assert.equal(rejected.schema, 'failed')); await check(async () => assert.equal(rejected.semantics, 'not_assessed'));
   await check(async () => assert.equal(rejected.findings[0].pointer, '/candidate'));
-  console.log(`Profile integrity: ${checks} checks passed (including 3 real pinned uvx validations).`);
+  console.log(`Profile validation: ${checks} checks passed (including 3 real pinned uvx validations; full evidence semantics and required-input readiness).`);
 }
 run().catch(error => { console.error(error); process.exitCode = 1; });

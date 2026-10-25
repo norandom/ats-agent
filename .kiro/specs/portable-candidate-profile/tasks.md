@@ -46,7 +46,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 2.2_
   - _Requirements: 4.1, 4.2, 4.3, 5.1, 5.2, 5.3_
 
-- [ ] 3.3 Implement evidence validation and task readiness
+- [x] 3.3 Implement evidence validation and task readiness
   - Enforce conflict resolution evidence and canonical equality, answered/confirmed-gap evidence, verification basis, observation-date limits and authorized history semantics.
   - Produce separate schema, semantic and caller-required readiness outcomes with actionable field findings and a private evidence view; optional unknowns do not block unrelated tasks.
   - Done when executed scenarios distinguish required missing inputs from optional unknowns, preserve evidence distinctions and return not_assessed when checks cannot run.

@@ -6,7 +6,11 @@ Execute the single JavaScript block below in host computation. The test harness 
 
 `ValidationReport` contains separate `schema`, `semantics`, `readiness` and `findings`. Every Finding contains `code`, `pointer`, `record_id`, `message` and `corrective_action`. Source IDs occupy a separate namespace from all active record IDs, including nested authorization IDs. Proposal IDs are correlation values, not additional records. Migration snapshots and historical before/after values are opaque; their embedded IDs, dates and references are not active assertions. Historical outer source references still resolve.
 
-The integrity pass implements semantic algorithm steps 1–4. Its `passed` state means these integrity checks passed, not that evidence dispositions, conflict resolutions, authorization history or task completeness were assessed. Readiness remains `not_assessed`, including when a task request is supplied. The subsequent evidence/readiness protocol must extend this pass before overall validity, readiness or write approval can be asserted. `host.semanticIntegrity`, when supplied, must execute this same function, not return an editorial guess; unavailable host computation returns `not_assessed`.
+The semantic pass implements algorithm steps 1–6, including evidence and recorded history consistency. `host.semanticIntegrity`, when supplied, must execute this same complete function, not return an editorial guess; unavailable host computation returns `not_assessed`. Step 7 evaluates `TaskInputRequest` profile-relative pointers only after both passes succeed. No task means `not_assessed`; required unknown or unresolved values mean `incomplete`. Optional unknowns remain unchanged. A passed result does not authenticate a supplied verification narrative or historical consent and never authorizes a new write.
+
+Use `evidenceView(selection, profile, validation)` for the private handoff. It retains all source, evidence, question, conflict and history distinctions without interpreting skipped questions as gaps or transferable evidence as an offer-fit judgment. Its unresolved IDs include open conflicts/questions, absent/uncertain/gap evidence and undated current assertions. Required fields overlap record-relative evidence pointers in either direction; an open question concerns its entire related record. Confirmed gaps remain known gaps, not qualifying support. Readiness means the declared data are available with their recorded limits, not that qualifications match an offer.
+
+`current=true` is always accompanied by an `observation_limit` finding. A supplied record observation date, or the dates of its sources, bounds that wording; no receipt date or wall clock extends it. Without any observation date, required currency remains unresolved. With dates, readiness concerns only that bounded assertion: the request contract has no evaluation-date field and cannot certify present-day freshness. Consumers needing fresher evidence must request clarification. Verification basis is a supplied, nonblank evidence reference/narrative; its truth still requires host review. Historical authorization is checked for proposal, declared scope, recorded change details and chronology, not reused as live authorization. Historical values and removed-field pointers are not compared with today's canonical values.
 
 Calendar values are intervals at their recorded precision. Ordering fails only when the entire start interval follows the end interval. Overlapping intervals that allow both orders produce `ambiguous_chronology`, a non-failing review finding. Equal exact dates are valid. No new day or month is written into facts. Unknown dates skip comparison and stay unknown.
 
@@ -36,8 +40,14 @@ async function validateProfile(profile, host, taskRequest = null) {
     if (!result || !['passed', 'failed'].includes(result.state) || !Array.isArray(result.findings)) throw Error('unavailable');
     report.semantics = result.state;
     report.findings.push(...result.findings);
+    if (report.semantics === 'passed' && taskRequest !== null) {
+      const readiness = assessReadiness(profile, taskRequest);
+      report.readiness = readiness.state;
+      report.findings.push(...readiness.findings);
+    }
   } catch {
-    report.findings.push(finding('check_unavailable', 'Semantic integrity computation could not complete.', 'Execute the complete integrity algorithm before asserting validity.'));
+    report.semantics = 'not_assessed'; report.readiness = 'not_assessed';
+    report.findings.push(finding('check_unavailable', 'Semantic computation could not complete.', 'Execute the complete semantic and readiness algorithm before asserting validity.'));
   }
   return report;
 }
@@ -138,6 +148,124 @@ function semanticIntegrity(profile) {
       else if (a[1] > b[0]) add('ambiguous_chronology', `${pointer}/${end}`, record, 'Recorded precision permits both valid and reversed ordering.', 'Retain supplied precision and request clarification if ordering matters to the task.', false);
     }
   }
+  const userSource = ids => ids.some(id => sources.get(id)?.type === 'user_answer');
+  profile.sources.forEach((r, i) => {
+    if (r.verification === 'independently_verified' && !substantive(r.verification_basis))
+      add('verification_basis_required', `/sources/${i}/verification_basis`, r, 'Independent verification requires supplied verification evidence.', 'Supply a traceable verification basis or retain the actual unverified source status.');
+  });
+  profile.review_questions.forEach((r, i) => {
+    if (r.disposition === 'answered' && !r.answer_source_ids.length)
+      add('answer_evidence_required', `/review_questions/${i}/answer_source_ids`, r, 'Answered disposition has no answer evidence.', 'Link the supplied answer source or retain an unanswered disposition.');
+    if (r.disposition === 'confirmed_gap' && !userSource(r.answer_source_ids))
+      add('gap_user_source_required', `/review_questions/${i}/answer_source_ids`, r, 'A confirmed gap requires a supporting user answer.', 'Obtain the user confirmation; skipped or missing answers do not prove missing ability.');
+  });
+  profile.evidence.forEach((r, i) => {
+    if (['supported', 'transferable'].includes(r.status) && !r.source_ids.length)
+      add('evidence_source_required', `/evidence/${i}/source_ids`, r, 'Supplied support or transferability requires provenance.', 'Link supplied or confirmed evidence; do not infer support or offer fit.');
+    if (r.status === 'confirmed_gap' && !userSource(r.source_ids))
+      add('gap_user_source_required', `/evidence/${i}/source_ids`, r, 'A confirmed gap requires a supporting user answer.', 'Link explicit user confirmation or preserve uncertainty.');
+  });
+  profile.conflicts.forEach((r, i) => {
+    const pointer = `/conflicts/${i}`;
+    if (r.alternatives.length < 2 || r.alternatives.some(a => !a.source_ids.length))
+      add('conflict_alternatives_required', `${pointer}/alternatives`, r, 'A conflict requires at least two sourced alternatives.', 'Retain and source every conflicting account.');
+    const target = pointerValue(records.get(r.record_id), r.field_pointer);
+    if (r.status === 'open') {
+      if (r.selected_alternative !== null || r.resolution_source_ids.length)
+        add('open_conflict_selection', `${pointer}/selected_alternative`, r, 'An open conflict cannot claim a selected resolution.', 'Retain the open conflict without selection until an explicit user decision.');
+      const uncertain = profile.evidence.some(e => e.record_id === r.record_id && e.field_pointer === '' && e.status === 'uncertain');
+      if (target.exists && target.value !== null && !uncertain)
+        add('open_conflict_canonical', `${pointer}/field_pointer`, r, 'An open conflict has a definitive canonical value.', 'Set the affected canonical field to null or mark the whole claim uncertain; preserve all alternatives.');
+    } else {
+      const index = r.selected_alternative;
+      if (!Number.isInteger(index) || index < 0 || index >= r.alternatives.length || !userSource(r.resolution_source_ids))
+        add('conflict_resolution_required', `${pointer}/selected_alternative`, r, 'Resolved conflict lacks a valid selection or explicit user-answer resolution.', 'Record the user decision and select its sourced alternative, adding a new alternative first if needed.');
+      else if (target.exists && !jsonEqual(target.value, r.alternatives[index].value))
+        add('conflict_canonical_mismatch', `${pointer}/field_pointer`, r, 'Canonical value differs from the accepted alternative.', 'Apply the accepted value exactly while retaining rejected accounts and the user decision.');
+    }
+  });
+  profile.employment.forEach((r, i) => {
+    if (r.current === true) add('observation_limit', `/employment/${i}/current`, r,
+      'Current wording is bounded by supplied observation dates; no present-day currency is inferred.',
+      'Retain record/source as-of dates and obtain additional evidence when fresher currency is required; receipt dates are not observations.', false);
+  });
+  profile.change_history.forEach((r, i) => {
+    const pointer = `/change_history/${i}`, a = r.authorization;
+    if (a.proposal_id !== r.proposal_id)
+      add('history_authorization_mismatch', `${pointer}/authorization/proposal_id`, r, 'Historical authorization names a different proposal.', 'Correct the supplied history from the recorded decision; never infer fresh authorization.');
+    if (![a.request_reference, a.resolved_path].every(substantive) || !r.changes.length || !r.source_ids.length)
+      add('history_authorization_incomplete', `${pointer}/authorization`, r, 'Recorded authorization lacks decision, destination, changes or sources.', 'Supply the traceable historical decision and reviewed change details.');
+    if (['fact_update', 'migration'].includes(a.scope) && r.base_sha256 === null)
+      add('history_scope_mismatch', `${pointer}/authorization/scope`, r, 'Recorded scope does not agree with the baseline.', 'Use the actual initial intake or existing-profile update/migration scope and its original-byte baseline.');
+    if (!Number.isFinite(Date.parse(a.approved_at)) || !Number.isFinite(Date.parse(r.accepted_at)) || Date.parse(a.approved_at) > Date.parse(r.accepted_at))
+      add('history_chronology', `${pointer}/accepted_at`, r, 'Recorded acceptance must not precede authorization.', 'Correct operational timestamps from the recorded decision; do not treat them as career dates.');
+    r.changes.forEach((c, j) => {
+      if (!validPointer(c.pointer) || !substantive(c.reason) || jsonEqual(c.before, c.after))
+        add('history_change_invalid', `${pointer}/changes/${j}`, r, 'Historical reviewed change needs a valid pointer, reason and differing values.', 'Restore the recorded change details without replaying historical values into current facts.');
+    });
+  });
   return { state: failed ? 'failed' : 'passed', findings };
+}
+
+function validPointer(pointer) { return typeof pointer === 'string' && /^(?:\/(?:[^~/]|~[01])*)*$/.test(pointer); }
+function pointerValue(value, pointer) {
+  if (!validPointer(pointer)) return { exists: false };
+  if (pointer === '') return { exists: value !== undefined, value };
+  for (const token of pointer.slice(1).split('/')) {
+    const key = token.replace(/~1/g, '/').replace(/~0/g, '~');
+    if (value === null || typeof value !== 'object' || (Array.isArray(value) && !/^(0|[1-9][0-9]*)$/.test(key)) || !Object.hasOwn(value, key)) return { exists: false };
+    value = value[key];
+  }
+  return { exists: true, value };
+}
+function jsonEqual(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object' || Array.isArray(a) !== Array.isArray(b)) return false;
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every(k => Object.hasOwn(b, k) && jsonEqual(a[k], b[k]));
+}
+function activeRecords(profile) {
+  const result = [{ record: profile.candidate, pointer: '/candidate' }];
+  for (const key of ['profile', 'employment', 'education', 'professional_development', 'skill_groups', 'projects', 'volunteering', 'languages', 'review_questions', 'evidence', 'conflicts', 'change_history'])
+    profile[key].forEach((record, i) => {
+      const pointer = `/${key}/${i}`; result.push({ record, pointer });
+      if (key === 'employment' || key === 'skill_groups') record.claims.forEach((record, j) => result.push({ record, pointer: `${pointer}/claims/${j}` }));
+      if (key === 'change_history') result.push({ record: record.authorization, pointer: `${pointer}/authorization` });
+    });
+  return result;
+}
+function unresolvedFields(profile) {
+  const records = new Map(activeRecords(profile).map(r => [r.record.id, r.pointer]));
+  const result = [];
+  const add = (id, relative) => { if (records.has(id)) result.push({ record_id: id, pointer: records.get(id) + relative }); };
+  profile.conflicts.filter(r => r.status === 'open').forEach(r => add(r.record_id, r.field_pointer));
+  profile.evidence.filter(r => ['absent', 'uncertain', 'confirmed_gap'].includes(r.status)).forEach(r => add(r.record_id, r.field_pointer));
+  profile.review_questions.filter(r => ['open', 'confirmed_gap'].includes(r.disposition)).forEach(r => r.related_ids.forEach(id => add(id, '')));
+  profile.employment.filter(r => r.current === true && r.as_of === null && !r.source_ids.some(id => profile.sources.some(s => s.id === id && s.as_of !== null))).forEach(r => add(r.id, '/current'));
+  return result;
+}
+function assessReadiness(profile, request) {
+  const findings = [];
+  const add = (pointer, id, message) => findings.push({ code: 'task_incomplete', pointer, record_id: id, message, corrective_action: 'Supply or clarify this caller-required input with evidence; preserve optional unknowns.' });
+  if (!request || typeof request.task_id !== 'string' || !request.task_id.trim() || !Array.isArray(request.required)) return { state: 'not_assessed', findings: [{ code: 'invalid_task_request', pointer: null, record_id: null, message: 'TaskInputRequest is malformed.', corrective_action: 'Supply a task_id and required profile JSON Pointers with record_id and reason.' }] };
+  const records = activeRecords(profile), unresolved = unresolvedFields(profile);
+  const overlaps = (a, b) => a === b || a.startsWith(b + '/') || b.startsWith(a + '/');
+  function supplied(value) {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (typeof value !== 'object') return true;
+    return Object.entries(value).some(([key, v]) => !['id', 'schema_version', 'source_ids', 'record_id', 'field_pointer', 'sources', 'evidence', 'conflicts', 'review_questions', 'change_history', 'migration_origin'].includes(key) && supplied(v));
+  }
+  for (const input of request.required) {
+    if (!input || !validPointer(input.pointer) || !(input.record_id === null || typeof input.record_id === 'string') || typeof input.reason !== 'string' || !input.reason.trim()) return { state: 'not_assessed', findings: [{ code: 'invalid_task_request', pointer: null, record_id: null, message: 'A required input has invalid pointer, record ID or reason.', corrective_action: 'Declare each required input with its profile-relative JSON Pointer, nullable record ID and reason.' }] };
+    const value = pointerValue(profile, input.pointer);
+    const record = input.record_id === null ? null : records.find(r => r.record.id === input.record_id);
+    if ((input.record_id !== null && (!record || !(input.pointer === record.pointer || input.pointer.startsWith(record.pointer + '/')))) || !value.exists || !supplied(value.value) || unresolved.some(r => overlaps(input.pointer, r.pointer)))
+      add(input.pointer, input.record_id, `Required input is missing, empty, mismatched or unresolved. ${input.reason}`);
+  }
+  return { state: findings.length ? 'incomplete' : 'ready', findings };
+}
+function evidenceView(selection, profile, validation) {
+  return { selection, profile, validation, unresolved_record_ids: [...new Set(unresolvedFields(profile).map(r => r.record_id))] };
 }
 ```
