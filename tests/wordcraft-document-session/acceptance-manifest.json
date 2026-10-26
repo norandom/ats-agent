@@ -1,8 +1,8 @@
 {
   "provenance": {
-    "reportSha256": "9d9baf26976b3b486038b3ed0e57f5234cef56668aaf286e3e74f2dbd6bd581d",
-    "sessionSha256": "a27cc80eefc9aa7d552d43179ffa2db83b39652c7ac9fc939c10e113d14156b2",
-    "basis": "Task 6.1 reviewed actual desktop MCP run; immutable receipt digest is an audit anchor, not a cryptographic attestation of MCP origin."
+    "reportSha256": "2fdd30342555d479891a4814cd646ceb36900f2fd1cfe2ed5ce4418fcbea9819",
+    "sessionSha256": "fc9fd07ba8af7e87787d84dcc2a7e2c6ff1101920ec7779efb11436652862830",
+    "basis": "Task 6.2 correction round 1 independently reviewed actual desktop MCP run with canonical environment binding and explicit user initial foreground observation; immutable receipt digest is an audit anchor, not a cryptographic attestation of MCP origin."
   },
   "suites": {
     "foundation.test.cjs": [
@@ -71,6 +71,8 @@
       "switch preserves unsaved work and requires fresh selected document; correction routing remains upstream"
     ],
     "live-scenarios.test.cjs": [
+      "explicit foreground observation requires provenance, recency and selected artifact scope",
+      "environment identity follows shipped canonical formula and includes both executables and used commands",
       "initial selection rejects blank or different text without opening or discarding it",
       "inspection projection refuses invented part identity and preserves inspected formatting",
       "missing, failed, or simulated lifecycle cases cannot accept live suite",
@@ -120,6 +122,10 @@
         [
           "capabilities.test.cjs",
           "version, executable/catalog fingerprint, mode, connection and schema drift invalidate evidence"
+        ],
+        [
+          "live-scenarios.test.cjs",
+          "environment identity follows shipped canonical formula and includes both executables and used commands"
         ]
       ],
       "live": [
@@ -147,6 +153,10 @@
         [
           "foundation.test.cjs",
           "desktop connection is explicit, loopback-only and never headless"
+        ],
+        [
+          "live-scenarios.test.cjs",
+          "environment identity follows shipped canonical formula and includes both executables and used commands"
         ]
       ],
       "live": [
@@ -245,13 +255,17 @@
         [
           "integration.test.cjs",
           "switch preserves unsaved work and requires fresh selected document; correction routing remains upstream"
+        ],
+        [
+          "live-scenarios.test.cjs",
+          "explicit foreground observation requires provenance, recency and selected artifact scope"
         ]
       ],
       "live": [
         "switching",
         "visibility"
       ],
-      "limit": "Initial focus and rendered pages observed; no repeated focus override."
+      "limit": "Initial user foreground confirmation and six actual rendered-page observations; later focus is neither forced nor claimed."
     },
     {
       "id": "3.1",
@@ -647,12 +661,12 @@
         "cv-lifecycle",
         "letter-lifecycle"
       ],
-      "limit": "Desktop MCP authors content; initial focus and per-document pages observed."
+      "limit": "Actual desktop MCP authors content; explicit user initial foreground confirmation is separate from actual MCP focus flag and per-document rendered pages."
     }
   ],
   "limits": [
     "Historical live run reused only for identical runtime hashes; no new desktop mutations during relocation.",
-    "Eight actual MCP scenarios and two explicitly simulated controls.",
+    "Seven actual MCP scenarios, visibility with actual MCP pages and explicit user initial foreground observation, and two explicitly simulated controls.",
     "No DIN, finished styling, ATS compatibility, atomic typing protection or exactly-once transport claim.",
     "Relocation copies four runtime assets plus explicit test support; this is not release packaging.",
     "Node, pnpm and pinned uvx schema validator are test prerequisites; no model credentials or sibling checkout used.",

@@ -4,17 +4,32 @@ const {execFileSync}=require('node:child_process');
 const {McpClient,requireTool,validateFixtures}=require('./foundation.cjs');
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const mandatory=['cv-lifecycle','letter-lifecycle','nonconflict','conflict','formatting','lost-response','unresolved','missing-tool','switching','visibility'];
-function acceptanceStatus(cases,state={}){return state.originalRestored===true&&!state.restoreError&&!state.error&&state.status!=='failed'&&cases.length===mandatory.length&&mandatory.every(id=>cases.filter(c=>c.id===id&&c.status==='passed'&&c.evidenceKind===(['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp')).length===1)?'passed':'pending';}
+function environmentIdentity({server,version,mode,desktopExecutableSha256,cliExecutableSha256,tools,commands=[]}){
+ if(!server||mode!=='desktop'||![desktopExecutableSha256,cliExecutableSha256].every(x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x)))throw Error('Resolved desktop and CLI executable identities required');
+ const catalogPairs=tools.map(t=>{if(!t.name||!t.inputSchema)throw Error('Missing tool schema');return [t.name,hash(JSON.stringify(t.inputSchema))];});
+ for(const c of commands){if(!c.id||typeof c.params!=='string'||!c.params)throw Error('Missing command schema');catalogPairs.push(['command:'+c.id,hash(c.params)]);}
+ catalogPairs.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);
+ if(new Set(catalogPairs.map(x=>x[0])).size!==catalogPairs.length)throw Error('Duplicate catalog identity');
+ return {catalogPairs,fingerprint:hash(JSON.stringify([server,version??null,mode,desktopExecutableSha256,cliExecutableSha256,catalogPairs]))};
+}
+function acceptanceStatus(cases,state={}){return state.originalRestored===true&&!state.restoreError&&!state.error&&state.status!=='failed'&&cases.length===mandatory.length&&mandatory.every(id=>cases.filter(c=>c.id===id&&c.status==='passed'&&(c.evidenceKind===(['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp')||(id==='visibility'&&c.evidenceKind==='actual_mcp_and_user_observation'))).length===1)?'passed':'pending';}
+function validateForegroundObservation(value,selectedArtifact,now=Date.now()){
+ const time=Date.parse(value?.observedAt);
+ if(value?.source!=='explicit_user'||typeof value.response!=='string'||!value.response.trim()||typeof value.prompt!=='string'||!value.prompt.trim()||value.scope!=='initial foreground only'||value.selectedArtifact!==selectedArtifact||!Number.isFinite(time)||time>now||now-time>10*60*1000)throw Error('Fresh explicit user foreground observation scoped to selected artifact required');
+ return value;
+}
 function requireInitialSelection(observed,expected){if(observed!==expected)throw Error('Initial selected document mismatch; no open, discard or mutation permitted');}
 function projectInspection(v){
  if(!Array.isArray(v.blocks)||!v.blocks.length)throw Error('No inspectable blocks');
  return {parts:v.blocks.map(b=>{if(!Number.isInteger(b.index)||typeof b.text!=='string')throw Error('No inspection-derived block identity');const {index,text,len,...format}=b;return {id:'body:'+index,text,format:JSON.stringify(format)};})};
 }
 function body(r){const t=r.content?.find(x=>x.type==='text');if(!t)throw Error('No structured tool response');return JSON.parse(t.text);}
-async function run(executable,endpoint,output,selectedPath){
+async function run(executable,endpoint,output,selectedPath,desktopExecutable,foregroundObservationPath){
+ if(!desktopExecutable)throw Error('Explicit selected desktop executable required');
  const root=path.resolve(__dirname,'../..'),fixture=validateFixtures(require('./fixtures.json'));
  const selected=JSON.parse(fs.readFileSync(selectedPath,'utf8').replace(/^\uFEFF/,''));
  if(selected.fictional!==true||!selected.selectedArtifact||typeof selected.expectedText!=='string')throw Error('Explicit selected fictional document required');
+ const foregroundObservation=foregroundObservationPath?validateForegroundObservation(JSON.parse(fs.readFileSync(foregroundObservationPath,'utf8').replace(/^\uFEFF/,'')),selected.selectedArtifact):null;
  const {validateOutputDirectory}=require('./live-acceptance.cjs');output=validateOutputDirectory(root,output);
  if(fs.existsSync(output))throw Error('Select a fresh output directory');fs.mkdirSync(output,{recursive:true});
  const host=vm.createContext({}),assets=[];
@@ -22,7 +37,7 @@ async function run(executable,endpoint,output,selectedPath){
   const text=fs.readFileSync(path.join(root,'skills/targeted-cv',name),'utf8');assets.push({name,sha256:hash(text)});
   if(name.endsWith('.md'))for(const b of text.matchAll(/```javascript\r?\n([\s\S]*?)```/g))vm.runInContext(b[1],host);
  }
- const report={evidenceKind:'actual_mcp',mode:'desktop-connected',startedAt:new Date().toISOString(),assets,endpoint,environment:{node:process.version,cliVersion:execFileSync(executable,['--version'],{encoding:'utf8',windowsHide:true}).trim(),executableSha256:hash(fs.readFileSync(executable))},calls:[],scenarios:mandatory.map(id=>({id,status:'pending',evidenceKind:['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp'})),limits:['No DIN, finished styling, ATS compatibility, atomic typing protection or exactly-once transport claim.'],milestone:'pending'};
+ const report={evidenceKind:'actual_mcp',mode:'desktop-connected',startedAt:new Date().toISOString(),assets,endpoint,environment:{node:process.version,cliVersion:execFileSync(executable,['--version'],{encoding:'utf8',windowsHide:true}).trim(),cliExecutableSha256:hash(fs.readFileSync(executable)),desktopExecutableSha256:hash(fs.readFileSync(desktopExecutable))},calls:[],scenarios:mandatory.map(id=>({id,status:'pending',evidenceKind:['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp'})),limits:['No DIN, finished styling, ATS compatibility, atomic typing protection or exactly-once transport claim.'],milestone:'pending'};
  let client=McpClient.connect(executable,endpoint),binding,current,record,sequence=0,tools,originalVerified=false;
  const id=prefix=>prefix+'-'+(++sequence),now=()=>new Date().toISOString();
  const check=(yes,label)=>{if(!yes)throw Error(label);};
@@ -71,12 +86,14 @@ async function run(executable,endpoint,output,selectedPath){
  try{
   const init=await client.rpc('initialize',{protocolVersion:'2024-11-05',capabilities:{},clientInfo:{name:'fictional-live-acceptance',version:'1'}});check(init.instructions?.includes('connected to the WordCraft app at '+endpoint),'Desktop connection');client.notify('notifications/initialized');report.serverInfo=init.serverInfo;
   const catalog=await client.rpc('tools/list',{});check(!catalog.nextCursor,'Complete catalog');tools=catalog.tools;report.tools=tools;
-  record={schema_version:'1.0',sessionId:'fictional-acceptance',connection:{id:'connection',server:init.serverInfo.name,version:init.serverInfo.version||null,mode:'desktop',environmentFingerprint:hash(JSON.stringify([report.environment,tools]))},capabilities:[],bindings:[],snapshots:[],intents:[],receipts:[],checks:[]};
   const initial=(await call('get_text')).text;await call('inspect_document');requireInitialSelection(initial,selected.expectedText);
   check((await call('get_text')).text===selected.expectedText,'Selected original content');originalVerified=true;
+  const commands=await call('list_commands',{query:'para.style'});report.formatCommands=commands;
+  const usedCommands=commands.filter(c=>c.id==='para.style');check(usedCommands.length===1,'Unique discovered command schema');
+  const identity=environmentIdentity({server:init.serverInfo.name,version:init.serverInfo.version??null,mode:'desktop',...report.environment,tools,commands:usedCommands});report.catalogPairs=identity.catalogPairs;
+  record={schema_version:'1.0',sessionId:'fictional-acceptance',connection:{id:'connection',server:init.serverInfo.name,version:init.serverInfo.version??null,mode:'desktop',environmentFingerprint:identity.fingerprint},capabilities:[],bindings:[],snapshots:[],intents:[],receipts:[],checks:[]};
   binding={id:'original-fictional-letter',connectionId:'connection',kind:'cover_letter',language:'en',path:selected.selectedArtifact,nativeId:null,currentSnapshotId:null};record.bindings.push(binding);await inspect();await mutation('save','save_document',{path:selected.selectedArtifact},{description:'Preserve explicitly selected original in place'});
   const ui=await call('ui_inspect');report.initialUI=ui;
-  const commands=await call('list_commands',{query:'para.style'});report.formatCommands=commands;
   for(const doc of fixture.documents){
    binding={id:'fixture-'+doc.kind,connectionId:'connection',kind:doc.kind==='letter'?'cover_letter':'cv',language:doc.language,path:null,nativeId:null,currentSnapshotId:null};record.bindings.push(binding);current=null;
    await mutation('create','new_document',{},{});await mutation('edit','type_text',{text:doc.text,paragraphs:true},{target:'empty body',replacement:doc.text});check(current.snapshot.text.trimEnd()===doc.text.trimEnd(),'Created fixture content');
@@ -109,7 +126,10 @@ async function run(executable,endpoint,output,selectedPath){
   }
   scenario('switching',{documents:record.bindings.map(b=>({id:b.id,path:b.path})),scope:'Explicit MCP new/open operations and fresh readback, each prior document saved'});
   // UI inspection proves desktop rendering state only; foreground needs explicit observed evidence.
-  if(report.initialUI.focused===true&&report.initialUI.pages?.length&&report.calls.filter(c=>c.documentId&&c.ui).every(c=>c.ui.pages?.length))scenario('visibility',{initialFocused:true,initialTitle:report.initialUI.title,scope:'Actual initial ui_inspect focused flag and rendered page rectangles; per-document UI state captured. Later focus changes respected.'});
+  if((report.initialUI.focused===true||foregroundObservation)&&report.initialUI.pages?.length&&report.calls.filter(c=>c.documentId&&c.ui).length===6&&report.calls.filter(c=>c.documentId&&c.ui).every(c=>c.ui.pages?.length)){
+   scenario('visibility',{initialFocused:report.initialUI.focused,initialTitle:report.initialUI.title,foregroundObservation,scope:'Initial foreground from MCP focused flag or explicit user observation as recorded; every created, edited and reopened document has actual MCP rendered page rectangles. Later focus changes respected, not claimed focused.'});
+   if(foregroundObservation)report.scenarios.find(x=>x.id==='visibility').evidenceKind='actual_mcp_and_user_observation';
+  }
   else report.scenarios.find(x=>x.id==='visibility').reason='MCP UI evidence insufficient for initial foreground; explicit observation required.';
  }catch(e){report.error=e.message;report.status='failed';}
  finally{
@@ -118,4 +138,4 @@ async function run(executable,endpoint,output,selectedPath){
  }
  console.log(JSON.stringify({output,milestone:report.milestone,error:report.error,scenarios:report.scenarios.map(({id,status})=>({id,status}))}));return report;
 }
-module.exports={run,projectInspection,acceptanceStatus,requireInitialSelection};
+module.exports={run,projectInspection,acceptanceStatus,requireInitialSelection,environmentIdentity,validateForegroundObservation};
