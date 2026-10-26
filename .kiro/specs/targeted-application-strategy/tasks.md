@@ -57,7 +57,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Requirements: 1.6, 3.5, 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 4. Implement contribution composition and editorial review
-- [ ] 4.1 Compose supported contribution arguments in both languages
+- [x] 4.1 Compose supported contribution arguments in both languages
   - Implement audience/decision/thesis selection, inclusion/exclusion rationale and capability-oriented expertise structure.
   - Inventory factual propositions and preserve genuine historical titles, temporal context and responsibility while drafting stronger employer-relevant wording.
   - Review German and English realizations separately against the same canonical proposition and snapshot; exclude unsupported or unresolved realizations from selected claims.
