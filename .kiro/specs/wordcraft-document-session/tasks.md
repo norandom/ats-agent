@@ -23,7 +23,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Depends: 1_
   - _Requirements: 1.2, 1.3, 2.5, 5.1, 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 3. Implement capability discovery and desktop connection guidance
+- [x] 3. Implement capability discovery and desktop connection guidance
   - Map actual discovered MCP tools and schemas to each required operation; bind demonstration receipts to environment, mode, tested format and version.
   - Distinguish demonstrated, failed or unsupported, unavailable and unverified operations. Missing support blocks only dependent work.
   - Use documented desktop control-port launch and CLI MCP connection, with local executable discovery and no persistent configuration edits. Handle initial visibility through available launch/MCP capabilities or a one-time user action; respect later focus changes.
