@@ -1,0 +1,359 @@
+[
+  {
+    "requirement": "1.1",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(r.status,'ready'); assert.deepEqual(validated,p);",
+    "property": "Exact selected parsed profile validation"
+  },
+  {
+    "requirement": "1.2",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(unreadableResult.issues[0].id,'finding:context-input_unreadable'); failureFindings.push(...unreadableResult.issues);",
+    "property": "Unreadable input requests selection"
+  },
+  {
+    "requirement": "1.3",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(r.value.target.sha256,hash(fixtures.offer('operations').text));",
+    "property": "Separate offer fingerprint"
+  },
+  {
+    "requirement": "1.4",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(role.value.mode,'role_only'); assert.equal(role.value.job_specific_coverage,false);",
+    "property": "Role-only coverage disabled"
+  },
+  {
+    "requirement": "1.5",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(incomplete.value.state,'bounded'); assert.equal(incomplete.value.evidence.validation.readiness,'incomplete');",
+    "property": "Incomplete readiness bounds positioning"
+  },
+  {
+    "requirement": "1.6",
+    "suite": "integration.test.cjs",
+    "assertion": "const decision=await w.prepareUpdate(request);assert.equal(decision.decision_state,'authorized');assert.equal(w.current(),null);reject(await w.assemble(seed),'pending_update');reject(await w.bind(input),'pending_update');assert.equal(JSON.parse(fs.readFileSync(a.selectedPath)).candidate.email,null);",
+    "property": "Pending update withholds canonical support"
+  },
+  {
+    "requirement": "1.7",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(bounded.value.present_day_freshness,'not_assessed');",
+    "property": "Readiness is not current freshness"
+  },
+  {
+    "requirement": "1.8",
+    "suite": "integration.test.cjs",
+    "assertion": "const invalid=profile('laboratory',h.blank);invalid.candidate.name=42;const invalidSelection=h.select(invalid);w.select({workspace_root:h.workspace,facts_path:invalidSelection.snapshot.selection.resolved_path});const failed=await w.bind(input);assert.equal(failed.status,'blocked');assert.ok(failed.issues.length);assert.ok(Object.hasOwn(failed,'request'));rejected.push(...failed.issues);reject(await w.assemble(null),'context_unavailable');",
+    "property": "Invalid profile blocks assembly"
+  },
+  {
+    "requirement": "2.1",
+    "suite": "offer.test.cjs",
+    "assertion": "assert.equal(explicit.analysis.criteria.length,6);",
+    "property": "Atomic criteria with traceable spans"
+  },
+  {
+    "requirement": "2.2",
+    "suite": "offer.test.cjs",
+    "assertion": "assert.notEqual(change(a => a.criteria[0].priority = 'unspecified').criterion_set_sha256,baseline.criterion_set_sha256);",
+    "property": "Explicit required/preferred priority preserved; conflicting-priorities semantic review",
+    "host_observations": [
+      "conflicting-priorities"
+    ]
+  },
+  {
+    "requirement": "2.3",
+    "suite": "offer.test.cjs",
+    "assertion": "assert.equal(change(a => a.inferred_needs[0].wording += ' Additional hypothesis.').criterion_set_sha256,baseline.criterion_set_sha256);",
+    "property": "Labelled inferred needs separate from explicit criteria"
+  },
+  {
+    "requirement": "2.4",
+    "suite": "offer.test.cjs",
+    "assertion": "const r = change(mutate); assert.equal(r.deterministic,'failed'); assert.equal(r.criterion_set_sha256,undefined);assert.ok(r.errors.every(e => e.pointer && e.corrective_action));",
+    "property": "Malformed analysis rejected; host conflicting-priorities case supplies focused clarification",
+    "host_observations": [
+      "conflicting-priorities"
+    ]
+  },
+  {
+    "requirement": "2.5",
+    "suite": "composition.test.cjs",
+    "assertion": "const good = await check(s);assert.equal(good.schema,'passed',JSON.stringify(good));assert.equal(good.deterministic,'passed',JSON.stringify(good));assert.equal(good.host_meaning,'not_assessed');",
+    "property": "Supported thesis and rationale; weak-inventory host review judges relevance",
+    "host_observations": [
+      "weak-inventory"
+    ]
+  },
+  {
+    "requirement": "3.1",
+    "suite": "evidence.test.cjs",
+    "assertion": "assert.equal(r.reference.original_state,status); assert.equal(r.host_meaning,'not_assessed');",
+    "property": "Five original evidence states"
+  },
+  {
+    "requirement": "3.2",
+    "suite": "composition.test.cjs",
+    "assertion": "await rejects(v => v.claims[0].realizations[0].semantic_state = 'unsupported', 'selected_claim_unreviewed');",
+    "property": "Unsupported selection excluded; host review judges meaning",
+    "host_observations": [
+      "unsupported-appeal",
+      "language-drift"
+    ]
+  },
+  {
+    "requirement": "3.3",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Related synonym and taxonomy limits; REX host review",
+    "host_observations": [
+      "taxonomy-unavailable"
+    ]
+  },
+  {
+    "requirement": "3.4",
+    "suite": "composition.test.cjs",
+    "assertion": "assert.equal((await check(appeal)).deterministic,'failed');",
+    "property": "Inflated ownership/impact withheld after host judgment",
+    "host_observations": [
+      "authority"
+    ]
+  },
+  {
+    "requirement": "3.5",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Bounded alternatives and missing-evidence questions in host cases",
+    "host_observations": [
+      "authority",
+      "credential",
+      "old-tools"
+    ]
+  },
+  {
+    "requirement": "3.6",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Credential gap/current-status limits; credential-uncertainty host review",
+    "host_observations": [
+      "credential"
+    ]
+  },
+  {
+    "requirement": "3.7",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Unavailable taxonomy with no consulted passage or competence claim",
+    "host_observations": [
+      "taxonomy-unavailable"
+    ]
+  },
+  {
+    "requirement": "4.1",
+    "suite": "composition.test.cjs",
+    "assertion": "const good = await check(s);assert.equal(good.schema,'passed',JSON.stringify(good));assert.equal(good.deterministic,'passed',JSON.stringify(good));assert.equal(good.host_meaning,'not_assessed');",
+    "property": "Contribution thesis and capability groups; weak-inventory host review",
+    "host_observations": [
+      "weak-inventory"
+    ]
+  },
+  {
+    "requirement": "4.2",
+    "suite": "composition.test.cjs",
+    "assertion": "assert.equal((await check(appeal)).deterministic,'failed');",
+    "property": "Appealing unsupported prose rejected; supported host revision",
+    "host_observations": [
+      "unsupported-appeal"
+    ]
+  },
+  {
+    "requirement": "4.3",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Historical tool limits; historical-tools host review",
+    "host_observations": [
+      "old-tools"
+    ]
+  },
+  {
+    "requirement": "4.4",
+    "suite": "composition.test.cjs",
+    "assertion": "assert.deepEqual(drift.positioning.selected_claims[0].languages,['en','de']);assert.deepEqual(drift.positioning.selected_claims[1].languages,['en']);",
+    "property": "German drift withheld independently of English",
+    "host_observations": [
+      "language-drift"
+    ]
+  },
+  {
+    "requirement": "4.5",
+    "suite": "composition.test.cjs",
+    "assertion": "assert.ok((await check(dashed)).findings.some(f => f.code === 'application_dash'));",
+    "property": "Dash prohibition; separate host clarity review",
+    "host_observations": [
+      "weak-inventory"
+    ]
+  },
+  {
+    "requirement": "4.6",
+    "suite": "methods.test.cjs",
+    "assertion": "assert.ok(fallback.methods.slice(0,2).every(m => !m.available && !m.executed && m.fallback));",
+    "property": "Missing optional methods honestly fall back"
+  },
+  {
+    "requirement": "5.1",
+    "suite": "questions.test.cjs",
+    "assertion": "assert.deepEqual(ids(result.value.question_batch.selected_ids),['question:repair','question:required','question:scope-a']);",
+    "property": "Prioritized material questions",
+    "host_observations": [
+      "credential"
+    ]
+  },
+  {
+    "requirement": "5.2",
+    "suite": "questions.test.cjs",
+    "assertion": "for (let limit=1;limit<=5;limit++) {const r=plan(questions,[],{limit});assert.equal(r.value.question_batch.selected_ids.length,limit);assert.equal(r.value.question_batch.deferred_ids.length,7-limit);}",
+    "property": "Finite batches retain deferred questions"
+  },
+  {
+    "requirement": "5.3",
+    "suite": "questions.test.cjs",
+    "assertion": "assert.equal(result.value.dispositions[0].status,status);",
+    "property": "Dispositions preserved without inability inference",
+    "host_observations": [
+      "skipped-answer"
+    ]
+  },
+  {
+    "requirement": "5.4",
+    "suite": "questions.test.cjs",
+    "assertion": "assert.equal(result.value.questions[0].reopen_reason,reason);",
+    "property": "Reopening needs material justification"
+  },
+  {
+    "requirement": "5.5",
+    "suite": "questions.test.cjs",
+    "assertion": "assert.deepEqual(ids(result.value.question_batch.selected_ids),['question:authority-a']);",
+    "property": "Authority distinction precise; credential and recency host review",
+    "host_observations": [
+      "authority",
+      "credential",
+      "old-tools"
+    ]
+  },
+  {
+    "requirement": "6.1",
+    "suite": "diagnostics.test.cjs",
+    "assertion": "for(const d of result.diagnostics){assert.equal(d.rubric.version,'strategy-review/1.0');assert.ok(d.rubric.weights.every(w=>w.weight===1));assert.equal(d.population_sha256,contracts.fingerprint(d.population,sha256));assert.equal(d.rubric_sha256,contracts.fingerprint(d.rubric,sha256));}",
+    "property": "Rubric version weights population and fingerprints"
+  },
+  {
+    "requirement": "6.2",
+    "suite": "diagnostics.test.cjs",
+    "assertion": "assert.deepEqual(get(result,'offer_coverage','required').counts,{supported:1,absent:0,uncertain:1,transferable:1,confirmed_gap:1,unsupported:0,unresolved:0});",
+    "property": "Distinct priority coverage and state counts"
+  },
+  {
+    "requirement": "6.3",
+    "suite": "editorial-review.test.cjs",
+    "assertion": "assert.equal(result.document_checks[0].result,'passed');",
+    "property": "Document observations distinct from evidence/editorial judgment"
+  },
+  {
+    "requirement": "6.4",
+    "suite": "editorial-review.test.cjs",
+    "assertion": "assert.equal((await review(s,{observeDocumentArtifacts:async()=>[]})).document_checks[0].result,'not_assessed');",
+    "property": "Unavailable document evidence not assessed"
+  },
+  {
+    "requirement": "6.5",
+    "suite": "semantic-acceptance.test.cjs",
+    "assertion": "else assert.deepEqual(observed,JSON.parse(fs.readFileSync(output,'utf8')),'Observed decisions/arithmetic or runtime assets changed: fresh review is required.');",
+    "property": "Complete omitted-dates-photo observation, including actual coverage/support diagnostics, equals the separately reviewed baseline. This is replay, not fresh semantic review.",
+    "host_observations": [
+      "omitted-dates-photo"
+    ],
+    "assertion_file": "semantic-cases/run.cjs"
+  },
+  {
+    "requirement": "6.6",
+    "suite": "diagnostics.test.cjs",
+    "assertion": "assert.equal(get(lexical,'claim_support','en').value,80);",
+    "property": "No repeated keyword reward"
+  },
+  {
+    "requirement": "6.7",
+    "suite": "diagnostics.test.cjs",
+    "assertion": "for(const d of result.diagnostics){assert.equal(d.rubric.version,'strategy-review/1.0');assert.ok(d.rubric.weights.every(w=>w.weight===1));assert.equal(d.population_sha256,contracts.fingerprint(d.population,sha256));assert.equal(d.rubric_sha256,contracts.fingerprint(d.rubric,sha256));}",
+    "property": "Explicit project rubric not predictive metric"
+  },
+  {
+    "requirement": "6.8",
+    "suite": "editorial-review.test.cjs",
+    "assertion": "assert.equal(get(result,'employer_appeal','en').value,1);",
+    "property": "Separate appeal/readability evidence/document dimensions"
+  },
+  {
+    "requirement": "7.1",
+    "suite": "integration.test.cjs",
+    "assertion": "let built=await w.assemble(make());assert.equal(built.status,'ready',JSON.stringify(built));assert.equal(built.value.state,'ready_for_document_draft');assert.ok(Object.isFrozen(built.value.claims[0]));assert.equal(built.checks.schema,'passed');assert.equal(built.checks.host_meaning,'not_assessed');",
+    "property": "Closed private handoff ready for document drafting"
+  },
+  {
+    "requirement": "7.2",
+    "suite": "editorial-review.test.cjs",
+    "assertion": "assert.ok(result.findings.some(f=>f.category==='readability'&&f.draft_span.language==='de'&&f.correction.includes('Satzanfänge')));",
+    "property": "Localized categories and corrections"
+  },
+  {
+    "requirement": "7.3",
+    "suite": "comparison.test.cjs",
+    "assertion": "const x=structuredClone(s);mutate(x);const r=await run(s,x);assert.equal(row(r,'claim_support').delta,null);assert.match(row(r,'claim_support').reasons.join(' '),/population|proposition/);assert.equal(row(r,'offer_coverage').delta,0);",
+    "property": "Changed population suppresses affected delta"
+  },
+  {
+    "requirement": "7.4",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal(JSON.stringify(other).includes('candidate-operations'),false);",
+    "property": "Unrelated candidate isolation; integration also checks same-path and continuity"
+  },
+  {
+    "requirement": "8.1",
+    "suite": "evidence.test.cjs",
+    "assertion": "const checked = await inspect(snapshot);assert.equal(checked.schema,'passed',JSON.stringify(checked));assert.equal(checked.deterministic,'passed',JSON.stringify(checked));assert.equal(checked.host_meaning,'not_assessed');",
+    "property": "Guidance limits explicit and host meaning unassessed",
+    "host_observations": [
+      "taxonomy-unavailable"
+    ]
+  },
+  {
+    "requirement": "8.2",
+    "suite": "diagnostics.test.cjs",
+    "assertion": "assert.equal(get(lexical,'claim_support','en').value,80);",
+    "property": "No lexical reward; reference-code host case",
+    "host_observations": [
+      "source-instructions"
+    ]
+  },
+  {
+    "requirement": "8.3",
+    "suite": "context.test.cjs",
+    "assertion": "assert.equal((await guarded.bindStrategy(input())).status,'ready'); assert.ok(reads.every(path=>path===h.intake.snapshot().selection.resolved_path));",
+    "property": "Read authority confined to selected profile",
+    "host_observations": [
+      "source-instructions"
+    ]
+  },
+  {
+    "requirement": "8.4",
+    "suite": "integration.test.cjs",
+    "assertion": "reject(await w.save(previous,path.join(h.workspace,'saved.json')),'private_output_denied');allowWrite=true;assert.equal((await w.save(previous,path.join(h.workspace,'saved.json'))).status,'saved');",
+    "property": "Authorized private destination required; root privacy scan separate"
+  },
+  {
+    "requirement": "8.5",
+    "suite": "methods.test.cjs",
+    "assertion": "assert.equal(unauthorized.handoffs.length,0,'assistance without authorization cannot dispatch installer');",
+    "property": "No unauthorized installation; helper dependency inspection and no model credentials"
+  }
+]

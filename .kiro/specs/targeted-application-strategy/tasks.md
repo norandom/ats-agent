@@ -100,7 +100,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: StrategyReview_
   - _Requirements: 6.1, 6.3, 7.1, 7.3, 7.4_
 
-- [ ] 6. Integrate and validate the portable strategy capability
+- [x] 6. Integrate and validate the portable strategy capability
 - [x] 6.1 Integrate canonical updates, continuity and private handoff
   - Connect context, planning, composition and review with the unchanged upstream profile workflow and authorized private output locations.
   - Demonstrate a proposed answer staying pending until confirmed persistence and fresh selection; use a host-observed continuity record to restore eligible dispositions and comparisons only across that verified chain.
@@ -119,7 +119,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 6.1_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 6.5, 6.6, 8.1, 8.2, 8.3_
 
-- [ ] 6.3 Validate relocation, isolation and final strategy handoff
+- [x] 6.3 Validate relocation, isolation and final strategy handoff
   - Execute the integrated checks against relocated skill/profile assets without the developer checkout, sibling collection, legacy scorer or additional model credentials.
   - Exercise unrelated candidate swaps, same-path replacement, missing continuity records, stale saved reports, unavailable document evidence and changed diagnostics populations.
   - Inspect helper dependencies and shareable assets for model-service calls and private content; verify test evidence binds the exact runtime assets reviewed.

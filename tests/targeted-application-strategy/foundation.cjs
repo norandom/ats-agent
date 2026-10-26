@@ -19,8 +19,16 @@ function extractBlock(text, names) {
 }
 function createHarness({ relocate = false } = {}) {
   const output = path.join(root, 'outputs/strategy-tests');
-  const ignored = spawnSync('git', ['check-ignore', '--quiet', 'outputs/strategy-tests/probe.json'], { cwd: root, windowsHide: true });
-  assert.equal(ignored.status, 0, 'test artifacts must be ignored before writing');
+  if (process.env.STRATEGY_ACCEPTANCE_ROOT) {
+    assert.equal(path.resolve(process.env.STRATEGY_ACCEPTANCE_ROOT), root, 'relocated test root must match this harness');
+    const marker = JSON.parse(fs.readFileSync(path.join(root, '.strategy-acceptance.json'), 'utf8'));
+    assert.equal(marker.kind, 'synthetic-relocation');
+    assert.ok(!fs.existsSync(path.join(root, '.git')), 'relocated tests must not depend on a checkout');
+    assert.equal(hash(fs.readFileSync(__filename)), marker.manifest['tests/targeted-application-strategy/foundation.cjs']);
+  } else {
+    const ignored = spawnSync('git', ['check-ignore', '--quiet', 'outputs/strategy-tests/probe.json'], { cwd: root, windowsHide: true });
+    assert.equal(ignored.status, 0, 'test artifacts must be ignored before writing');
+  }
   fs.mkdirSync(output, { recursive: true });
   const evidenceDirectory = fs.mkdtempSync(path.join(output, 'foundation-'));
   const workspace = relocate ? fs.mkdtempSync(path.join(os.tmpdir(), 'strategy-relocated-')) : evidenceDirectory;
