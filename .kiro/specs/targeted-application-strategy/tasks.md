@@ -75,7 +75,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Requirements: 4.5, 4.6, 8.1, 8.2, 8.3, 8.5_
 
 - [ ] 5. Implement transparent diagnostics and revision comparison
-- [ ] 5.1 Calculate coverage and semantic claim support
+- [x] 5.1 Calculate coverage and semantic claim support
   - Implement the versioned rubric with equal weights, explicit populations, separate required/preferred/unspecified coverage and per-language claim support.
   - Require full factual-proposition inventory and semantic-review evidence before whole-draft support scoring; retain unknown states and zero-denominator reasons.
   - Prevent keyword repetition, omitted photos/award dates and unrelated attributes from changing scores; keep explicit application-completeness requests separate.
