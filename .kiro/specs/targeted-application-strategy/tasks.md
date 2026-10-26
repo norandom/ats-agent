@@ -40,7 +40,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 2.2_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 6.2, 8.3_
 
-- [ ] 3.2 Map evidence and terminology without inflating capability
+- [x] 3.2 Map evidence and terminology without inflating capability
   - Implement five-state evidence mapping with original upstream states, field references, partial-satisfaction reasoning and material freshness limits.
   - Keep profile-relative and record-relative pointers distinct; retain task-material input requests and supporting source namespaces.
   - Implement semantic checks for authority, organizational scope, credential status, related terms versus equivalence and optional occupational lookup limits.
