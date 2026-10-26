@@ -1,0 +1,22 @@
+{
+  "feature_name": "wordcraft-application-documents",
+  "created_at": "2026-10-26T16:16:18.5711131Z",
+  "updated_at": "2026-10-26T16:16:18.5711131Z",
+  "language": "en",
+  "phase": "requirements-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": false
+    },
+    "design": {
+      "generated": false,
+      "approved": false
+    },
+    "tasks": {
+      "generated": false,
+      "approved": false
+    }
+  },
+  "ready_for_implementation": false
+}
