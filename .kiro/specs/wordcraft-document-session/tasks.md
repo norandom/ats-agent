@@ -88,6 +88,8 @@ Tasks run sequentially because operation tasks share one reference and tests sha
 
 ## Implementation Notes
 
-- Task 2 review: when integrating pending/uncertain outcomes, add full schema-plus-integrity examples with matching receipt/intent operation types; current variant tests establish shape only.
+- Task 2 review follow-up was completed in task 5: full schema-plus-integrity examples cover pending and uncertain outcomes with matching receipt/intent operation types.
 
 - Task 6.1 review: final evidence aggregation must reject restoration errors, not only scenario failures; accepted live run restored original successfully. Its 120 trace entries contain 108 actual MCP tool calls.
+
+- Final integration review: the acceptance harness now uses the shipped complete environment fingerprint, including both executable identities and the used command schema. Fresh independently reviewed live evidence replaced the earlier report. Initial foreground confirmation can come from the user as specified; it is recorded separately from actual MCP focus observations. Feature validation passed all 65 tests and 39 criteria.

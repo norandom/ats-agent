@@ -1,6 +1,6 @@
 # Project Structure
 
-Updated: 2026-10-25
+Updated: 2026-10-26
 
 ## Organization Philosophy
 
@@ -13,6 +13,7 @@ Separate reusable instructions and contracts from runtime candidate data, docume
 - `skills/targeted-cv/schemas/` holds identity-free reusable data contracts: current `cv-facts.schema.json` and retained legacy `cv-facts-v1.schema.json`.
 - `skills/targeted-cv/templates/` holds empty reusable inputs, such as `cv-facts.blank.json`. A blank scaffold is not a complete candidate profile.
 - `skills/targeted-cv/references/application-strategy.md` routes the validated strategy workflow through its contract, evidence, editorial and review references. Private handoffs use `schemas/application-strategy.schema.json`; the final distributable entrypoint remains release work.
+- `skills/targeted-cv/references/document-session.md` routes the validated host session through capability and operation references. `schemas/document-session.schema.json` defines private session records. JavaScript helpers are bounded checks; test drivers under `tests/wordcraft-document-session/` are not the runtime workflow.
 - `private/` holds local candidate facts, offers, provenance and private reference analyses. `examples/` holds private supplied references. `outputs/` holds generated applications. All three are Git-ignored and excluded from release bundles.
 - `.kiro/specs/` holds feature requirements, design, tasks and supporting decisions. `.kiro/steering/` holds durable cross-feature policies rather than a task catalog.
 

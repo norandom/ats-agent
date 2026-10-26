@@ -1,13 +1,13 @@
 # Product Overview
 
-Updated: 2026-10-25
+Updated: 2026-10-26
 
 This project is migrating a Python CV scorer into a reusable skill for persuasive, truthful job applications. The target workflow combines user-supplied candidate JSON with a pasted job offer to create and refine German or English CVs and cover letters through WordCraft MCP.
 
 ## Current and Target State
 
-- Current implementation: a Python CLI extracts PDF/DOCX content and produces OpenAI-assisted scoring reports. The portable profile and application-strategy capabilities passed feature validation on 2026-10-26. Strategy supplies employer analysis, focused questions, bilingual contribution wording and bounded diagnostics through portable references and contracts. Document and release capabilities remain separate work.
-- Target architecture: portable skill instructions and reference assets, without a maintained project Python application. WordCraft integration, document generation, live refinement and distributable skill packaging remain implementation work.
+- Current implementation: the legacy Python CLI remains alongside validated portable profile, application-strategy and WordCraft session capabilities. Strategy supplies employer analysis, focused questions, bilingual contribution wording and bounded diagnostics. The session protocol supports verified document operations through existing WordCraft MCP.
+- Target architecture: a session-based skill with portable instructions and reference assets. Node.js helpers and tests use pnpm; they do not run a separate application. Finished document composition, live refinement and distributable packaging remain implementation work.
 - Legacy vendor assertions and score deductions are research leads, not validated ATS rules. Retire legacy code only after the replacement workflow is validated.
 
 ## Core Capabilities and Value
