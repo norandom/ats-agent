@@ -30,7 +30,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 1.1, 1.2_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 6.3, 7.4_
 
-- [ ] 3. Compose supported documents from the application strategy
+- [x] 3. Compose supported documents from the application strategy
 - [x] 3.1 Select and map employer-relevant document content
   - Implement the host composition instructions for current reviewed strategy text, retaining the contribution argument, clear chronology and contextual evidence rather than reproducing every fact field.
   - Separate role scope from selected achievements and review repetition across experience, projects and expertise. Every retained item must add distinct relevant evidence; long lists trigger editorial review rather than an automatic bullet-count rule.
@@ -40,7 +40,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Boundary: Composition_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.3, 6.3, 7.1_
 
-- [ ] 3.2 Preserve independent languages, pair consistency and refreshed support
+- [x] 3.2 Preserve independent languages, pair consistency and refreshed support
   - Use one composite draft per language with separate CV/letter ranges. Keep supported output usable while another language or requested letter remains pending, without creating duplicate same-language strategy versions.
   - Route new/reworded factual claims through upstream semantic review and assembly; check CV/letter identity, chronology, qualifications and employer-specific contribution for contradictions.
   - Implement the explicit check-only strategy rebind: preserve the origin hash, validate the new current snapshot and binding, and permit no-reauthor refresh only when complete snapshots differ solely in document checks. Other changes require normal composition/support revalidation.

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "consistent",
+    "facts": "Wholly fictional Ari Example was a dispatch adviser at Imaginary Parcel House from January 2022 to December 2025. Ari reconciled manifests and advised shift leads. A logistics diploma is in progress. No team ownership or measured error reduction is recorded.",
+    "target": "Fictional Lantern Dispatch seeks a dispatch adviser to reconcile manifests and improve shift handovers.",
+    "cv_en": "Ari Example | Dispatch adviser. Imaginary Parcel House, January 2022 to December 2025. Reconciled manifests and advised shift leads. Logistics diploma in progress.",
+    "letter_en": "Dear hiring team, I am applying for the dispatch adviser role at Fictional Lantern Dispatch. My experience reconciling manifests would help me contribute to your shift handovers. I advised shift leads at Imaginary Parcel House until December 2025. My logistics diploma is in progress.",
+    "cv_de": "Ari Example | Beratung im Versand. Imaginary Parcel House, Januar 2022 bis Dezember 2025. Glich Paketlisten ab und beriet die Schichtleitung. Logistikdiplom in Ausbildung.",
+    "letter_de": "Sehr geehrtes Einstellungsteam, ich bewerbe mich bei Fictional Lantern Dispatch für die Beratung im Versand. Mit meiner Erfahrung beim Abgleichen von Paketlisten möchte ich Ihre Schichtübergaben unterstützen. Bis Dezember 2025 beriet ich die Schichtleitung bei Imaginary Parcel House. Mein Logistikdiplom ist noch nicht abgeschlossen.",
+    "review_focus": "Assess identity, role equivalence, chronology, qualification status and bounded prospective contribution in both languages. Natural wording need not be literal. This card is a human review input, not an automated approval or complete letter metadata."
+  },
+  {
+    "id": "contradictory",
+    "facts": "Use the same wholly fictional facts as the consistent case: Ari Example advised shift leads until December 2025, reconciled manifests and is still completing a logistics diploma. No ownership, metrics or personal motivation are recorded.",
+    "target": "Fictional Lantern Dispatch seeks a dispatch adviser for manifest reconciliation and shift handovers.",
+    "cv_en": "Ari Example | Dispatch adviser. Imaginary Parcel House, January 2022 to December 2025. Logistics diploma in progress.",
+    "letter_en": "Dear hiring team at Different Fictional Dispatch, I am Bea Example, your next dispatch director. I still manage Imaginary Parcel House's dispatch team. My completed logistics diploma and 30 percent error reduction prove my leadership. Your market leadership has always inspired me.",
+    "cv_de": "Ari Example | Beratung im Versand. Imaginary Parcel House, Januar 2022 bis Dezember 2025. Logistikdiplom in Ausbildung.",
+    "letter_de": "Sehr geehrtes Einstellungsteam von Different Fictional Dispatch, ich bin Bea Example und bewerbe mich als Versandleitung. Ich leite weiterhin das Versandteam von Imaginary Parcel House. Mein abgeschlossenes Logistikdiplom und 30 Prozent weniger Fehler belegen meinen Erfolg. Ihre Marktführerschaft begeistert mich seit Jahren.",
+    "review_focus": "Identify contradictions in identity, target employer/role, ongoing employment, authority and completed qualification, plus invented metric, employer fact and motivation. Route each changed claim upstream and keep affected wording pending; do not approve through string comparison."
+  }
+]

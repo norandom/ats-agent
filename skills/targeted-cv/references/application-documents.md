@@ -10,6 +10,14 @@ Lead expertise with supported capabilities and decisions, then relevant tools an
 
 Apply the strategy's COBESY composition and Humanizer defaults, or its recorded embedded fallback, through [strategy-editorial.md](strategy-editorial.md). Use the contribution argument to cut repetition, then run the draft, factual audit and rewrite internally. Preserve proper names and credential meaning. Use concise sentences, standard bullets and readable date ranges using words. Employer-facing text contains no em dashes, internal scores, claim IDs, evidence notes, technical anchors or drafting placeholders. Method execution and evidence limits remain private.
 
+## Keep languages and pairs consistent
+
+Confirm the selected languages and document kinds from current upstream settings. A CV-only request produces no letter. Write natural German or English from the independently supported selections for that language, preserving names and credential meaning. Localize headings, prose, date labels, greetings and page labels consistently; the target market remains separate. German wording need not mirror English sentence structure. Return every new or reworded factual proposition to upstream semantic review and `assemble()` before finalizing it.
+
+For each requested pair, read the complete CV and letter together against the current facts and target. Check shared identity, employer and role, chronology, qualification status, authority and factual claims. Build the letter around the employer's need and selected contribution examples, rather than retelling the CV chronology. Do not infer motivation or employer facts. Record this host judgment privately with the exact language draft hash and affected sections; mechanical checks do not establish consistency of meaning.
+
+Keep an unsupported language or incomplete letter pending with its specific missing item while independently supported members proceed. Retain unsupported proposals privately outside emitted ranges. For a pending language with no supported composition, keep its document entry with `draft: null`; do not invent a second draft version or weaken support checks. Confirm required sender/recipient addresses, date, salutation and actual enclosures. A named recipient and signature image are optional; a reviewed neutral salutation may be used. Unknown required metadata remains explicit and unresolved, including missing sender inputs in `missing_required`; ask through the host instead of fabricating them. A pending letter does not block its CV.
+
 ## Map and review the assembled text
 
 Use one composite upstream draft per language for the requested documents. Map each editable section or entry to a non-overlapping exact range, excluding separators and private review material. Use zero-based Unicode code-point spans, not UTF-16 offsets. Select complete factual propositions with their qualifiers; do not trim a reviewed sentence into a stronger claim. Inventory all factual assertions, including contacts, factual headings and metadata-derived wording. Ordinary section labels and generated page fields are presentation content. Repeated identical wording uses multiple spans of the same realization. Different wording requires separate upstream claim records and semantic review because the current contract has only one wording per language per claim. Refresh hashes and spans after a wording change.
@@ -20,7 +28,9 @@ Before authoring, the host reads each complete assembled document against the ev
 
 Keep manifest instances, exact excerpts and observations at an explicitly authorized private destination. The [closed 1.0 schema](../schemas/application-documents.schema.json) requires every field; null records an unknown or not-yet-observed value. Preserve the original strategy hash for audit. The current hash identifies the exact validated strategy snapshot. Do not update either from a manifest's own assertions.
 
-At creation, the origin equals the trusted current snapshot hash. For an existing manifest, supply `trusted.origin_strategy_sha256` from the independently retained origin record. This checker does not authorize a strategy rebind or decide whether a change is check-only.
+At creation, the origin equals the trusted current snapshot hash. For an existing manifest, supply `trusted.origin_strategy_sha256` from the independently retained origin record. `inspectDocumentManifest` does not authorize a strategy rebind.
+
+For a check-only refresh, call `proposeCheckOnlyRefresh(manifest, previousStrategy, trusted)` with both retained complete snapshots. In addition to the context below, supply upstream `inspectStrategy`, the existing strategy workflow's `current()` and independently current `documentArtifacts` in the upstream observer shape `{binding, artifact_id, artifact_sha256, checks}`. Establish these from the actual saved artifact and inspection evidence, never by copying incoming manifest or strategy flags. The helper validates both snapshots against current validated profile/binding, compares their complete stable serialization after removing only top-level `document_checks`, and checks manifest integrity before and after the proposed hash change. It returns a proposal and old/new transition for private retention, with no writes or reauthoring. Preserve the origin hash. Any other change, including facts, settings, metadata, findings, claim decisions or wording, requires normal composition/support revalidation even when draft text is unchanged. Retain revision-specific observations as historical after an edit; obtain new current evidence before refresh.
 
 Run the following block unchanged with the upstream `stableSerialize` and `fingerprint` functions from [strategy-contract.md](strategy-contract.md). `trusted` supplies the already validated current `strategy`, its independently calculated `strategy_sha256`, current independently observed `binding`, `sha256`, `stableSerialize`, `fingerprint`, and `validate(schema, exactInstance)`. The validation adapter uses `uvx --from check-jsonschema==0.38.2 check-jsonschema` on the installed schema and exact private instance, returning `{state,findings}`. Keep the upstream strategy schema beside this schema for its binding reference.
 
@@ -31,6 +41,36 @@ An empty finding list means only mechanical consistency with the supplied truste
 `needs_revision` retains unsupported private proposals without rejecting independently supported languages. Unresolved blocking findings apply to their exact language/range when supplied, otherwise to referenced emitted claims or their target criteria. A blocking finding without those scopes applies to the whole handoff. Selected language realizations must still be supported.
 
 ```javascript
+async function proposeCheckOnlyRefresh(manifest, previousStrategy, trusted = {}) {
+  const reject = reason => ({decision:'revalidate',reason,proposal:null,transition:null});
+  const t=trusted;
+  if (!['current','inspectStrategy','validate','stableSerialize','fingerprint','sha256'].every(k=>typeof t[k]==='function') || !t.origin_strategy_sha256 || !Array.isArray(t.documentArtifacts)) return reject('Independent refresh context is incomplete.');
+  try {
+    const equal=(a,b)=>t.stableSerialize(a)===t.stableSerialize(b);
+    const context=t.current();
+    if (!context || context.evidence?.validation?.schema!=='passed' || context.evidence?.validation?.semantics!=='passed' || !equal(context.binding,t.binding)) return reject('Current validated canonical context is unavailable or changed.');
+    for (const strategy of [previousStrategy,t.strategy]) {
+      const report=await t.inspectStrategy(strategy,{profile:context.evidence.profile,binding:context.binding,sha256:t.sha256,validate:t.validate});
+      if (report.schema!=='passed'||report.deterministic!=='passed') return reject('A strategy snapshot is invalid or stale against current inputs.');
+    }
+    if (t.fingerprint(previousStrategy,t.sha256)!==manifest.strategy_sha256 || t.fingerprint(t.strategy,t.sha256)!==t.strategy_sha256) return reject('Snapshot hashes differ from the retained snapshots.');
+    const withoutChecks=value=>Object.fromEntries(Object.entries(value).filter(([key])=>key!=='document_checks'));
+    if (!equal(withoutChecks(previousStrategy),withoutChecks(t.strategy))) return reject('Non-check strategy content changed; repeat composition and support review.');
+    for (const check of t.strategy.document_checks) {
+      if (!t.documentArtifacts.some(o=>equal(o.binding,context.binding)&&o.artifact_id===check.artifact_id&&o.artifact_sha256===check.artifact_sha256&&Array.isArray(o.checks)&&o.checks.some(c=>equal(c,check)))) return reject('A document check lacks an independently current artifact observation.');
+      if (check.result!=='not_assessed'&&(!check.evidence_reference||!Number.isFinite(Date.parse(check.observed_at)))) return reject('An executed check lacks current evidence.');
+    }
+    const before=await inspectDocumentManifest(manifest,{...t,strategy:previousStrategy,strategy_sha256:manifest.strategy_sha256});
+    if (before.length) return reject('The retained manifest fails integrity validation.');
+    const proposal=JSON.parse(JSON.stringify(manifest));
+    proposal.strategy_sha256=t.strategy_sha256;
+    if ((await inspectDocumentManifest(proposal,t)).length) return reject('The proposed manifest fails integrity validation.');
+    const now=t.current();
+    if (!now||!equal(now.binding,context.binding)||now.evidence?.validation?.schema!=='passed'||now.evidence?.validation?.semantics!=='passed') return reject('Canonical context changed during validation.');
+    return {decision:'refresh',reason:'Only document checks changed and supplied current observations match.',proposal,transition:{origin_strategy_sha256:manifest.origin_strategy_sha256,previous_strategy_sha256:manifest.strategy_sha256,strategy_sha256:t.strategy_sha256}};
+  } catch { return reject('Refresh validation could not be completed.'); }
+}
+
 async function inspectDocumentManifest(manifest, trusted = {}) {
   const findings = [];
   const add = (code,path,message,action='Refresh the affected private mapping from current trusted inputs.') => findings.push({code,path,message,action});
