@@ -46,14 +46,14 @@ function createHarness({ relocate = false } = {}) {
   const intake = createProfileIntake({ resolvePath: path.resolve, realpath: fs.realpathSync, readBytes: fs.readFileSync, decodeUtf8: bytes => new TextDecoder('utf-8', { fatal: true }).decode(bytes), sha256: hash });
   const evidence = { tools, assets, reasoning: 'not_assessed', adapters: 'Node filesystem, hashing and external schema command; no simulated schema success', checks: [] };
   let sequence = 0;
-  async function validate(profile, { executable = 'uvx' } = {}) {
+  async function validate(profile, { executable = 'uvx', taskRequest = null, semanticIntegrity } = {}) {
     // Serialize the exact argument passed by the upstream validator, never a stale fixture.
     const report = await validateProfile(profile, { validate: async (schema, exactProfile) => {
       const file = path.join(workspace, `validation-${++sequence}.json`);
       fs.writeFileSync(file, JSON.stringify(exactProfile), { flag: 'wx' });
       const result = command(executable, [...validatorArgs, '--schemafile', path.join(skillRoot, schema), file]);
       return { state: classifyCheck(result), findings: [] };
-    } });
+    }, ...(semanticIntegrity ? { semanticIntegrity } : {}) }, taskRequest);
     evidence.checks.push({ method: 'executed_upstream_validation', profile_sha256: hash(JSON.stringify(profile)), schema: report.schema, semantics: report.semantics, readiness: report.readiness });
     return report;
   }
@@ -63,6 +63,6 @@ function createHarness({ relocate = false } = {}) {
     return { selection: intake.select({ workspace_root: workspace, facts_path: file }), snapshot: intake.snapshot() };
   }
   function saveEvidence() { fs.writeFileSync(path.join(evidenceDirectory, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n'); }
-  return { workspace, skillRoot, assets, tools, evidence, load, validate, select, saveEvidence, blank: JSON.parse(fs.readFileSync(path.join(skillRoot, 'templates/cv-facts.blank.json'), 'utf8')) };
+  return { workspace, skillRoot, assets, tools, evidence, load, validate, select, intake, saveEvidence, blank: JSON.parse(fs.readFileSync(path.join(skillRoot, 'templates/cv-facts.blank.json'), 'utf8')) };
 }
 module.exports = { createHarness, extractBlock, classifyCheck };

@@ -12,7 +12,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: Verification_
   - _Requirements: 1.1, 8.4, 8.5_
 
-- [ ] 2. Establish private strategy contracts and trusted context
+- [x] 2. Establish private strategy contracts and trusted context
 - [x] 2.1 Define the versioned handoff and reference integrity rules
   - Implement the closed strategy contract, local schema definitions, typed ID namespaces, null rules, exact text spans and stable serialization for fingerprints.
   - Define all planned evidence, claim, question, guidance, diagnostic, method and document-observation records without adding fields to canonical candidate facts.
@@ -22,7 +22,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 1_
   - _Requirements: 1.3, 3.2, 6.1, 7.1, 7.2, 8.4_
 
-- [ ] 2.2 Bind strategy to validated canonical evidence and an explicit target
+- [x] 2.2 Bind strategy to validated canonical evidence and an explicit target
   - Implement selection/generation binding with canonical-byte verification and validation of the exact parsed profile; reject pending proposals and forged validation. Accept current 2.0, route recognized legacy formats to the upstream compatibility workflow, and block unknown versions without implementing migration here.
   - Separate offer or declared-role target from language, market and requested-document settings; calculate their fingerprints without accepting source-provided hashes as authority.
   - Implement repair-only behavior for failed/unassessed validation and bounded positioning for incomplete task readiness, retaining observation limits.
