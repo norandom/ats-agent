@@ -1,0 +1,661 @@
+{
+  "provenance": {
+    "reportSha256": "9d9baf26976b3b486038b3ed0e57f5234cef56668aaf286e3e74f2dbd6bd581d",
+    "sessionSha256": "a27cc80eefc9aa7d552d43179ffa2db83b39652c7ac9fc939c10e113d14156b2",
+    "basis": "Task 6.1 reviewed actual desktop MCP run; immutable receipt digest is an audit anchor, not a cryptographic attestation of MCP origin."
+  },
+  "suites": {
+    "foundation.test.cjs": [
+      "receipt paths distinguish parent traversal from repository dot-prefixed directories",
+      "desktop connection is explicit, loopback-only and never headless",
+      "missing tools block only dependent work",
+      "fixtures contain fictional CV and letter with unambiguous edits",
+      "fragmented response resolves once, notifications ignored",
+      "timeout closes connection without replay",
+      "exit and malformed or oversized output reject pending calls",
+      "RPC errors reject without retry and concurrent calls are withheld"
+    ],
+    "contracts.test.cjs": [
+      "valid fictional contract and actual shipped integrity block",
+      "closed fields, malformed data, authentication and missing evidence are rejected",
+      "outcome variants remain distinct and unavailable checks are not assessed",
+      "integrity rejects duplicate IDs, dangling references, mismatched states and stale claims",
+      "old evidence is retained only with explicit stale freshness",
+      "confirmed artifacts preserve document relationship and cannot imply round-trip checks",
+      "historical connection evidence cannot authorize a new desktop connection",
+      "render evidence cannot stand in for extraction or reading-order checks",
+      "each capability status validates; outcome mixtures and cross-document evidence fail"
+    ],
+    "capabilities.test.cjs": [
+      "catalog presence leaves all nine operations unverified and blocked",
+      "executed receipt permits only its demonstrated operation",
+      "missing tool blocks dependent work without blocking demonstrated read",
+      "version, executable/catalog fingerprint, mode, connection and schema drift invalidate evidence",
+      "headless evidence never permits desktop work, even with matching connection",
+      "failed, unavailable and unverified remain distinct; complete report and mapped tools required",
+      "fictional capability report conforms to the shipped closed schema"
+    ],
+    "protocol.test.cjs": [
+      "scoped edit requires fresh identity and exact inspected selection",
+      "duplicate and missing exact targets withhold mutation",
+      "rebase preserves intervening text and formatting outside the target",
+      "overlapping target format changes remain pending",
+      "read-back detects wrong replacement, out-of-scope text and format drift",
+      "uninspectable preservation blocks dependent edits and never passes by default",
+      "same-part nonconflicting additions rebase selection offsets and expected read-back",
+      "post-edit identity and unavailable read-back cannot confirm the edit",
+      "malformed or ambiguous part projections and overlapping string matches stop edits",
+      "confirmed receipt plus uninterrupted fresh state binds saved document",
+      "text or logical ID alone cannot establish identity; reconnect requires rebind",
+      "wrong native path or identifier blocks even when continuity is claimed",
+      "new unsaved binding requires confirmed creation and current connection continuity",
+      "switch preserves unsaved or unknown work until saved or explicit discard decision",
+      "export collisions and unknown destination block; ordinary save stays in place",
+      "confirmed persistence reports artifact source and separate round-trip status",
+      "unconfirmed save paths, timeouts and dispatched errors never claim success",
+      "save does not imply round-trip verification",
+      "recovery classifies proven pre-dispatch failure and every dispatched write conservatively",
+      "observed scoped effect recovers without another mutation and references inspection",
+      "absent edit requires fresh target and authorization checks after inspection before retry",
+      "unresolved, missing inspection and lost access retain the original intent",
+      "reconnect mismatch or stale inspection cannot recover or authorize retry",
+      "artifact operations need host MCP artifact evidence, never a caller effect checkbox"
+    ],
+    "integration.test.cjs": [
+      "fictional end-to-end host trace persists pending then confirmed outcome; stale checks stay stale",
+      "failed actual private persistence withholds dispatch for every mutation",
+      "gate rejects stale persistence, wrong operation decision, wrong document/language and missing capabilities",
+      "resume loads private intent, rebinds and freshly inspects before editing; no stored action replay",
+      "uncertain attempt is retained and cannot be replayed by a subsequent session request",
+      "complete records validate every outcome variant and reject mismatching receipt operation",
+      "switch preserves unsaved work and requires fresh selected document; correction routing remains upstream"
+    ],
+    "live-scenarios.test.cjs": [
+      "initial selection rejects blank or different text without opening or discarding it",
+      "inspection projection refuses invented part identity and preserves inspected formatting",
+      "missing, failed, or simulated lifecycle cases cannot accept live suite",
+      "complete cases cannot hide restoration failure or a run error"
+    ],
+    "final-acceptance.test.cjs": [
+      "suite aggregation rejects omitted, renamed, failed or skipped executable tests",
+      "flags and unreviewed receipt bytes cannot establish actual MCP evidence",
+      "coverage contains exactly the 39 source criteria with concrete check references",
+      "stale, missing, duplicate or extra runtime assets invalidate live receipt reuse"
+    ]
+  },
+  "criteria": [
+    {
+      "id": "1.1",
+      "tests": [
+        [
+          "capabilities.test.cjs",
+          "catalog presence leaves all nine operations unverified and blocked"
+        ],
+        [
+          "capabilities.test.cjs",
+          "failed, unavailable and unverified remain distinct; complete report and mapped tools required"
+        ]
+      ],
+      "live": [],
+      "limit": "Catalog coverage is tested; unverified operations stay blocked."
+    },
+    {
+      "id": "1.2",
+      "tests": [
+        [
+          "capabilities.test.cjs",
+          "failed, unavailable and unverified remain distinct; complete report and mapped tools required"
+        ]
+      ],
+      "live": [],
+      "limit": "Four statuses are distinct."
+    },
+    {
+      "id": "1.3",
+      "tests": [
+        [
+          "capabilities.test.cjs",
+          "executed receipt permits only its demonstrated operation"
+        ],
+        [
+          "capabilities.test.cjs",
+          "version, executable/catalog fingerprint, mode, connection and schema drift invalidate evidence"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Live receipts bound to runtime, executable, environment and tool schemas."
+    },
+    {
+      "id": "1.4",
+      "tests": [
+        [
+          "capabilities.test.cjs",
+          "missing tool blocks dependent work without blocking demonstrated read"
+        ]
+      ],
+      "live": [
+        "missing-tool"
+      ],
+      "limit": "Missing-tool fault is a simulated control."
+    },
+    {
+      "id": "1.5",
+      "tests": [
+        [
+          "foundation.test.cjs",
+          "desktop connection is explicit, loopback-only and never headless"
+        ]
+      ],
+      "live": [
+        "visibility"
+      ],
+      "limit": "Installed CLI 0.10.0 observed; licensing and other setups unverified."
+    },
+    {
+      "id": "2.1",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "new unsaved binding requires confirmed creation and current connection continuity"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Creation is through actual desktop MCP."
+    },
+    {
+      "id": "2.2",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "confirmed receipt plus uninterrupted fresh state binds saved document"
+        ]
+      ],
+      "live": [
+        "switching"
+      ],
+      "limit": "Logical binding uses paths and connection continuity; no native immutable ID."
+    },
+    {
+      "id": "2.3",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "text or logical ID alone cannot establish identity; reconnect requires rebind"
+        ],
+        [
+          "protocol.test.cjs",
+          "wrong native path or identifier blocks even when continuity is claimed"
+        ]
+      ],
+      "live": [],
+      "limit": "Wrong-document observations are scripted rejection cases."
+    },
+    {
+      "id": "2.4",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "confirmed receipt plus uninterrupted fresh state binds saved document"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Actual open and readback receipts verify tested documents."
+    },
+    {
+      "id": "2.5",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "confirmed persistence reports artifact source and separate round-trip status"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Distinct DOCX exports and source relationships recorded."
+    },
+    {
+      "id": "2.6",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "unconfirmed save paths, timeouts and dispatched errors never claim success"
+        ],
+        [
+          "protocol.test.cjs",
+          "save does not imply round-trip verification"
+        ]
+      ],
+      "live": [],
+      "limit": "Save failures are scripted controls."
+    },
+    {
+      "id": "2.7",
+      "tests": [
+        [
+          "integration.test.cjs",
+          "switch preserves unsaved work and requires fresh selected document; correction routing remains upstream"
+        ]
+      ],
+      "live": [
+        "switching",
+        "visibility"
+      ],
+      "limit": "Initial focus and rendered pages observed; no repeated focus override."
+    },
+    {
+      "id": "3.1",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "scoped edit requires fresh identity and exact inspected selection"
+        ]
+      ],
+      "live": [
+        "nonconflict"
+      ],
+      "limit": "Sequential fresh selection and readback."
+    },
+    {
+      "id": "3.2",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "rebase preserves intervening text and formatting outside the target"
+        ],
+        [
+          "protocol.test.cjs",
+          "read-back detects wrong replacement, out-of-scope text and format drift"
+        ]
+      ],
+      "live": [
+        "formatting",
+        "nonconflict"
+      ],
+      "limit": "Formatting limited to inspected block properties."
+    },
+    {
+      "id": "3.3",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "duplicate and missing exact targets withhold mutation"
+        ],
+        [
+          "protocol.test.cjs",
+          "malformed or ambiguous part projections and overlapping string matches stop edits"
+        ]
+      ],
+      "live": [],
+      "limit": "Duplicate and missing targets are scripted rejection cases."
+    },
+    {
+      "id": "3.4",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "read-back detects wrong replacement, out-of-scope text and format drift"
+        ],
+        [
+          "protocol.test.cjs",
+          "post-edit identity and unavailable read-back cannot confirm the edit"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Readback verifies tested scope."
+    },
+    {
+      "id": "3.5",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "uninspectable preservation blocks dependent edits and never passes by default"
+        ]
+      ],
+      "live": [
+        "missing-tool"
+      ],
+      "limit": "Unavailable capability is simulated; no substitute engine."
+    },
+    {
+      "id": "4.1",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "rebase preserves intervening text and formatting outside the target"
+        ],
+        [
+          "protocol.test.cjs",
+          "same-part nonconflicting additions rebase selection offsets and expected read-back"
+        ]
+      ],
+      "live": [
+        "nonconflict"
+      ],
+      "limit": "Separate MCP actor simulates an intervening manual edit."
+    },
+    {
+      "id": "4.2",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "overlapping target format changes remain pending"
+        ]
+      ],
+      "live": [
+        "conflict"
+      ],
+      "limit": "Sequential conflict detection; no simultaneous typing lock."
+    },
+    {
+      "id": "4.3",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "rebase preserves intervening text and formatting outside the target"
+        ],
+        [
+          "protocol.test.cjs",
+          "same-part nonconflicting additions rebase selection offsets and expected read-back"
+        ]
+      ],
+      "live": [
+        "nonconflict"
+      ],
+      "limit": "Inspected unrelated text and style preserved."
+    },
+    {
+      "id": "4.4",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "uninspectable preservation blocks dependent edits and never passes by default"
+        ],
+        [
+          "protocol.test.cjs",
+          "malformed or ambiguous part projections and overlapping string matches stop edits"
+        ]
+      ],
+      "live": [
+        "unresolved"
+      ],
+      "limit": "Missing observation is a simulated control."
+    },
+    {
+      "id": "5.1",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "recovery classifies proven pre-dispatch failure and every dispatched write conservatively"
+        ]
+      ],
+      "live": [
+        "lost-response"
+      ],
+      "limit": "Host response loss injected after actual effect."
+    },
+    {
+      "id": "5.2",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "observed scoped effect recovers without another mutation and references inspection"
+        ],
+        [
+          "protocol.test.cjs",
+          "absent edit requires fresh target and authorization checks after inspection before retry"
+        ]
+      ],
+      "live": [
+        "lost-response"
+      ],
+      "limit": "Host inspect-before-retry; no transport exactly-once claim."
+    },
+    {
+      "id": "5.3",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "observed scoped effect recovers without another mutation and references inspection"
+        ]
+      ],
+      "live": [
+        "lost-response"
+      ],
+      "limit": "Actual effect recovered with no repeat mutation."
+    },
+    {
+      "id": "5.4",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "unresolved, missing inspection and lost access retain the original intent"
+        ]
+      ],
+      "live": [
+        "unresolved"
+      ],
+      "limit": "Unresolved outcome is simulated."
+    },
+    {
+      "id": "5.5",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "unresolved, missing inspection and lost access retain the original intent"
+        ]
+      ],
+      "live": [
+        "missing-tool"
+      ],
+      "limit": "Lost access and no-substitute handling are scripted controls."
+    },
+    {
+      "id": "5.6",
+      "tests": [
+        [
+          "integration.test.cjs",
+          "resume loads private intent, rebinds and freshly inspects before editing; no stored action replay"
+        ]
+      ],
+      "live": [],
+      "limit": "Resume/reconnect mismatch is scripted, not a live disconnect."
+    },
+    {
+      "id": "6.1",
+      "tests": [
+        [
+          "contracts.test.cjs",
+          "outcome variants remain distinct and unavailable checks are not assessed"
+        ],
+        [
+          "contracts.test.cjs",
+          "render evidence cannot stand in for extraction or reading-order checks"
+        ]
+      ],
+      "live": [
+        "formatting"
+      ],
+      "limit": "Only executed checks claimed; no full render assessment."
+    },
+    {
+      "id": "6.2",
+      "tests": [
+        [
+          "contracts.test.cjs",
+          "outcome variants remain distinct and unavailable checks are not assessed"
+        ]
+      ],
+      "live": [],
+      "limit": "Unavailable check stays not assessed."
+    },
+    {
+      "id": "6.3",
+      "tests": [
+        [
+          "contracts.test.cjs",
+          "valid fictional contract and actual shipped integrity block"
+        ],
+        [
+          "contracts.test.cjs",
+          "integrity rejects duplicate IDs, dangling references, mismatched states and stale claims"
+        ]
+      ],
+      "live": [
+        "formatting"
+      ],
+      "limit": "Actual get_text and inspect_document receipts only."
+    },
+    {
+      "id": "6.4",
+      "tests": [
+        [
+          "contracts.test.cjs",
+          "old evidence is retained only with explicit stale freshness"
+        ]
+      ],
+      "live": [],
+      "limit": "Stale-state handling exercised in scripted contract tests."
+    },
+    {
+      "id": "6.5",
+      "tests": [
+        [
+          "contracts.test.cjs",
+          "render evidence cannot stand in for extraction or reading-order checks"
+        ]
+      ],
+      "live": [],
+      "limit": "No ATS compatibility, DIN or complete visual quality claim."
+    },
+    {
+      "id": "7.1",
+      "tests": [
+        [
+          "final-acceptance.test.cjs",
+          "flags and unreviewed receipt bytes cannot establish actual MCP evidence"
+        ]
+      ],
+      "live": [
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Historical actual receipts revalidated against unchanged runtime hashes."
+    },
+    {
+      "id": "7.2",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "rebase preserves intervening text and formatting outside the target"
+        ],
+        [
+          "protocol.test.cjs",
+          "overlapping target format changes remain pending"
+        ]
+      ],
+      "live": [
+        "nonconflict",
+        "conflict"
+      ],
+      "limit": "Separate MCP actor, not simultaneous human typing."
+    },
+    {
+      "id": "7.3",
+      "tests": [
+        [
+          "protocol.test.cjs",
+          "observed scoped effect recovers without another mutation and references inspection"
+        ],
+        [
+          "protocol.test.cjs",
+          "absent edit requires fresh target and authorization checks after inspection before retry"
+        ],
+        [
+          "protocol.test.cjs",
+          "unresolved, missing inspection and lost access retain the original intent"
+        ]
+      ],
+      "live": [
+        "lost-response",
+        "unresolved"
+      ],
+      "limit": "Actual dropped host response plus simulated unresolved control."
+    },
+    {
+      "id": "7.4",
+      "tests": [
+        [
+          "capabilities.test.cjs",
+          "missing tool blocks dependent work without blocking demonstrated read"
+        ]
+      ],
+      "live": [
+        "missing-tool"
+      ],
+      "limit": "Simulated catalog removal with dependent edit blocked."
+    },
+    {
+      "id": "7.5",
+      "tests": [
+        [
+          "foundation.test.cjs",
+          "fixtures contain fictional CV and letter with unambiguous edits"
+        ]
+      ],
+      "live": [],
+      "limit": "Wholly fictional fixtures; separate repository privacy scan and human review required."
+    },
+    {
+      "id": "7.6",
+      "tests": [
+        [
+          "live-scenarios.test.cjs",
+          "missing, failed, or simulated lifecycle cases cannot accept live suite"
+        ],
+        [
+          "live-scenarios.test.cjs",
+          "complete cases cannot hide restoration failure or a run error"
+        ]
+      ],
+      "live": [],
+      "limit": "Missing, simulated, stale, failed and restoration-error acceptance rejected."
+    },
+    {
+      "id": "7.7",
+      "tests": [
+        [
+          "final-acceptance.test.cjs",
+          "flags and unreviewed receipt bytes cannot establish actual MCP evidence"
+        ]
+      ],
+      "live": [
+        "visibility",
+        "cv-lifecycle",
+        "letter-lifecycle"
+      ],
+      "limit": "Desktop MCP authors content; initial focus and per-document pages observed."
+    }
+  ],
+  "limits": [
+    "Historical live run reused only for identical runtime hashes; no new desktop mutations during relocation.",
+    "Eight actual MCP scenarios and two explicitly simulated controls.",
+    "No DIN, finished styling, ATS compatibility, atomic typing protection or exactly-once transport claim.",
+    "Relocation copies four runtime assets plus explicit test support; this is not release packaging.",
+    "Node, pnpm and pinned uvx schema validator are test prerequisites; no model credentials or sibling checkout used.",
+    "Privacy scan and manual shareable-asset review are separate required checks."
+  ]
+}

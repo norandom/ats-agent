@@ -34,3 +34,17 @@ The letter edit deliberately withholds a successful tool response from the host 
 Both sources are saved and reopened, explicitly exported through `save_document` to distinct collision-free DOCX paths, then reopened and checked through MCP. Export receipts retain the source logical document relationship. Initial `ui_inspect` must report focus and page rectangles; per-document UI observations are captured during creation, editing and switching. Later focus changes are respected. UI evidence supports the observed desktop state only. No external UI automation, other document service, generated bridge, or headless fallback is used.
 
 The private `acceptance-report.json` lists every mandatory scenario as passed or pending and retains any execution error. Any missing mandatory success leaves acceptance pending and the full runner requests a nonzero exit status. The private `session.json` retains pending, uncertain and confirmed history. Review both artifacts, including original-document restoration, before accepting the run. No DIN compliance, finished styling, ATS compatibility, semantic quality or unexecuted rendering check follows from this lifecycle test.
+
+## Relocated feature verification
+
+Run the deterministic verifier with the reviewed actual acceptance report and session record, plus a fresh destination outside the checkout:
+
+```text
+pnpm exec node tests/wordcraft-document-session/final-acceptance.cjs <actual-acceptance-report.json> <actual-session.json> <fresh-external-verification-directory>
+```
+
+The verifier copies exactly four runtime assets and the explicit test support allowlist. It executes the foundation, contract, capability, operation, integration and acceptance controls through `pnpm` in that installation, with no candidate input, sibling repository, model credentials or document engine. It checks exact passing test names and counts, rejects skipped tests, validates the actual private record against the relocated schema and integrity helper, and emits TAP logs and `verification.json`. The report records copied file hashes and all 39 source criteria with named checks and evidence limitations. This is verification tooling, not release packaging or a runtime application.
+
+`acceptance-manifest.json` pins the reviewed task 6.1 receipt and session bytes. These digests anchor an already inspected actual run; they do not cryptographically attest MCP origin. Changing a receipt, session, runtime asset or scenario invalidates reuse. A new legitimate live run needs explicit receipt review and updated provenance, never automatic digest replacement. The original live run's initial `get_text` and `inspect_document` calls supply executable smoke evidence; relocation does not replay desktop mutations. Eight scenarios use actual MCP observations; missing-tool and unresolved-inspection controls remain explicitly simulated. Restoration errors, absent restoration, duplicate cases and execution errors prevent acceptance even when scenario flags say passed.
+
+The minimal test subprocess environment retains operating-system and tooling paths only. Pinned `uvx` schema validation can use its cache or network. Run the repository privacy checker separately against the explicitly selected private facts file, then manually review the copied allowlist and every shareable change. The verifier intentionally does not read candidate data. It reports verification ready for review; the feature approval and final GO decision remain with the reviewer.

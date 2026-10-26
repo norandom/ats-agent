@@ -15,3 +15,10 @@ test('missing, failed, or simulated lifecycle cases cannot accept live suite',()
  assert.equal(acceptanceStatus([]),'pending');
  assert.equal(acceptanceStatus([{id:'cv-lifecycle',status:'passed',evidenceKind:'simulated_control'}]),'pending');
 });
+
+test('complete cases cannot hide restoration failure or a run error',()=>{
+ const cases=['cv-lifecycle','letter-lifecycle','nonconflict','conflict','formatting','lost-response','unresolved','missing-tool','switching','visibility'].map(id=>({id,status:'passed',evidenceKind:['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp'}));
+ assert.equal(acceptanceStatus(cases,{originalRestored:true}),'passed');
+ for(const state of [{},{originalRestored:false},{originalRestored:true,restoreError:'failed'},{originalRestored:true,error:'failed'}]) assert.equal(acceptanceStatus(cases,state),'pending');
+ assert.equal(acceptanceStatus([...cases,cases[0]],{originalRestored:true}),'pending');
+});

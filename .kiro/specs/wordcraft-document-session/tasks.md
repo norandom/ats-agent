@@ -68,7 +68,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Depends: 2, 3, 4.1, 4.2, 4.3_
   - _Requirements: 1.4, 2.7, 3.5, 4.4, 5.1, 5.4, 5.5, 5.6, 6.1, 6.2, 6.4_
 
-- [ ] 6. Verify the complete live protocol and portable assets
+- [x] 6. Verify the complete live protocol and portable assets
 - [x] 6.1 Execute fictional CV and letter acceptance through MCP
   - Run the shipped session instructions against the selected desktop MCP connection: create, read, targeted edit, save, reopen and explicit DOCX export to a distinct selected destination for both document types. Verify exported content and its identity relationship to the source document through MCP.
   - Verify document switching and visibility with MCP evidence or explicit user observation, without another service. Check unrelated formatting/content and simulate intervening edits through a separate MCP test actor.
@@ -78,7 +78,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Depends: 5_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 4.3, 4.4, 5.2, 5.3, 5.4, 5.6, 6.1, 6.3, 6.5, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
-- [ ] 6.2 Validate relocation, privacy and feature completeness
+- [x] 6.2 Validate relocation, privacy and feature completeness
   - Load the explicit runtime asset set outside the checkout and run contract/protocol checks without sibling repositories, candidate inputs, model credentials or an alternative document engine.
   - Bind the final acceptance report to current runtime hashes and real MCP receipts; verify coverage of all 39 criteria and prevent simulated or stale observations from satisfying live checks.
   - Run relevant regression and privacy checks, review shareable assets manually, and record concrete remaining limitations. Keep release packaging and legacy retirement outside this feature.

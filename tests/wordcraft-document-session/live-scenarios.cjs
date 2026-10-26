@@ -4,7 +4,7 @@ const {execFileSync}=require('node:child_process');
 const {McpClient,requireTool,validateFixtures}=require('./foundation.cjs');
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const mandatory=['cv-lifecycle','letter-lifecycle','nonconflict','conflict','formatting','lost-response','unresolved','missing-tool','switching','visibility'];
-function acceptanceStatus(cases){return mandatory.every(id=>cases.some(c=>c.id===id&&c.status==='passed'&&(['unresolved','missing-tool'].includes(id)||c.evidenceKind==='actual_mcp')))?'passed':'pending';}
+function acceptanceStatus(cases,state={}){return state.originalRestored===true&&!state.restoreError&&!state.error&&state.status!=='failed'&&cases.length===mandatory.length&&mandatory.every(id=>cases.filter(c=>c.id===id&&c.status==='passed'&&c.evidenceKind===(['unresolved','missing-tool'].includes(id)?'simulated_control':'actual_mcp')).length===1)?'passed':'pending';}
 function requireInitialSelection(observed,expected){if(observed!==expected)throw Error('Initial selected document mismatch; no open, discard or mutation permitted');}
 function projectInspection(v){
  if(!Array.isArray(v.blocks)||!v.blocks.length)throw Error('No inspectable blocks');
@@ -114,7 +114,7 @@ async function run(executable,endpoint,output,selectedPath){
  }catch(e){report.error=e.message;report.status='failed';}
  finally{
   if(originalVerified&&tools){try{await call('open_document',{path:selected.selectedArtifact});check((await call('get_text')).text===selected.expectedText,'Original restored');report.originalRestored=true;}catch(e){report.restoreError=e.message;}}
-  client.close();report.milestone=acceptanceStatus(report.scenarios);report.finishedAt=now();fs.writeFileSync(path.join(output,'acceptance-report.json'),JSON.stringify(report,null,2));
+  client.close();report.milestone=acceptanceStatus(report.scenarios,report);report.finishedAt=now();fs.writeFileSync(path.join(output,'acceptance-report.json'),JSON.stringify(report,null,2));
  }
  console.log(JSON.stringify({output,milestone:report.milestone,error:report.error,scenarios:report.scenarios.map(({id,status})=>({id,status}))}));return report;
 }

@@ -6,8 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const {spawnSync} = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
-fs.mkdirSync(path.join(root,'outputs'),{recursive:true});
-const dir = fs.mkdtempSync(path.join(root, 'outputs/fictional-session-integration-'));
+const dir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'fictional-session-integration-'));
 const file = path.join(dir, 'record.json');
 const fp = 'a'.repeat(64), time = '2026-10-26T12:00:00Z';
 const host = vm.createContext({});
@@ -59,7 +58,7 @@ test.after(()=> {for(const name of ['record.json','validate.json']) {const p=pat
 
 test('fictional end-to-end host trace persists pending then confirmed outcome; stale checks stay stale',()=>{
   const f=fixture(),trace=[];
-  const ignored=spawnSync('git',['check-ignore',file],{cwd:root,encoding:'utf8'});assert.equal(ignored.status,0);
+  assert.ok(path.relative(root,file).startsWith('..')||path.isAbsolute(path.relative(root,file)),'Private test outputs must be outside installed assets');
   f.record.receipts.push(receipt(f,{status:'pending',reason:'selection',intentId:'change',nextAction:'Inspect target'},'pending'));
   const persisted=persist(f.record,trace);
   assert.equal(gate(f,persisted).decision,'dispatch');trace.push('scripted-mutation');
