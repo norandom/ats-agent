@@ -110,7 +110,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 2.2, 3.3, 4.2, 5.3_
   - _Requirements: 1.1, 1.4, 1.5, 1.6, 1.7, 1.8, 5.3, 5.4, 7.1, 7.3, 7.4, 8.4_
 
-- [ ] 6.2 Validate semantic usefulness, bilingual consistency and adverse cases
+- [x] 6.2 Validate semantic usefulness, bilingual consistency and adverse cases
   - Run fresh host reasoning over fictional cases for weak inventories, unsupported appeal, authority inflation, old tools, credential uncertainty and conflicting offer priorities.
   - Independently review meaning preservation, employer appeal and useful questions; record observed outputs rather than treating prerecorded expected labels as comprehension evidence.
   - Exercise source instructions, taxonomy unavailability, omitted award dates/photos, skipped answers and language-specific drift alongside the deterministic regressions.
