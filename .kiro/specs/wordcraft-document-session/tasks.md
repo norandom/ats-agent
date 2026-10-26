@@ -33,7 +33,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.7, 7.4_
 
 - [ ] 4. Implement controlled document operations
-- [ ] 4.1 Bind, inspect and persist the intended document
+- [x] 4.1 Bind, inspect and persist the intended document
   - Implement explicit selection and new-document binding, recording logical identity separately from observed native identifiers and paths.
   - Read content and structure through MCP; retain open/save receipts and connection continuity when native identity is unavailable. Withhold mutations when identity is ambiguous.
   - Save in place and explicitly export DOCX to a selected destination through WordCraft MCP; handle existing-file collisions and preserve unsaved work on switches. Record the exported artifact relationship to the selected document, report unconfirmed exports, and distinguish saved/exported from round-trip verified.
