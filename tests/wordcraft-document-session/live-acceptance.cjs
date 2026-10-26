@@ -13,7 +13,15 @@ function validateOutputDirectory(root, output) {
   return destination;
 }
 async function main() {
-  const [executable, endpoint, output, fixturePath] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const mode = args[0]?.startsWith('--') ? args.shift() : '--read';
+  if (!['--read','--full'].includes(mode)) throw new Error('Use --read or --full');
+  const [executable, endpoint, output, fixturePath] = args;
+  if (mode === '--full') {
+    const result = await require('./live-scenarios.cjs').run(executable, endpoint, output, fixturePath);
+    if (result.milestone !== 'passed') process.exitCode = 1;
+    return;
+  }
   if (!executable || !output || !fixturePath) throw new Error('Usage: live-acceptance.cjs CLI LOOPBACK_ENDPOINT PRIVATE_OUTPUT_DIRECTORY SELECTED_FICTIONAL_FIXTURE_JSON');
   desktopArgs(endpoint);
   validateFixtures(require('./fixtures.json'));
@@ -61,5 +69,5 @@ async function main() {
   }
   console.log('Read-only desktop smoke passed; lifecycle acceptance remains pending.');
 }
-if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });
 module.exports = {validateOutputDirectory};
+if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });

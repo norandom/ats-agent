@@ -69,7 +69,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Requirements: 1.4, 2.7, 3.5, 4.4, 5.1, 5.4, 5.5, 5.6, 6.1, 6.2, 6.4_
 
 - [ ] 6. Verify the complete live protocol and portable assets
-- [ ] 6.1 Execute fictional CV and letter acceptance through MCP
+- [x] 6.1 Execute fictional CV and letter acceptance through MCP
   - Run the shipped session instructions against the selected desktop MCP connection: create, read, targeted edit, save, reopen and explicit DOCX export to a distinct selected destination for both document types. Verify exported content and its identity relationship to the source document through MCP.
   - Verify document switching and visibility with MCP evidence or explicit user observation, without another service. Check unrelated formatting/content and simulate intervening edits through a separate MCP test actor.
   - Inject a lost host response after a successful synthetic MCP operation and establish recovery without another effect. Exercise unresolved recovery and unavailable tools; label simulation scope honestly.
@@ -89,3 +89,5 @@ Tasks run sequentially because operation tasks share one reference and tests sha
 ## Implementation Notes
 
 - Task 2 review: when integrating pending/uncertain outcomes, add full schema-plus-integrity examples with matching receipt/intent operation types; current variant tests establish shape only.
+
+- Task 6.1 review: final evidence aggregation must reject restoration errors, not only scenario failures; accepted live run restored original successfully. Its 120 trace entries contain 108 actual MCP tool calls.
