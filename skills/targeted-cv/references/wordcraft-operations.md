@@ -18,6 +18,18 @@ Use `get_text` for readable body content and `inspect_document` for available st
 
 Record each executed check with document ID, snapshot ID/fingerprint, tool, time, scope and evidence IDs. Mark unsupported or unexecuted rendering, extraction of other parts and reading-order checks `not_assessed`; do not infer them from a body-text read. Use only available WordCraft MCP inspection tools. After any mutation, mark earlier checks stale and inspect again. An earlier render or extraction cannot verify the newer state; visual checks do not establish ATS compatibility.
 
+## Apply a scoped edit
+
+Keep the original baseline and requested intent private. Describe the permitted part, exact target text and surrounding context, replacement or discovered formatting command, and properties that must be preserved. Obtain fresh `get_text` and `inspect_document` observations and establish identity using the binding procedure above. Required read-back and targeted modification capabilities must also be demonstrated before dispatch. Missing inspection or capabilities retain the intent as pending; never replace the document to work around them.
+
+Compare the fresh text and normalized structure with the original baseline. Report intervening changes before editing. Resolve the exact target within its explicit part and context; count all matches, including overlapping matches. Zero or multiple matches withhold the edit. Do not silently choose the first match, widen the scope, or interpret matching text in a different part as the original target. If the target or its context/formatting has changed, or correspondence between old and new parts is uncertain, retain the current document and request a decision on the overlapping change. User decisions become a revised intent with a fresh baseline; they do not authorize replay against the old snapshot.
+
+For nonconflicting changes, derive the expected result from the **current** snapshot, preserving its other text, structure and formatting. The host reviews semantic overlap and context; text equality alone cannot prove that two occurrences represent the same intended content. In short sequential calls, use discovered `select_text` or the discovered selection command, then inspect the actual selection through MCP. Verify its exact text, part and boundaries against the fresh target before invoking `type_text` or the discovered formatting command. If selection inspection cannot establish those facts, keep the change pending. If state changes during selection, inspect and compare again. These checks are not an atomic lock against typing.
+
+Persist the pending intent and baseline privately before the mutation; failure to persist blocks dispatch. After the mutation, re-establish identity and read fresh text and structure through MCP. Check the requested replacement/formatting and compare all inspected out-of-scope text, part order and formatting against the pre-mutation **current** snapshot. Formatting commands must have an explicit permitted property/range; all other inspected properties remain unchanged. Record substantive before/after changes, producer tools, times, snapshot fingerprints and bounded check scopes. Earlier checks are stale. Unavailable properties, including headers, fields or formatting not exposed by inspection, remain `not_assessed`; withhold an edit when its preservation guarantee depends on such properties. A verified body-text change does not verify the entire document's formatting.
+
+Unexpected differences are conflicts: preserve current work, retain pending intent and report the differences for a decision. Never regenerate the whole file or automatically undo, since that could erase intervening user edits. Missing read-back after dispatch leaves the outcome uncertain and requires inspection before retry. Report success only for executed checks; return pending selection/conflict/capability outcomes using the existing record contract.
+
 ## Save and export
 
 Persist the pending intent and baseline privately before dispatch. If that write fails, withhold the MCP mutation. For an ordinary saved document use `save_document` in place, with its confirmed bound path or the discovered omission-of-path contract. A first save requires an explicitly selected unique destination. Resolve path equivalence using the host's filesystem semantics; never assume two different strings denote different files.
@@ -61,5 +73,55 @@ function inspectDocumentOperation(input) {
   return {decision:'confirmed', artifact:{documentId:b.id, destination, format:'docx',
     relationship:op === 'export' ? 'export' : 'saved_document'},
     roundTrip:['passed','failed'].includes(input.roundTrip) ? input.roundTrip : 'not_assessed'};
+}
+```
+
+### Bounded scoped text comparison
+
+This optional pure check compares normalized MCP observations; it does not select or edit a document. It handles an exact text replacement in one stable part, after the host has resolved context and semantic overlap. Formatting-only commands use the host procedure above. Snapshot projections contain ordered `parts` with stable inspection-derived `id`, exact `text`, and a canonical string `format` describing inspected formatting/structure, or `null` when unavailable. Never invent stable IDs or omit inspected out-of-scope parts. If the MCP observations cannot be mapped this way, use the host comparison and mark unsupported checks not assessed. A format description must represent comparable properties, not offset changes caused solely by the replacement.
+
+Inputs reuse `binding` and fresh `observation`; `baseline`, `current` and optional `after` are transient snapshot projections. `target` contains `partId`, nonempty `text` and `replacement`; `selection` is the actual inspected part/text/start/end in JavaScript string offsets (normalize MCP offsets before comparing). `requireFormatting` defaults to required; false is permitted only when the intent does not depend on unavailable formatting guarantees. `afterObservation` must establish fresh post-mutation identity when `after` is supplied. The returned formatting status covers inspected properties only. This helper does not replace private record validation or host judgment.
+
+```javascript
+function inspectScopedEdit(input) {
+  if (inspectDocumentOperation({...input, operation:'read'}).decision !== 'proceed')
+    return {decision:'selection'};
+  const valid = snapshot => snapshot && Array.isArray(snapshot.parts) && snapshot.parts.length > 0 &&
+    snapshot.parts.every(p => typeof p.id === 'string' && p.id && typeof p.text === 'string' &&
+      (p.format === null || typeof p.format === 'string')) &&
+    new Set(snapshot.parts.map(p => p.id)).size === snapshot.parts.length;
+  if (!valid(input.baseline) || !valid(input.current)) return {decision:'capability', formatting:'not_assessed'};
+  const {baseline, current, target:t, selection:s, after} = input;
+  if (!t || typeof t.text !== 'string' || !t.text || typeof t.replacement !== 'string') return {decision:'target'};
+  const matches = part => {
+    const found=[];
+    if (part) for (let i=part.text.indexOf(t.text); i >= 0; i=part.text.indexOf(t.text,i+1)) found.push(i);
+    return found;
+  };
+  const oldPart=baseline.parts.find(p=>p.id===t.partId), part=current.parts.find(p=>p.id===t.partId);
+  if (matches(oldPart).length !== 1) return {decision:'target'};
+  const hits=matches(part);
+  if (hits.length !== 1 || (oldPart.format !== null && part.format !== null && oldPart.format !== part.format))
+    return {decision:'conflict'};
+  const start=hits[0], end=start+t.text.length;
+  const intervening=JSON.stringify(baseline.parts)!==JSON.stringify(current.parts);
+  let formatting=oldPart.format!==null && current.parts.every(p=>p.format!==null) ? 'passed' : 'not_assessed';
+  if (formatting==='not_assessed' && input.requireFormatting !== false) return {decision:'capability', formatting, intervening};
+  if (!s || s.partId!==t.partId || s.text!==t.text || s.start!==start || s.end!==end)
+    return {decision:'selection', intervening};
+  if (!after) return {decision:'proceed', intervening, formatting:'not_assessed'};
+  if (!input.afterObservation || inspectDocumentOperation({...input, operation:'read', observation:input.afterObservation}).decision !== 'proceed')
+    return {decision:'selection'};
+  if (!valid(after)) return {decision:'uncertain', formatting:'not_assessed'};
+  if (after.parts.length!==current.parts.length) return {decision:'conflict'};
+  for (let i=0; i<current.parts.length; i++) {
+    const before=current.parts[i], observed=after.parts[i];
+    const expected=before.id===t.partId ? before.text.slice(0,start)+t.replacement+before.text.slice(end) : before.text;
+    if (observed.id!==before.id || observed.text!==expected) return {decision:'conflict'};
+    if (before.format===null || observed.format===null) formatting='not_assessed';
+    else if (before.format!==observed.format) return {decision:'conflict', formatting:'failed'};
+  }
+  if (formatting==='not_assessed' && input.requireFormatting !== false) return {decision:'uncertain', formatting};
+  return {decision:'confirmed', intervening, formatting};
 }
 ```

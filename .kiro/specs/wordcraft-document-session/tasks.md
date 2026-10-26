@@ -42,7 +42,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Depends: 2, 3_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 6.1, 6.3, 6.4_
 
-- [ ] 4.2 Apply scoped edits and preserve intervening work
+- [x] 4.2 Apply scoped edits and preserve intervening work
   - Compare fresh MCP text/structure with the edit baseline. Resolve exact targets and verify selection; reject missing or duplicate matches.
   - Retain nonconflicting intervening changes and request a decision on overlapping changes. Check requested edits and inspected out-of-scope text and formatting afterward.
   - Keep inaccessible preservation checks not assessed and withhold dependent edits. Do not replace the whole document or automatically undo newer user work.
