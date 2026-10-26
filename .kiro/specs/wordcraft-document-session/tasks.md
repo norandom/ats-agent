@@ -32,7 +32,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Depends: 2_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.7, 7.4_
 
-- [ ] 4. Implement controlled document operations
+- [x] 4. Implement controlled document operations
 - [x] 4.1 Bind, inspect and persist the intended document
   - Implement explicit selection and new-document binding, recording logical identity separately from observed native identifiers and paths.
   - Read content and structure through MCP; retain open/save receipts and connection continuity when native identity is unavailable. Withhold mutations when identity is ambiguous.
@@ -50,7 +50,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Boundary: Operation protocol_
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 6.2, 7.2_
 
-- [ ] 4.3 Reconcile uncertain operations and restored access
+- [x] 4.3 Reconcile uncertain operations and restored access
   - Classify known pre-dispatch failures separately from uncertain dispatched writes. Preserve intent and record operation-level limitations.
   - Re-establish identity and inspect actual effects before any skill-initiated retry. Confirm recovered effects without another mutation; retain unresolved work.
   - Require fresh target and authorization checks before another attempt when absence is conclusively established. Keep transport guarantees distinct from host decisions.

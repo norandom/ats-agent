@@ -125,3 +125,51 @@ function inspectScopedEdit(input) {
   return {decision:'confirmed', intervening, formatting};
 }
 ```
+
+## Reconcile interrupted operations
+
+Retain the original private draft, intent, baseline and dispatch evidence when create, edit, save or export fails. A local validation rejection is `failed` without an effect only when recorded evidence establishes that dispatch never started. Timeout, lost response, interrupted access, and an error after dispatch are `uncertain` unless actual evidence proves the outcome. Missing dispatch information is uncertainty. Do not infer absence from an error message or replace the original attempt receipt with a later success.
+
+Follow this sequence before any skill-initiated repetition:
+
+1. Restore WordCraft access and revalidate capabilities affected by connection or version changes. Missing access retains the draft and pending intent and blocks dependent work. Name the missing operation/access and the next action needed; do not substitute another authoring engine, bridge or service.
+2. Re-establish the selected identity using the binding procedure. Resolve unsaved work before explicit reselection or opening an artifact. Preserve the original logical document relationship when rebinding a restored connection; append new binding evidence. Matching text or an old connection receipt alone cannot establish identity after reconnect. A mismatch blocks recovery and further writes until selection is resolved.
+3. Inspect current effects through MCP, retaining actual response evidence IDs, inspection time, snapshot fingerprint and inspected scope. Compare against the original persisted intent and last inspected pre-dispatch state, including preserved intervening changes. Never use a caller's `effectPresent` or `effectAbsent` assertion as proof.
+4. If the intended effect is confirmed, append a confirmed recovery outcome referencing the inspection and original intent/attempt. Resolve that intent without another mutation. Report only checks actually established; recovered content does not establish save success or round-trip verification.
+5. If current absence is conclusively established for the whole intended effect, revalidate authorization against the current request and document state. Follow the normal operation procedure again: fresh identity, target/context/selection and preservation checks for edits; destination and collision checks for persistence; unsaved-work checks for creation. Obtain a new user decision if scope or authorization changed. Persist a new attempt and fresh baseline linked to the original intent before dispatch. Absence alone never authorizes retry.
+6. If observation is partial, contradictory, unavailable or cannot distinguish outcomes, keep the uncertain attempt and pending intent. Explain which identity, inspection scope, artifact evidence or user decision is missing. Do not repeat or undo automatically. A resumed request starts with restoration, binding and inspection again.
+
+Evidence depends on the operation:
+
+| Operation | Evidence needed for recovery | When absence remains unresolved |
+| --- | --- | --- |
+| Create | MCP identity evidence linking the requested creation to the selected new document, with current text/structure and creation context | An empty document, matching title/text, or no visible new document cannot prove a timed-out creation absent. Do not enumerate unrelated documents to find it. |
+| Edit | Fresh bound text/structure showing the exact requested effect and inspected preservation properties, compared with the pre-dispatch snapshot | Missing parts, changed context, overlapping edits or incomplete formatting inspection cannot establish absence of the whole effect. |
+| Save/export | MCP inspection of the exact selected destination, its identity relationship to the source and expected saved content/structure; retain any actual confirmed save response | Current in-memory content or path existence alone cannot prove persistence. A destination read failure is not proof of nonexistence. If identical content already existed, report only the verified artifact state and retain uncertainty about unproven persistence properties. |
+
+Confirm recovered artifact outcomes through the save/export procedure and record their source relationship. Establish absence only through evidence that distinguishes the requested effect from its baseline. A missing destination requires an authoritative observation about that exact destination; an unavailable tool is insufficient. When MCP cannot establish that evidence, retain uncertainty. Internal retries inside the external CLI remain outside this skill's delivery guarantees. This protocol prevents skill-initiated blind replay; it does not promise exactly-once transport or an atomic lock against later changes.
+
+### Bounded recovery comparison
+
+The optional pure helper below handles failure classification and exact scoped text-edit recovery. It does not dispatch, grant authorization or resolve artifact operations. Use the host procedure above for creation, save/export and formatting-only edits. Inputs reuse the scoped edit projections: `current` is the persisted pre-dispatch snapshot, `after` is the fresh recovery observation, and `afterObservation` establishes its identity. `currentEvidenceId` references that fresh MCP inspection in the private record. The host must resolve that reference and validate records separately; a string alone does not authenticate evidence. `attempt` contains the recorded dispatch stage and its evidence ID. `access` describes current MCP availability; `intentId` identifies the retained original intent.
+
+`recovered` means the inspected edit effect is present, not that this attempt necessarily caused it. `revalidate` means the inspected scope matches its pre-dispatch state and requires the fresh authorization/precondition procedure; it is never permission to write. The helper conservatively retains uncertainty for other observations. Map its decisions to existing record outcomes: recovered to confirmed with evidence, revalidate to retained pending intent, selection/capability to pending when no dispatched uncertainty exists, and preserve the original uncertain receipt in every case. These transient decisions are not new record status values.
+
+```javascript
+function inspectUncertainOperation(input) {
+  const result = decision => ({decision, intentId:input.intentId});
+  if (input.attempt?.dispatch === 'not_started' && input.attempt.evidenceId)
+    return {...result('failed'), evidenceId:input.attempt.evidenceId};
+  if (input.access !== 'available') return result('capability');
+  if (!input.afterObservation || inspectDocumentOperation({...input, operation:'read', observation:input.afterObservation}).decision !== 'proceed')
+    return result('selection');
+  if (input.operation !== 'edit' || !input.currentEvidenceId || !input.after) return result('uncertain');
+  const checked=inspectScopedEdit(input);
+  if (checked.decision === 'confirmed') return {...result('recovered'), evidenceId:input.currentEvidenceId};
+  // Equality establishes only the inspected scope's current absence, never permission to retry.
+  if (inspectScopedEdit({...input, after:undefined}).decision === 'proceed' &&
+      JSON.stringify(input.after.parts) === JSON.stringify(input.current.parts))
+    return {...result('revalidate'), evidenceId:input.currentEvidenceId};
+  return result('uncertain');
+}
+```

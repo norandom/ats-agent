@@ -135,3 +135,67 @@ test('save does not imply round-trip verification', () => {
   assert.equal(result.decision,'confirmed');assert.equal(result.roundTrip,'not_assessed');
   assert.equal(result.artifact.relationship,'saved_document');
 });
+
+function recover(input) {
+  const source=fs.readFileSync(path.resolve(__dirname,'../../skills/targeted-cv/references/wordcraft-operations.md'),'utf8');
+  const context=vm.createContext({});
+  for(const block of source.matchAll(/```javascript\r?\n([\s\S]*?)```/g)) vm.runInContext(block[1],context);
+  return context.inspectUncertainOperation(input);
+}
+function recoveryCase() {
+  const input=editCase();
+  input.intentId='pending-edit';input.operation='edit';input.access='available';
+  input.attempt={dispatch:'started',evidenceId:'attempt-1'};
+  input.currentEvidenceId='inspection-2';
+  input.after=structuredClone(input.current);input.after.parts[0].text='A fictional revision.';
+  return input;
+}
+test('recovery classifies proven pre-dispatch failure and every dispatched write conservatively',()=>{
+  for(const operation of ['create','edit','save','export']) {
+    const input=recoveryCase();input.operation=operation;delete input.after;
+    assert.equal(recover(input).decision,'uncertain');
+    input.attempt={dispatch:'not_started',evidenceId:'validation-rejection'};
+    assert.equal(recover(input).decision,'failed');
+    assert.equal(recover(input).intentId,'pending-edit');
+    delete input.attempt.evidenceId;assert.equal(recover(input).decision,'uncertain');
+  }
+});
+test('observed scoped effect recovers without another mutation and references inspection',()=>{
+  const input=recoveryCase();const trace=['restore','rebind','inspect'];
+  const result=recover(input);trace.push(result.decision);
+  assert.deepEqual(trace,['restore','rebind','inspect','recovered']);
+  assert.equal(result.evidenceId,'inspection-2');assert.equal(result.intentId,'pending-edit');
+  delete input.currentEvidenceId;assert.equal(recover(input).decision,'uncertain');
+});
+test('absent edit requires fresh target and authorization checks after inspection before retry',()=>{
+  const input=recoveryCase();input.after=structuredClone(input.current);
+  const trace=['restore','rebind','inspect'];
+  const result=recover(input);trace.push(result.decision);
+  assert.equal(result.decision,'revalidate');assert.equal(result.intentId,'pending-edit');
+  const fresh=editCase();fresh.current=structuredClone(input.after);
+  assert.equal(edit(fresh).decision,'proceed');trace.push('fresh_target');
+  // Simulated host obtains a current authorization decision and persists a new attempt.
+  trace.push('authorization','persist_pending','retry');
+  assert.deepEqual(trace,['restore','rebind','inspect','revalidate','fresh_target','authorization','persist_pending','retry']);
+  fresh.selection.start=0;assert.equal(edit(fresh).decision,'selection');
+});
+test('unresolved, missing inspection and lost access retain the original intent',()=>{
+  const input=recoveryCase();input.after.parts[0].text='An intervening change.';
+  assert.equal(recover(input).decision,'uncertain');assert.equal(recover(input).intentId,'pending-edit');
+  input.effectPresent=true;assert.equal(recover(input).decision,'uncertain');
+  input.after=undefined;assert.equal(recover(input).decision,'uncertain');
+  input.access='unavailable';assert.equal(recover(input).decision,'capability');
+  assert.equal(recover(input).intentId,'pending-edit');
+});
+test('reconnect mismatch or stale inspection cannot recover or authorize retry',()=>{
+  for(const change of [i=>i.afterObservation.connectionId='reconnected', i=>i.afterObservation.path='/other.docx',i=>i.afterObservation.freshInspection=false]) {
+    const input=recoveryCase();change(input);
+    assert.equal(recover(input).decision,'selection');assert.equal(recover(input).intentId,'pending-edit');
+  }
+});
+test('artifact operations need host MCP artifact evidence, never a caller effect checkbox',()=>{
+  for(const operation of ['create','save','export']) {
+    const input=recoveryCase();input.operation=operation;input.effectPresent=true;input.effectAbsent=true;
+    assert.equal(recover(input).decision,'uncertain');
+  }
+});
