@@ -1,0 +1,17 @@
+{
+  "fictional": true,
+  "documents": [
+    {
+      "kind": "cv",
+      "language": "en",
+      "text": "Fictional test applicant: Rowan Example\nCV fixture only\nMaintained a pretend observatory inventory.\nProtected fixture paragraph.\n",
+      "edit": {"target": "pretend observatory inventory", "replacement": "fictional observatory catalogue"}
+    },
+    {
+      "kind": "letter",
+      "language": "en",
+      "text": "Fictional cover letter fixture\nDear Imaginary Hiring Team,\nI would help maintain your pretend observatory inventory.\nProtected closing paragraph.\nRowan Example\n",
+      "edit": {"target": "pretend observatory inventory", "replacement": "fictional observatory catalogue"}
+    }
+  ]
+}
