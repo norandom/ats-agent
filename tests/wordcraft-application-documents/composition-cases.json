@@ -1,0 +1,50 @@
+[
+  {
+    "id": "qualifier-and-juxtaposition",
+    "source_facts": "Wholly fictional: Mira Quill advised the depot manager on a route pilot from March to June 2024. The manager approved changes. Depot delays fell that quarter, but the source does not attribute the fall to the pilot.",
+    "target": "A dispatch employer needs clear recommendations about route changes.",
+    "intended_draft": "Advised the depot manager on route changes during a pilot from March to June 2024. Prepared recommendations for the manager's approval.",
+    "rejected_alternative": "Directed route changes. Depot delays fell during the pilot.",
+    "reason": "The first alternative removes advisory authority. The adjacent delay statement implies causal impact that neither source establishes. Whole-document review must reject the implication even if each fragment has a reference. Keep the approval qualifier in the proposition span."
+  },
+  {
+    "id": "historical-tools",
+    "source_facts": "Wholly fictional: Mira used RouteLedger in a dispatch assignment from January to November 2014. No later use or current proficiency is recorded. She reconciled parcel manifests in 2024 without a named tool.",
+    "target": "The employer seeks reliable manifest reconciliation and prefers current RouteLedger proficiency.",
+    "intended_draft": "Expertise: Manifest reconciliation, supported by dispatch work in 2024. Earlier experience: Used RouteLedger from January to November 2014.",
+    "rejected_alternative": "Current RouteLedger expert with ten years of continuous experience.",
+    "reason": "A historical episode supports dated use only. Capability leads the expertise section; the old tool is secondary if relevant, and current proficiency remains unresolved."
+  },
+  {
+    "id": "authority-and-scale",
+    "source_facts": "Wholly fictional: As Dispatch Adviser at Lantern Parcel Works from January 2022 to December 2024, Mira prepared rota options for a manager of 18 staff, including alternatives for a peak-season planning exercise. The fictional company reported EUR 12 million revenue. Mira had no recorded staff-management or revenue ownership.",
+    "target": "An employer needs someone who can prepare practical staffing recommendations.",
+    "intended_draft": "Dispatch Adviser, Lantern Parcel Works. January 2022 to December 2024. Prepared staffing options for the dispatch manager. Selected achievement: Developed rota alternatives for review during a peak-season planning exercise.",
+    "rejected_alternative": "Head of Dispatch. Led 18 staff and managed EUR 12 million revenue.",
+    "reason": "Retain the actual title and advisory scope. Team size and company revenue cannot become the applicant's authority or achievement. The scope paragraph and selected achievement distinguish the ongoing responsibility from the concrete planning exercise."
+  },
+  {
+    "id": "qualifications-without-award-dates",
+    "source_facts": "Wholly fictional: Mira completed a Diploma in Transport Records in 2016. Her Yard Safety Certificate was awarded in 2021 and expired in September 2025. She is studying for a Certificate in Planning Practice, completion not yet confirmed.",
+    "target": "The employer values transport-record education and requires valid yard-safety certification for yard duties.",
+    "intended_draft": "Diploma in Transport Records. Yard Safety Certificate, expired September 2025. Certificate in Planning Practice, in progress.",
+    "rejected_alternative": "Diploma in Transport Records, 2016. Certified yard-safety professional. Certificate in Planning Practice.",
+    "reason": "Omit completed award dates by default, retain the expiry and in-progress status, and leave the required active safety qualification unresolved. Date omission is not a factual deficiency or review penalty."
+  },
+  {
+    "id": "employer-contribution",
+    "source_facts": "Wholly fictional: Mira reconciled parcel manifests and documented unresolved exceptions for the next shift. The offer explicitly asks for accurate dispatch records and reliable handovers. No source establishes the employer's culture or recent error rate.",
+    "target": "A dispatch hiring team deciding whether to interview for a records and handover role.",
+    "intended_draft": "Manifest reconciliation and clear exception records for dispatch handovers. Reconciled parcel manifests and documented unresolved exceptions for the next shift.",
+    "rejected_alternative": "Visionary leader who will transform your struggling dispatch culture and eliminate all errors.",
+    "reason": "The intended summary makes a concrete evidenced contribution visible. The alternative invents leadership, employer problems and a guaranteed result. Review appeal and factual support together; the concise argument is not permission to strengthen the facts."
+  },
+  {
+    "id": "distinct-projects-and-chronology",
+    "source_facts": "Wholly fictional: Mira was Dispatch Adviser at Lantern Parcel Works from January 2022 to December 2024, after Records Assistant at Paper Kite Depot from February 2019 to December 2021. In the March to June 2024 Route Pilot she compared route options for manager approval. In the August to October 2023 Handover Notes project she created a template for recording unresolved exceptions. No adoption rate is recorded.",
+    "target": "The employer needs both route recommendations and useful handover records.",
+    "intended_draft": "Experience: Dispatch Adviser, Lantern Parcel Works, January 2022 to December 2024; Records Assistant, Paper Kite Depot, February 2019 to December 2021. Projects: Route Pilot, March to June 2024. Compared route options for manager approval. Handover Notes, August to October 2023. Created a template for recording unresolved exceptions.",
+    "rejected_alternative": "Experience: Reconciled manifests. Project 1: Reconciled manifests. Project 2: Reconciled manifests. Expertise: Reconciled manifests. Both projects achieved company-wide adoption.",
+    "reason": "Reverse chronology preserves actual progression. Each project has its own title, readable range and evidence paragraph. Distinct comparison and documentation evidence answers different employer needs without repetition or invented adoption outcomes."
+  }
+]

@@ -31,7 +31,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 6.3, 7.4_
 
 - [ ] 3. Compose supported documents from the application strategy
-- [ ] 3.1 Select and map employer-relevant document content
+- [x] 3.1 Select and map employer-relevant document content
   - Implement the host composition instructions for current reviewed strategy text, retaining the contribution argument, clear chronology and contextual evidence rather than reproducing every fact field.
   - Separate role scope from selected achievements and review repetition across experience, projects and expertise. Every retained item must add distinct relevant evidence; long lists trigger editorial review rather than an automatic bullet-count rule.
   - Preserve authority, scale, uncertainty and temporal relevance; lead expertise with supported capabilities. Apply qualification-date/status rules and upstream editorial defaults without introducing unsupported tools, metrics or wording.
