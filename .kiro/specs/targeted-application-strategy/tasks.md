@@ -84,7 +84,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 3.3, 4.2_
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8_
 
-- [ ] 5.2 Review appeal, readability and supplied document observations
+- [x] 5.2 Review appeal, readability and supplied document observations
   - Implement the distinct ordinal editorial anchors with localized reasons and evidence references, without combining them into an overall score.
   - Validate external document observations against producer/method/artifact/time/evidence fields; unavailable or stale observations remain not assessed.
   - Deliver categorized/severity-rated findings, affected claims/criteria and available locations, concrete corrections and their rationale without applying document edits.
