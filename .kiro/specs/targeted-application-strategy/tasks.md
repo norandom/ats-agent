@@ -74,7 +74,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: PositioningEditor_
   - _Requirements: 4.5, 4.6, 8.1, 8.2, 8.3, 8.5_
 
-- [ ] 5. Implement transparent diagnostics and revision comparison
+- [x] 5. Implement transparent diagnostics and revision comparison
 - [x] 5.1 Calculate coverage and semantic claim support
   - Implement the versioned rubric with equal weights, explicit populations, separate required/preferred/unspecified coverage and per-language claim support.
   - Require full factual-proposition inventory and semantic-review evidence before whole-draft support scoring; retain unknown states and zero-denominator reasons.
@@ -92,7 +92,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: StrategyReview_
   - _Requirements: 4.2, 4.5, 6.3, 6.4, 6.7, 6.8, 7.2, 8.1, 8.2_
 
-- [ ] 5.3 Compare revisions only under explicit comparable conditions
+- [x] 5.3 Compare revisions only under explicit comparable conditions
   - Implement dimension-specific fingerprints and checks for target, criterion population, rubric, language, market, method and proposition population.
   - Support labelled evidence-update comparisons through trusted continuity and identify changed evidence; otherwise provide non-comparability reasons and side-by-side results without a delta.
   - Reject arbitrary reselection and matching structural candidate IDs as identity evidence; retain artifact-specific comparison scope for document observations.

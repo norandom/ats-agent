@@ -42,11 +42,109 @@ The host supplies `reviewEditorialJudgments(value)` after reading the exact draf
 
 When a recommendation uses guidance, retain `GuidanceUse` and its applicability/access limits: distinguish professional source support, vendor-specific behavior, practitioner opinion, user preference and project judgment. The ordinal anchors here are project judgment. Neither these anchors nor a source register establish psychometrics, hiring probabilities, universal ATS behavior or DIN certification. Do not import keyword quotas, placement bonuses, reference-code interpretations or personality inferences. Keep these limits next to the recommendation they qualify.
 
+## Compare private revisions
+
+Call `compareRevisions(previous, current, host)` with the same trusted validation, hashing and live-context capabilities used above. Retain both private snapshots. The returned closed `ComparisonResult` binds the complete previous snapshot hash and references current diagnostics; merge it into the current handoff and validate before use. Only rows with a non-null delta are comparable. The overall status describes whether at least one row qualifies; every excluded row retains its side-by-side values and reasons. No eligible rows means `not_comparable`.
+
+Candidate identity requires the same live session, selection generation, resolved canonical path, canonical hash and validated profile version/hash. Target and settings are checked separately for their affected dimensions. A matching candidate record ID, name or path does not establish identity. Saved reports and incoming source text cannot authorize continuity.
+
+For a confirmed facts update, the host may supply `observeConfirmedUpdate(previousBinding, currentBinding)`. This capability must consult its directly observed upstream persistence and reselection chain, not a caller-supplied report. Return `{previous_binding,current_binding,previous_profile,changed_fields}` only after observing the confirmed upstream result's canonical hash at the new selection, validating the current canonical profile, and retaining the exact previous profile. Bind both complete bindings and identify changed canonical fields as JSON pointers. Missing observation, arbitrary reselection, failed persistence, pending proposals or mismatched bytes return null. This is a consumer interface; integration owns the producer and its upstream wiring. Tests use an explicit fictional host adapter, not a continuity producer. The comparison labels accepted refreshes `evidence_update` and lists changed fields without exposing values.
+
+Each row checks target, full frozen criteria, rubric definition, population, denominator, scope and assessment kind. Before using either snapshot's deterministic score, recompute its population and counts from the criterion mappings or complete language inventory and verify unit weights, scale, numerator, denominator and rounded value. Inconsistent arithmetic withholds the delta and requires regenerated diagnostics. Claim support also fingerprints each canonical proposition, not merely its stable ID; translated or rewritten realizations may vary while the proposition stays fixed. Appeal and readability additionally check market and all editorial-method records. Language is part of each diagnostic scope. Unavailable diagnostics retain null deltas, never a zero assessment. A changed population or definition requires fresh interpretation, not an improvement claim.
+
+Document observations remain separate from numeric diagnostics. Comparison notes retain their artifact identities and hashes, producer, method and results. Different artifacts or methods and unavailable checks cannot establish comparable execution. Retain the source snapshots for observation times and evidence locations, and use `reviewEditorial` to verify current external observations before comparison. These notes neither rerun document checks nor certify ATS compatibility.
+
 ## Execute bounded arithmetic
 
 Supply trusted `current` from `createStrategyContext`, `inspectStrategy`, `validate` (the real schema adapter), `sha256`, `stableSerialize`, `fingerprint`, and the host review callback described above. Never substitute a caller-supplied passed report for current binding or validation. The helper rechecks live context after asynchronous work. It returns only new closed-schema `diagnostics` and `findings`; merge them into the same private handoff and validate that populated handoff before use. No model service or document tool is called here. `check_kind: deterministic` describes arithmetic from host decisions, not execution of semantic reasoning. Findings identify the host judgment basis separately. Existing document observations, editorial dimensions and comparison remain outside this calculation.
 
 ```javascript
+function diagnosticPercent(supported, denominator) {
+  return Math.round(1000*supported/denominator)/10;
+}
+function consistentDiagnostic(value, diagnostic, same) {
+  if(!['offer_coverage','claim_support'].includes(diagnostic.dimension)||diagnostic.status!=='assessed')return true;
+  const coverage=diagnostic.dimension==='offer_coverage';
+  const counts={supported:0,absent:0,uncertain:0,transferable:0,confirmed_gap:0,unsupported:0,unresolved:0};
+  let population, states;
+  if(coverage){
+    if(value.target.kind!=='offer')return false;
+    const criteria=value.criteria.filter(c=>c.priority===diagnostic.scope.priority);
+    population=criteria.map(c=>({namespace:'criterion',id:c.id}));
+    states=criteria.map(c=>value.mappings.find(m=>m.criterion.id===c.id)?.state);
+  }else{
+    const draft=value.draft?.versions.find(d=>d.language===diagnostic.scope.language);
+    if(!draft||draft.inventory_status!=='complete')return false;
+    population=draft.claims.map(c=>c.claim);
+    states=population.map(r=>{const c=value.claims.find(c=>c.id===r.id);return !c?null:!c.evidence.length?'unsupported':c.realizations.find(r=>r.language===diagnostic.scope.language)?.semantic_state;});
+  }
+  const allowed=coverage?['supported','absent','uncertain','transferable','confirmed_gap']:['supported','unsupported','unresolved'];
+  if(!population.length||new Set(population.map(r=>r.id)).size!==population.length||states.some(s=>!allowed.includes(s)))return false;
+  for(const state of states)counts[state]++;
+  return diagnostic.rubric.version==='strategy-review/1.0'&&same(diagnostic.rubric.scale,{minimum:0,maximum:100,unit:'percent'})&&
+    same(diagnostic.rubric.weights,population.map(reference=>({reference,weight:1})))&&same(diagnostic.population,population)&&
+    same(diagnostic.counts,counts)&&diagnostic.numerator===counts.supported&&diagnostic.denominator===population.length&&
+    diagnostic.value===diagnosticPercent(counts.supported,population.length);
+}
+
+async function compareRevisions(previous, current, host) {
+  previous=structuredClone(previous);current=structuredClone(current);
+  const same=(a,b)=>host.stableSerialize(a)===host.stableSerialize(b);
+  const hash=x=>host.fingerprint(x,host.sha256);
+  const candidate=b=>({host_session:b.host_session,generation:b.generation,resolved_path:b.resolved_path,canonical_sha256:b.canonical_sha256,profile_version:b.profile_version,validation_profile_sha256:b.validation_profile_sha256});
+  const result={status:'not_comparable',previous_snapshot_sha256:hash(previous),dimensions:[],reasons:[]};
+  const live=host.current();
+  let eligible=!!live&&same(live.binding,current.binding)&&live.evidence.validation.schema==='passed'&&live.evidence.validation.semantics==='passed';
+  let evidenceUpdate=false, priorProfile=live?.evidence.profile;
+  if(!eligible)result.reasons.push('Current validated canonical binding is unavailable or stale.');
+  if(eligible&&!same(candidate(previous.binding),candidate(current.binding))){
+    let chain=null;
+    try{chain=await host.observeConfirmedUpdate?.(structuredClone(previous.binding),structuredClone(current.binding));}catch{}
+    eligible=!!chain&&same(chain.previous_binding,previous.binding)&&same(chain.current_binding,current.binding)&&!!chain.previous_profile&&Array.isArray(chain.changed_fields)&&chain.changed_fields.length>0&&chain.changed_fields.every(p=>typeof p==='string'&&/^\/(?:[^~]|~[01])+$/.test(p));
+    if(eligible){evidenceUpdate=true;priorProfile=chain.previous_profile;result.reasons.push(`Evidence update: changed canonical fields ${chain.changed_fields.join(', ')}.`);}
+    else result.reasons.push('Candidate continuity is unavailable: arbitrary reselection or matching IDs, names and paths cannot authorize reuse.');
+  }
+  if(eligible){
+    for(const [value,profile] of [[previous,priorProfile],[current,live.evidence.profile]]){
+      const checked=await host.inspectStrategy(value,{profile,binding:value.binding,sha256:host.sha256,validate:host.validate});
+      if(checked.schema!=='passed'||checked.deterministic!=='passed'){eligible=false;result.reasons.push('Snapshot schema or reference integrity is unavailable or failed.');break;}
+    }
+  }
+  const stillLive=host.current();
+  if(!stillLive||!live||!same(stillLive.binding,live.binding)){eligible=false;result.reasons.push('Canonical selection changed during comparison.');}
+  const propositions=(value,d)=>d.population.map(r=>({reference:r,proposition:value.claims.find(c=>c.id===r.id)?.proposition??null}));
+  const common=[];
+  if(!eligible)common.push('No trusted current candidate binding or confirmed-update continuity.');
+  if(hash(previous.target)!==hash(current.target))common.push('Target changed.');
+  if(hash(previous.criteria)!==hash(current.criteria)||previous.positioning.criterion_set_sha256!==current.positioning.criterion_set_sha256)common.push('Criterion population or definitions changed.');
+  for(const d of current.diagnostics){
+    const matches=previous.diagnostics.filter(p=>p.dimension===d.dimension&&same(p.scope,d.scope));
+    const p=matches.length===1?matches[0]:null,reasons=[...common];
+    if(!p)reasons.push('Previous dimension with the same scope is missing or ambiguous.');
+    if(p){
+      if(!consistentDiagnostic(previous,p,same)||!consistentDiagnostic(current,d,same))reasons.push('Diagnostic arithmetic is inconsistent with its rubric, source states, counts or population; regenerate the affected snapshot review.');
+      if(hash(p.rubric)!==hash(d.rubric))reasons.push('Rubric definition, weights or scale changed.');
+      if(hash(p.population)!==hash(d.population)||p.denominator!==d.denominator)reasons.push('Diagnostic population or denominator changed.');
+      if(p.check_kind!==d.check_kind)reasons.push('Assessment method changed.');
+      if(d.dimension==='claim_support'&&hash(propositions(previous,p))!==hash(propositions(current,d)))reasons.push('Canonical proposition population changed.');
+      if(['employer_appeal','editorial_readability'].includes(d.dimension)){
+        if(previous.settings.market!==current.settings.market)reasons.push('Editorial market changed.');
+        if(hash(previous.editorial_methods)!==hash(current.editorial_methods))reasons.push('Editorial method fingerprint changed.');
+      }
+      if(p.status!=='assessed'||d.status!=='assessed'||!Number.isFinite(p.value)||!Number.isFinite(d.value))reasons.push('One or both diagnostics are not assessed; obtain the missing review before comparing.');
+    }
+    result.dimensions.push({dimension:d.dimension,current:{namespace:'diagnostic',id:d.id},previous_value:p?.value??null,current_value:d.value,delta:reasons.length?null:Math.round((d.value-p.value)*1e10)/1e10,reasons});
+  }
+  // Document observations have their own artifact versions and methods, not diagnostic numbers.
+  for(const check of current.document_checks){
+    const p=previous.document_checks.find(x=>x.artifact_id===check.artifact_id&&x.check===check.check&&x.producer===check.producer&&x.method===check.method);
+    result.reasons.push(`Document observation ${check.id}: current artifact ${check.artifact_id}@${check.artifact_sha256}, method ${check.producer}/${check.method}, result ${check.result}; ${p?`previous artifact ${p.artifact_id}@${p.artifact_sha256}, result ${p.result}`:'no previous observation with matching artifact identity, check and method'}. ${!eligible||!p||p.result==='not_assessed'||check.result==='not_assessed'?'Not comparable: trusted continuity or an assessed observation is missing.':'Artifact-specific observations only; no numeric delta or inferred document execution.'}`);
+  }
+  const comparable=result.dimensions.some(d=>d.delta!==null);
+  result.status=comparable?(evidenceUpdate?'evidence_update':'comparable'):'not_comparable';
+  if(result.dimensions.some(d=>d.delta===null))result.reasons.push('Use only eligible dimension deltas; other dimensions remain side by side with their reasons.');
+  return result;
+}
 async function reviewDiagnostics(value, host) {
   value = structuredClone(value);
   const diagnostics = [], findings = [];
@@ -70,7 +168,7 @@ async function reviewDiagnostics(value, host) {
     const rubric = {version:'strategy-review/1.0',definition:coverage?'Demonstrated explicit offer coverage: 100 * supported / all criteria in this priority group; round to one decimal.':'Claim support: 100 * semantically supported / all factual propositions in this language draft; round to one decimal.',scale:{minimum:0,maximum:100,unit:'percent'},weights:population.map(reference=>({reference,weight:1})),unknown_treatment:coverage?'Absent, uncertain, transferable and confirmed_gap remain in the denominator; missing evidence is not inability. Role-only or zero denominator is not assessed.':'Unsupported and unresolved remain in the denominator. Missing draft, incomplete inventory, unassessed semantic review or zero propositions is not assessed.'};
     const denominator = population.length;
     const status = assessed && denominator>0 ? 'assessed' : 'not_assessed';
-    diagnostics.push({id:`diagnostic:${dimension}-${scope.priority||scope.language}`,dimension,scope,rubric,rubric_sha256:host.fingerprint(rubric,host.sha256),population,population_sha256:host.fingerprint(population,host.sha256),status,check_kind:'deterministic',value:status==='assessed'?Math.round(1000*stateCounts.supported/denominator)/10:null,numerator:stateCounts.supported,denominator,counts:stateCounts,reason});
+    diagnostics.push({id:`diagnostic:${dimension}-${scope.priority||scope.language}`,dimension,scope,rubric,rubric_sha256:host.fingerprint(rubric,host.sha256),population,population_sha256:host.fingerprint(population,host.sha256),status,check_kind:'deterministic',value:status==='assessed'?diagnosticPercent(stateCounts.supported,denominator):null,numerator:stateCounts.supported,denominator,counts:stateCounts,reason});
   }
   for (const priority of ['required','preferred','unspecified']) {
     const criteria = value.target.kind === 'offer' ? value.criteria.filter(c=>c.priority===priority) : [];
