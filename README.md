@@ -1,5 +1,7 @@
 # ATS CV Scoring Agent
 
+The portable candidate-profile feature is validated: [feature result](.kiro/specs/portable-candidate-profile/validation-report.md), [test commands and coverage](tests/portable-candidate-profile/scenarios.md). This supplies the private facts workflow; WordCraft session integration, targeting strategy and the final distributable skill remain separate milestones.
+
 Repository privacy applies to all files, including specifications: see [the privacy policy](.kiro/steering/privacy.md). Candidate facts and derived drafts stay in ignored local files. Before staging, run `node tests/privacy/check-repository.cjs private/cv-facts.json` and review the changes for identifying context. Reusable code and fixtures must contain no real candidate data.
 
 > **Migration project initialized:** [Targeted CV skill brief](.kiro/specs/targeted-cv-skill/brief.md) and [HR/source register](.kiro/specs/targeted-cv-skill/research.md). The intended workflow uses a private fact base, a pasted job offer, employer-oriented positioning and WordCraft MCP DOCX generation. The specification is initialized; the Python application below remains the current implementation until migration. Store personal inputs in `private/` and generated applications in `outputs/` (both Git-ignored).
