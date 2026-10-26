@@ -56,7 +56,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: EvidencePlanner_
   - _Requirements: 1.6, 3.5, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 4. Implement contribution composition and editorial review
+- [x] 4. Implement contribution composition and editorial review
 - [x] 4.1 Compose supported contribution arguments in both languages
   - Implement audience/decision/thesis selection, inclusion/exclusion rationale and capability-oriented expertise structure.
   - Inventory factual propositions and preserve genuine historical titles, temporal context and responsibility while drafting stronger employer-relevant wording.
@@ -66,7 +66,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Depends: 3.2, 3.3_
   - _Requirements: 3.2, 3.4, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 4.2 Integrate optional writing skills and the embedded fallback
+- [x] 4.2 Integrate optional writing skills and the embedded fallback
   - Implement discovery and execution reporting for COBESY and Humanizer using the user-selected repository links and actual available versions.
   - Offer assisted installation, manual instructions or fallback once when missing; delegate any authorized installation to the host without implementing an installer or requiring the collection.
   - Distinguish installed, available and executed; preserve existing installs and user constraints, including no em/en dashes in submitted prose.
