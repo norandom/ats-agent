@@ -59,4 +59,4 @@ Do not redefine upstream-owned contracts. Any new dependency or ownership change
 No personal data in committed instructions or distributable assets. German/English target output; WordCraft MCP authors final DOCX; blue/no photos; DIN 5008 letters for Germany in either language. No maintained Python application. Keep professional source support distinct from editorial judgment and user preferences. Candidate examples are synthetic and unrelated to private profiles.
 
 ## Kiro Status
-Requirements approved on 2026-10-26. Design generated with full discovery and independent review PASS covering all 42 criteria. Human design approval is next, followed by task generation and its approval gate. No implementation readiness is implied.
+Requirements and design approved on 2026-10-26. Twelve executable implementation tasks in seven groups cover all 42 criteria and passed independent task-graph review. Human task approval is next. No implementation completion is implied.
