@@ -31,7 +31,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 7.4, 8.3_
 
 - [ ] 3. Implement employer analysis and evidence questions
-- [ ] 3.1 Interpret offer criteria and priorities with source references
+- [x] 3.1 Interpret offer criteria and priorities with source references
   - Implement the host analysis protocol for atomic responsibilities, outcomes, qualifications and context with exact source spans.
   - Preserve required/preferred/unspecified priority, retain contradictions and keep inferred needs in a separate labelled collection.
   - Deduplicate repetition while preserving distinct conditions and freeze the criterion population before scoring.
