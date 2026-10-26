@@ -4,7 +4,7 @@ Implement the approved document design as host-session skill instructions and bo
 
 Tasks are sequential: shared references, test fixtures and the selected desktop session make concurrent edits or live probes unsafe. Runtime asset ownership follows the design's file structure plan. Tests are part of each deliverable; no mandatory acceptance work is optional. Read privacy steering before work and use wholly fictional inputs.
 
-- [ ] 1. Establish the document verification foundation
+- [x] 1. Establish the document verification foundation
 - [x] 1.1 Prepare fictional inputs and the installed verification environment
   - Reuse upstream profile, strategy and session validation adapters and the existing test-only MCP client. Confirm pnpm, Node.js, the pinned schema validator and selected desktop connection without reading candidate inputs.
   - Prepare unrelated fictional English/German application data, a requested CV/letter pair, missing letter metadata and a sufficiently long profile for pagination. Retain exact selected-original document identity and a private output destination.
@@ -13,7 +13,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Boundary: Acceptance harness_
   - _Requirements: 1.1, 1.2, 1.6, 6.5, 7.6_
 
-- [ ] 1.2 Verify the required formatting operations on fictional content
+- [x] 1.2 Verify the required formatting operations on fictional content
   - Probe page dimensions, margins, paragraph spacing/styles, measured address-region placement and header/footer behavior through discovered WordCraft commands and the existing session protocol.
   - Verify actual PAGE and NUMPAGES fields before and after a one-to-multiple-page change, refresh all parts, save/reopen and inspect rendered results. Distinguish point units, rendered scale and differing page-index conventions.
   - Establish how body text, field/part structure and every rendered page can be observed. Record unavailable properties accurately and restore the originally selected fictional document.
@@ -112,3 +112,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - Completion is a fresh feature-level report with full-suite and actual runtime evidence, coverage/design/integration review and an honest GO or outstanding-case result.
   - _Boundary: Acceptance harness_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 7.4, 7.5, 7.6_
+
+## Implementation Notes
+
+- Task 1.2: ordinary body paragraphs support measured recipient placement through document.layout caret line-top/height after reopen. Default text-box inset/wrapping and body extraction failed; do not use that recipe. Footer field cached strings may be empty while true PAGE/NUMPAGES objects persist and render correctly. Evidence remains private.
