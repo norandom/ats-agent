@@ -9,8 +9,10 @@ Separate reusable instructions and contracts from runtime candidate data, docume
 ## Existing Directory Patterns
 
 - Root Python modules form the current CLI/scorer/parser application. Modules use snake_case names and direct local imports, such as `from ats_agent import ATSCVAgent`. This is a legacy pattern to retire, not the intended skill layout.
+- `README.md` guides users through the intended application flow; it is not a development status report. `docs/` separates reusable candidate facts from per-application workflow and optional writing-skill setup. Link requirements and roadmap for technical detail and availability rather than duplicating them. Use COBESY composition for documentation structure and Humanizer for authored prose by default. Preserve technical identifiers, evidence limits and required Kiro templates. See `docs/writing-guide.md`.
 - `skills/targeted-cv/schemas/` holds identity-free reusable data contracts: current `cv-facts.schema.json` and retained legacy `cv-facts-v1.schema.json`.
 - `skills/targeted-cv/templates/` holds empty reusable inputs, such as `cv-facts.blank.json`. A blank scaffold is not a complete candidate profile.
+- `skills/targeted-cv/references/application-strategy.md` routes the validated strategy workflow through its contract, evidence, editorial and review references. Private handoffs use `schemas/application-strategy.schema.json`; the final distributable entrypoint remains release work.
 - `private/` holds local candidate facts, offers, provenance and private reference analyses. `examples/` holds private supplied references. `outputs/` holds generated applications. All three are Git-ignored and excluded from release bundles.
 - `.kiro/specs/` holds feature requirements, design, tasks and supporting decisions. `.kiro/steering/` holds durable cross-feature policies rather than a task catalog.
 

@@ -6,7 +6,7 @@ This project is migrating a Python CV scorer into a reusable skill for persuasiv
 
 ## Current and Target State
 
-- Current implementation: a Python CLI extracts PDF/DOCX content and produces OpenAI-assisted scoring reports. The portable profile references, versioned schemas and blank scaffold passed feature validation on 2026-10-26; document and release capabilities remain separate work.
+- Current implementation: a Python CLI extracts PDF/DOCX content and produces OpenAI-assisted scoring reports. The portable profile and application-strategy capabilities passed feature validation on 2026-10-26. Strategy supplies employer analysis, focused questions, bilingual contribution wording and bounded diagnostics through portable references and contracts. Document and release capabilities remain separate work.
 - Target architecture: portable skill instructions and reference assets, without a maintained project Python application. WordCraft integration, document generation, live refinement and distributable skill packaging remain implementation work.
 - Legacy vendor assertions and score deductions are research leads, not validated ATS rules. Retire legacy code only after the replacement workflow is validated.
 
@@ -16,6 +16,7 @@ This project is migrating a Python CV scorer into a reusable skill for persuasiv
 - Connect offer terminology to contextual evidence. Preserve real titles, chronology and qualifications; never manufacture metrics, seniority or skills, or reward keyword stuffing.
 - Produce coherent CV/cover-letter pairs and private explanations of positioning, evidence and unresolved gaps. Keep internal claim IDs, confidence labels and score apparatus out of submitted documents.
 - Ask small batches of useful missing-evidence questions, accept skipped questions and confirmed gaps, and refine the actual WordCraft documents while preserving user edits.
+- Open or raise WordCraft in the foreground and author CVs and requested cover letters live through its MCP-connected desktop session. Show the active document when switching between documents or languages. Background generation followed by opening the finished file does not satisfy the default live-authoring experience. Respect a user's later choice to minimize or switch away; do not repeatedly steal focus.
 - Use transparent diagnostic scores for coverage, evidence, relevance and readability. Define rubrics and uncertainty before scoring; do not present hiring probabilities or universal proprietary ATS scores.
 
 ## Presentation and Market

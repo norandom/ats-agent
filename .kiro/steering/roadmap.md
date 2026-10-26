@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-10-26. Portable candidate profile validated GO (14 tasks, 41 acceptance criteria). M1 remains incomplete pending the WordCraft session contract.
+Updated 2026-10-26. Portable candidate profile validated GO (14 tasks, 41 acceptance criteria). Application strategy validated GO (14 tasks, 48 acceptance criteria). M1 still needs the WordCraft session contract; M2 is complete within its strategy boundary.
 
 ## Overview
 Replace the legacy CV scorer with a separately distributable skill that reads private structured candidate data, interprets a pasted offer, develops an employer-oriented contribution argument, and creates/refines German or English application documents live in WordCraft MCP. Evidence constrains claims without dictating the narrative. Transparent diagnostics guide questions and improvements.
@@ -49,7 +49,7 @@ Checkboxes above track completed specification pipelines if the batch workflow i
 | M4 — Live refinement | live-application-refinement | User answers questions and improves live documents with meaningful score changes | Preserved manual edits, consistent CV/letter changes, explicit profile-update choice, resume and stop behavior |
 | M5 — Shareable replacement | portable-skill-release | A clean installation works for a new user; obsolete Python workflow is retired | Installed-package end-to-end checks, archive allowlist/privacy audit, license checks, standalone operation and updated instructions |
 
-The profile half of M1 is implemented and validated; the WordCraft session design gate remains open. No complete delivery milestone or release is claimed. M2 strategy requirements are generated and reviewed, awaiting human approval before design.
+The profile half of M1 is implemented and validated. M2 strategy is implemented and validated: fourteen independently reviewed tasks, 48 acceptance criteria, fourteen relocated suites and independently reviewed bilingual semantic cases. See the strategy validation report. WordCraft session, application documents, live refinement and release remain their own delivery work. The English research synthesis in `docs/recruiting-signals-2026.md` supplies evidence and explicit hypotheses without changing approved requirements.
 
 ## Execution Waves
 1. Profile and WordCraft session specifications can proceed independently.
@@ -76,8 +76,8 @@ None in this discovery step. Existing schema/template/ignore changes remain prel
 ## Review and Next Step
 An independent read-only discovery review accepted the decomposition with boundary/dependency refinements incorporated. WordCraft behavior, detailed DIN layout guidance and redistribution rights remain unverified investigations, not completed checks.
 
-M1 status: both requirements sets were approved by the user. `portable-candidate-profile` is `tasks-generated`: design approved, task graph independently reviewed, tasks awaiting approval. `wordcraft-document-session` remains `requirements-generated`: discovery demonstrated headless MCP operations, but the live design gate found unsafe internal replay in the installed 0.10.0 GUI bridge and missing manual-edit/concurrency proof. See that spec's research.md and design-review.md. Neither feature is implementation-ready.
+M1 status: `portable-candidate-profile` is implementation-complete with a GO validation result. `wordcraft-document-session` remains `requirements-generated`: discovery demonstrated headless MCP operations, but the live design gate found unsafe internal replay in the installed 0.10.0 GUI bridge and missing manual-edit/concurrency proof. See that spec's research.md and design-review.md. The WordCraft session feature is not implementation-ready.
 
-Next: review the portable-profile implementation tasks; resolve and verify the WordCraft live-session integration findings before finalizing its design. Generate implementation tasks only after the corresponding design is approved. The two M1 streams remain independently progressable.
+Next: finalize the WordCraft session design for foreground live authoring, then connect the validated strategy to application documents and refinement through their approved workflows. Technical recovery/concurrency evidence stays in the session notes; report concrete limitations at the affected operation. Strategy consumers must retain language-specific selections, fresh bindings, complete findings and observed update continuity.
 
 `$kiro-spec-batch` is an available optional fast-track, not executed here: it automatically passes `-y` to design and tasks. Use only when that fast-track is intentionally requested.
