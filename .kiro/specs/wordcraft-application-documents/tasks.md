@@ -21,7 +21,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Boundary: Acceptance harness_
   - _Requirements: 4.3, 4.5, 4.6, 5.4, 5.5, 6.1, 6.5, 7.2, 7.3, 7.6_
 
-- [ ] 2. Define the private document manifest and integrity checks
+- [x] 2. Define the private document manifest and integrity checks
   - Implement the closed manifest with requested document identities, origin/current strategy hashes, exact language draft ranges, confirmed letter inputs, presentation versions, session references, anchors and revision-specific check states.
   - Reuse upstream binding and claim-reference semantics. Reject stale trusted context, duplicate document identities, invalid or overlapping ranges, partial proposition slices and unverified saved-artifact identities.
   - Preserve pending, authored, checked and delivered distinctions; a valid structure cannot establish semantic support, successful rendering or finished delivery.
