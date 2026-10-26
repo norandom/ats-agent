@@ -140,6 +140,8 @@ Attaching `document_checks` creates a new strategy snapshot. Keep `origin_strate
 
 Apply keep-with-next to headings/role labels when supported, and keep paragraph lines together where useful. Fit content by editorial selection and sensible breaks, not reduction below the chosen readable body size. Avoid a hard page cap. Rendered inspection may justify spacing adjustments; retain the resulting profile version and rerun affected checks.
 
+The user-approved senior presentation separates a short role-scope paragraph from selected achievement bullets. Projects use title, readable month/year range and a short evidence paragraph, with labels kept beside their content. Experience, projects and expertise must each contribute distinct evidence. Treat three to five role bullets as an editorial starting point; flag longer lists for relevance and scanability review without imposing an ATS penalty or a hard cap. Do not preserve the count by combining unrelated claims into oversized bullets. Full facts remain unchanged; application selections live in the private composition. This refinement implements existing concise-composition and readable-layout requirements without changing contracts.
+
 The localized footer contains ordinary labels plus true PAGE and NUMPAGES fields, not typed numbers. Do not force same footer text into each page separately. Discover footer propagation, update all fields, then verify rendered values and persisted fields after a one-to-multiple-page edit and reopen. If field round-trip cannot be demonstrated, pagination stays pending rather than falling back to static values.
 
 ### Letter

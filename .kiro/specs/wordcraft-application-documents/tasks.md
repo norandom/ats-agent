@@ -33,6 +33,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
 - [ ] 3. Compose supported documents from the application strategy
 - [ ] 3.1 Select and map employer-relevant document content
   - Implement the host composition instructions for current reviewed strategy text, retaining the contribution argument, clear chronology and contextual evidence rather than reproducing every fact field.
+  - Separate role scope from selected achievements and review repetition across experience, projects and expertise. Every retained item must add distinct relevant evidence; long lists trigger editorial review rather than an automatic bullet-count rule.
   - Preserve authority, scale, uncertainty and temporal relevance; lead expertise with supported capabilities. Apply qualification-date/status rules and upstream editorial defaults without introducing unsupported tools, metrics or wording.
   - Map complete propositions into document sections with exact code-point spans and private claim associations. Inventory emitted factual content, including contacts and metadata-derived assertions, and review assembled meaning for qualifier loss or misleading juxtaposition.
   - Completion is independently reviewed fictional composition cases plus executable mapping checks, including repeated exact wording, differently worded propositions, partial-slice rejection and exclusion of internal review material from submitted text.
@@ -50,6 +51,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
 - [ ] 4. Implement the two document presentation profiles
 - [ ] 4.1 Apply the approved CV presentation and dynamic pagination
   - Implement the blue single-column CV profile with prominent identity/role, optional shaded summary, recognizable headings, standard bullets and editable body paragraphs. Keep employer, role and date associations unambiguous.
+  - Apply the approved project pattern: title, readable localized month/year range and short evidence paragraph. Keep senior role-scope paragraphs separate from achievement bullets and verify that this hierarchy survives rendering and extraction.
   - Apply the design's typography, spacing and keep-with-next rules through the verified commands. Preserve readable size and content-dependent length; use no photos, rating grids or graphic bullets.
   - Add localized automatic current/total page fields on every page and apply the demonstrated refresh/persistence behavior. Retain actual applied layout settings for verification.
   - Completion is a reusable presentation reference exercised on fictional short and multi-page content, with observed correct page fields, readable layout and extraction order; failed observations remain pending.

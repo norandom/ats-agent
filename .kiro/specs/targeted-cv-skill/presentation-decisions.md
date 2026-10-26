@@ -28,3 +28,11 @@ The user reviewed the fictional John Doe document in WordCraft and confirmed: 'o
 
 
 Footer refinement: show current page / total pages on each CV page using automatic PAGE and NUMPAGES fields, labelled Page in English and Seite in German. Include this on single-page documents too for consistency; verify multi-page rendering and count updates.
+
+## Approved structured presentation refinement: 2026-10-26
+
+The user approved the revised two-page fictional leadership CV, especially the structured project section. For senior experience, place a short scope paragraph before selected achievement bullets. For projects, use a clear title, a readable month/year range and a short evidence paragraph instead of a bullet inventory. In English, use ranges such as "Mar 2023 to Nov 2023"; localize month names for German output.
+
+Review whether scope is immediately understandable, each item contributes distinct job-relevant evidence, and experience/projects/expertise repeat the same story. Three to five role bullets is a starting editorial cue, not a mandatory cap or an empirically proven ATS threshold. Longer lists need a relevance justification; do not merge unrelated achievements into dense sentences just to meet a count. Keep complete facts privately and make selection in the application composition.
+
+This records a user-approved presentation pattern. It does not claim the complete skill has been implemented or change the pending implementation-task approval.
