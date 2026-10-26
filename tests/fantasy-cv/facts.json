@@ -1,0 +1,276 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "id": "src-fiction",
+      "type": "synthetic_test_fixture",
+      "received_on": "2026-10-25",
+      "language": "en",
+      "verification": "fictional_not_real_credentials"
+    }
+  ],
+  "candidate": {
+    "name": "John Doe",
+    "location": {
+      "city": "New York",
+      "country": "United States"
+    },
+    "phone": "+1 212 555 0147",
+    "email": "john.doe@example.com",
+    "postal_address": "42 Example Avenue, New York, NY 10001, United States (fictional)",
+    "links": [
+      {
+        "label": "Professional profile",
+        "url": "https://example.com/john-doe"
+      }
+    ],
+    "source_ids": [
+      "src-fiction"
+    ]
+  },
+  "profile": [
+    {
+      "id": "summary",
+      "statement": "Field agent who keeps first contact from becoming a public crisis. Leads extraterrestrial incident response, negotiates peaceful outcomes and protects civilians without compromising operational secrecy. Ready to lead complex missions and develop the next generation of Men in Black agents.",
+      "source_ids": [
+        "src-fiction"
+      ]
+    }
+  ],
+  "employment": [
+    {
+      "id": "job-lead",
+      "employer": "Men in Black",
+      "location": "New York",
+      "title": "Senior Field Agent",
+      "start": "2021-04",
+      "end": null,
+      "current": true,
+      "as_of": "2026-10-25",
+      "source_ids": [
+        "src-fiction"
+      ],
+      "claims": [
+        {
+          "id": "lead-1",
+          "statement": "Led 42 extraterrestrial incident responses in 2025, with zero civilian injuries and no confirmed public exposure.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "lead-2",
+          "statement": "Negotiated a peaceful surrender during the Orion Terminal standoff, evacuating 180 commuters without deploying a neuralyzer.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "lead-3",
+          "statement": "Directed six agents during Operation Night Transit; recovered an unlicensed warp core before it reached a populated transit hub.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "lead-4",
+          "statement": "Trained eight field agents in first-contact protocol and proportional response; all passed their supervised field assessment.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "job-agent",
+      "employer": "Men in Black",
+      "location": "New York",
+      "title": "Field Agent",
+      "start": "2017-07",
+      "end": "2021-03",
+      "current": false,
+      "as_of": "2026-10-25",
+      "source_ids": [
+        "src-fiction"
+      ],
+      "claims": [
+        {
+          "id": "agent-1",
+          "statement": "Resolved 63 interspecies disputes through de-escalation and treaty-based mediation, avoiding forced relocation in 58 cases.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "agent-2",
+          "statement": "Built a smuggling-route picture from witness interviews and transit records, enabling the recovery of 14 restricted alien artifacts.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "agent-3",
+          "statement": "Maintained complete chain-of-custody records for 120 evidence transfers; all were accepted at internal review.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "job-trainee",
+      "employer": "Men in Black",
+      "location": "New York",
+      "title": "Agent Trainee",
+      "start": "2016-09",
+      "end": "2017-06",
+      "current": false,
+      "as_of": "2026-10-25",
+      "source_ids": [
+        "src-fiction"
+      ],
+      "claims": [
+        {
+          "id": "trainee-1",
+          "statement": "Completed supervised rotations in extraterrestrial screening, field observation and civilian evacuation.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "qualification": "Diploma in Interplanetary Relations",
+      "institution": "Lunar Academy of Applied Diplomacy",
+      "start": "2012-09",
+      "end": "2016-06",
+      "completion_status": "completed",
+      "source_ids": [
+        "src-fiction"
+      ]
+    }
+  ],
+  "professional_development": [
+    {
+      "id": "dev-1",
+      "name": "Advanced First Contact and De-escalation",
+      "organization": "Men in Black Academy",
+      "since": "2023",
+      "valid_until": null,
+      "source_ids": [
+        "src-fiction"
+      ]
+    },
+    {
+      "id": "dev-2",
+      "name": "Neuralyzer Operator Qualification",
+      "organization": "Men in Black Academy",
+      "since": "2024",
+      "valid_until": "2027-12",
+      "source_ids": [
+        "src-fiction"
+      ]
+    }
+  ],
+  "skill_groups": [
+    {
+      "id": "skills-field",
+      "label": "Field capabilities",
+      "claims": [
+        {
+          "id": "skill-1",
+          "statement": "Threat assessment: distinguish hostile intent from unfamiliar species behavior before selecting a response.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "skill-2",
+          "statement": "Alien technology: operate biosignature scanners and containment equipment during field recovery.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        },
+        {
+          "id": "skill-3",
+          "statement": "Operational discretion: use compartmented briefings and controlled evidence access to protect sensitive missions.",
+          "source_ids": [
+            "src-fiction"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "statement": "Designed a first-contact triage playbook adopted by three field teams",
+      "source_ids": [
+        "src-fiction"
+      ],
+      "start": "2023-03",
+      "end": "2023-11",
+      "employer_id": "job-lead"
+    }
+  ],
+  "volunteering": [
+    {
+      "id": "volunteer-1",
+      "statement": "Volunteer language mentor for newly arrived extraterrestrial residents",
+      "source_ids": [
+        "src-fiction"
+      ],
+      "since": "2022"
+    }
+  ],
+  "languages": [
+    {
+      "id": "lang-en",
+      "language": "English",
+      "proficiency": "Native",
+      "cefr": null,
+      "source_ids": [
+        "src-fiction"
+      ]
+    },
+    {
+      "id": "lang-h",
+      "language": "Huttese",
+      "proficiency": "Professional working proficiency (fictional)",
+      "cefr": null,
+      "source_ids": [
+        "src-fiction"
+      ]
+    },
+    {
+      "id": "lang-de",
+      "language": "German",
+      "proficiency": "Upper intermediate",
+      "cefr": "B2",
+      "source_ids": [
+        "src-fiction"
+      ]
+    }
+  ],
+  "review_questions": [
+    {
+      "id": "q-command",
+      "related_ids": [
+        "job-lead"
+      ],
+      "question": "Have you held formal incident-command certification, beyond leading field teams?",
+      "status": "open"
+    },
+    {
+      "id": "q-travel",
+      "related_ids": [
+        "job-lead"
+      ],
+      "question": "Are you available for extended off-world deployment?",
+      "status": "open"
+    }
+  ]
+}

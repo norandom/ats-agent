@@ -88,7 +88,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 4.1_
   - _Requirements: 2.5, 2.6, 6.1, 6.2, 6.4, 6.6, 6.7_
 
-- [ ] 5. Verify profile boundaries and failure behavior
+- [x] 5. Verify profile boundaries and failure behavior
 - [x] 5.1 Exercise structural, semantic and readiness edge cases
   - Add and execute synthetic valid/blank/malformed/unsupported-version cases and duplicate IDs, missing/wrong-kind references, invalid dates and mixed-precision chronology cases.
   - Exercise null end dates, stale/undated current assertions, unsupported verification upgrades, evidence states, answered/skipped/gap questions and unresolved/resolved conflicts.
@@ -114,7 +114,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 4.1, 4.2_
   - _Requirements: 2.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.3, 7.5_
 
-- [ ] 5.4 Complete relocated-asset integration acceptance
+- [x] 5.4 Complete relocated-asset integration acceptance
   - Re-run integrated intake, correction and lossless migration from relocated skill assets.
   - Check reference resolution and absence of legacy-scorer, WordCraft or sibling-checkout dependencies in the profile flow.
   - Done when all 41 acceptance criteria have requirement-linked observed verification evidence, with unavailable checks and remaining limitations distinguished from passes.

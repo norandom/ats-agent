@@ -1,0 +1,13 @@
+'use strict';
+const assert = require('node:assert/strict');
+const { verifyCoverage, verifyReferences, requirements } = require('./full-acceptance.cjs');
+const rows = requirements.map(requirement => ({ suite: 'synthetic-gate-control', name: requirement, requirements: [requirement], observed: { passed: true }, expected: { passed: true } }));
+assert.equal(Object.keys(verifyCoverage(rows)).length, 41);
+assert.throws(() => verifyCoverage([]), /missing observed requirement/);
+assert.throws(() => verifyCoverage(rows.slice(1)), /missing observed requirement 1\.1/);
+assert.throws(() => verifyCoverage(rows.map((row, index) => index ? row : { ...row, observed: { passed: false } })), /observed outcome mismatch/);
+assert.throws(() => verifyCoverage(rows.map((row, index) => index ? row : { ...row, observed: null })), /missing observed outcome/);
+assert.equal(verifyReferences({ 'references/a.md': '[peer](b.md)', 'references/b.md': '' }), 1);
+assert.throws(() => verifyReferences({ 'references/a.md': '[missing](b.md)' }), /unresolved relocated reference/);
+assert.throws(() => verifyReferences({ 'schemas/a.json': '{"$ref":"https://invalid.example/schema"}' }), /external schema dependency/);
+console.log('Full acceptance gate: complete 41-criterion control, four negative evidence controls, local-link success and two dependency failures passed. Controls are not feature acceptance.');

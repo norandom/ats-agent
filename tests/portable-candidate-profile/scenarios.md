@@ -124,4 +124,68 @@ Command: `node tests/portable-candidate-profile/persistence-acceptance.test.cjs`
 | `lost_ack`, `read_failure`, `mismatch`, `security_failure`, `validation_failure`, `late_stale` | 6.6, 7.3, 7.5 | Lost acknowledgement reconciles to confirmed; failed read is initially unconfirmed then confirms on read-only reconciliation; mismatch/security/validation remain unconfirmed; late baseline change conflicts; repeat calls never replay replacement; backup and peer retained |
 | `migration_preserved` | 2.6, 6.3, 6.6, 7.3, 7.5 | Conversion findings acknowledged; complete legacy values and sources retained in opaque snapshot; current schema/semantics pass; exact backup, protected DACL and unchanged peer |
 
-The invalid persistence scenario injects validator failure; migration integration also executes actual schema-invalid and semantic-invalid proposals and checks unchanged originals. These are Windows `.NET File.Replace` checks on wholly fictional profiles with deliberately protected destination DACLs. The test-owned unpublished directory supplies the bounded writer assumption; it does not establish exclusion of external writers for a real host. SDDL comparison does not prove unexamined audit, encryption or network security behavior. No private candidate inputs are read by these acceptance suites. Task 5.4 retains full-feature acceptance ownership.
+The invalid persistence scenario injects validator failure; migration integration also executes actual schema-invalid and semantic-invalid proposals and checks unchanged originals. These are Windows `.NET File.Replace` checks on wholly fictional profiles with deliberately protected destination DACLs. The test-owned unpublished directory supplies the bounded writer assumption; it does not establish exclusion of external writers for a real host. SDDL comparison does not prove unexamined audit, encryption or network security behavior. No private candidate inputs are read by these acceptance suites.
+
+## Relocated full-profile acceptance (task 5.4)
+
+Canonical full command: `node tests/portable-candidate-profile/full-acceptance.cjs`.
+Gate negative controls: `node tests/portable-candidate-profile/full-acceptance.test.cjs`.
+Lightweight runtime liveness: `node tests/portable-candidate-profile/full-acceptance.cjs --smoke`.
+
+Observed on 2026-10-26: the full relocated run passed all 11 top-level suites and verified 62 named outcomes covering 41/41 criteria. Counts were contract 59 external checks, validation 183, evidence 131, migration 58, intake 53, updates 37, integration 96, edge cases 32, isolation 9, and persistence acceptance 21 (nested persistence 81 and migration integration 138); foundation also passed. A separate final smoke verified eight local Markdown links and local-only schema references, alongside actual schema and semantic execution. These observations do not replace independent review or feature approval.
+
+The full command copies exactly four references, two schemas and the blank scaffold into a fresh unrelated operating-system temporary root. Existing test adapters and wholly fictional fixtures are copied separately under `tests/`; they are not distributable assets. Byte hashes verify the seven copies before and after execution. All test paths and validator schema paths resolve from the relocated copies, with the child working directory outside this checkout. The temporary root contains no scorer, sibling checkout, WordCraft adapter, application entrypoint or model SDK. Node caller preloads and package-path overrides are removed. This verifies the profile protocols without those dependencies; it does not build a final skill entrypoint or release archive.
+
+The driver runs contract, foundation, validation, evidence, migration, intake, updates, integration, edge-cases, isolation and persistence-acceptance once each. The last runner owns the nested persistence and migration-integration executions; do not run those again merely to complete this command. Integration executes the exact copied reference blocks for intake, correction, readiness and confirmed persistence. Migration integration executes the copied migration block through acknowledged lossless migration and confirmed persistence.
+
+Each invocation creates ignored `outputs/profile-tests/full-acceptance-*` evidence. `workspace.txt` privately locates the retained temporary root; synthetic profiles, backups and original detailed evidence stay there. Suite stdout/stderr is retained privately beside a generic `evidence.json` containing asset hashes, suite exit states, named expected/observed outcomes and the derived requirement map. The report remains incomplete if any suite or coverage check fails. Never treat a partial report or negative control as acceptance. The negative controls prove empty evidence, one missing criterion, absent observations and mismatching outcomes fail closed.
+
+The following map identifies the asserted scenarios used for all 41 criteria. The driver derives its actual map from fresh suite evidence rather than accepting this table as proof. `E` denotes edge-cases, `I` isolation, `P` persistence, and `M` migration-integration.
+
+| Criterion | Named observed evidence |
+| --- | --- |
+| 1.1 | I: first-selected-write, second-selected-write |
+| 1.2 | I: absent-selection (no implicit default) |
+| 1.3 | I: missing-path, unreadable-path |
+| 1.4 | I: absent-selection, missing-path, unreadable-path |
+| 1.5 | I: absent-selection, switch-clears-state-authority, reusable-assets |
+| 2.1 | E: valid, blank |
+| 2.2 | E: blank |
+| 2.3 | E: blank, required-missing, optional-unknown |
+| 2.4 | E: unsupported-version |
+| 2.5 | E: unsupported-version |
+| 2.6 | M: migration_preserved |
+| 3.1 | I: hostile-incomplete-source, second-selected-write |
+| 3.2 | I: hostile-incomplete-source |
+| 3.3 | E: conflict-open, conflict-resolved; I: hostile-incomplete-source |
+| 3.4 | E: mixed-precision, invalid-calendar; I: second-selected-write |
+| 3.5 | I: hostile-incomplete-source |
+| 4.1 | E: valid, malformed-json, malformed-record, validator-unavailable |
+| 4.2 | E: duplicate-id, missing-source, wrong-kind |
+| 4.3 | E: malformed-json, malformed-record, duplicate-id, missing-source |
+| 4.4 | E: blank, required-missing, no-task, semantics-unavailable |
+| 4.5 | E: required-missing, null-end, conflict-open |
+| 4.6 | E: optional-unknown |
+| 5.1 | E: valid, missing-source |
+| 5.2 | E: verification-upgrade |
+| 5.3 | E: mixed-precision, null-end |
+| 5.4 | E: evidence-supported, evidence-uncertain, evidence-absent, evidence-transferable, evidence-confirmed_gap |
+| 5.5 | E: question-answered, question-skipped, question-not_applicable, question-confirmed_gap |
+| 5.6 | E: conflict-open, conflict-resolved, conflict-mismatch |
+| 5.7 | E: bounded-current, undated-current |
+| 6.1 | P: approved, declined, document_only |
+| 6.2 | P: declined, forged, mutated |
+| 6.3 | P: approved, already_authorized; M: migration_preserved |
+| 6.4 | P: invalid (injected); actual invalid proposals also execute in migration integration |
+| 6.5 | P: document_only |
+| 6.6 | P: approved, stale, no_writer, no_security, stage_failure, read_failure, mismatch |
+| 6.7 | P: already_authorized |
+| 7.1 | I: first-selected-write, switch-clears-state-authority |
+| 7.2 | I: switch-clears-state-authority, return-to-first |
+| 7.3 | I: first-selected-write, second-selected-write, return-to-first; P: approved |
+| 7.4 | I: reusable-assets |
+| 7.5 | I: hostile-incomplete-source, second-selected-write, reusable-assets; P: approved |
+
+Passing scenarios include expected failures and `not_assessed` states: unavailable validation never becomes valid/ready; unknowns and unresolved required evidence remain incomplete; failed or ambiguous writes remain rejected/conflict/unconfirmed as appropriate. Host-reviewed fictional source mappings test traceability and supplied semantic interpretation, not arbitrary prose extraction or source authentication. Historical current assertions retain their observation limit and do not establish present-day employment. Single-writer assurance covers only fresh unpublished test-owned directories. Windows `.NET File.Replace` and protected destination/backup DACL observations do not establish audit, encryption or network filesystem guarantees for another host. Asset scanning uses synthetic identifiers and generic path patterns, not real private inputs or exhaustive detection of identifying paraphrases.
+
+The smoke command selects the relocated blank through the exact intake block, dispatches its version and executes actual pinned schema validation plus reference semantics. Its no-task readiness is `not_assessed`; it performs no profile write and does not substitute for full acceptance. Reuse unchanged full-suite evidence for review; repeat the full command when runtime assets, scenario assertions or relevant host guarantees change.
