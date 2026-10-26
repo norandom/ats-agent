@@ -1,0 +1,20 @@
+{
+  "fictional": true,
+  "name": "Ivo Paperbrook",
+  "employer": "Invented Lantern Parcel Guild",
+  "complete": {
+    "sender_address": "8 Imaginary Quay, 00000 Exampletown",
+    "recipient_address": "Fictional Cloud Courier, 9 Sample Lane, 00000 Exampletown",
+    "application_date": "2026-10-26",
+    "salutation": {"en": "Dear Hiring Team,", "de": "Sehr geehrtes Auswahlteam,"},
+    "enclosures": ["cv"],
+    "provenance": "Wholly fictional metadata supplied for this test; no environmental defaults."
+  },
+  "missing": {
+    "sender_address": "8 Imaginary Quay, 00000 Exampletown",
+    "recipient_address": null,
+    "application_date": null,
+    "enclosures": ["cv"],
+    "missing_required": ["recipient_address", "application_date"]
+  }
+}

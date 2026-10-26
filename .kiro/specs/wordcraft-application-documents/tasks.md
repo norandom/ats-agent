@@ -5,7 +5,7 @@ Implement the approved document design as host-session skill instructions and bo
 Tasks are sequential: shared references, test fixtures and the selected desktop session make concurrent edits or live probes unsafe. Runtime asset ownership follows the design's file structure plan. Tests are part of each deliverable; no mandatory acceptance work is optional. Read privacy steering before work and use wholly fictional inputs.
 
 - [ ] 1. Establish the document verification foundation
-- [ ] 1.1 Prepare fictional inputs and the installed verification environment
+- [x] 1.1 Prepare fictional inputs and the installed verification environment
   - Reuse upstream profile, strategy and session validation adapters and the existing test-only MCP client. Confirm pnpm, Node.js, the pinned schema validator and selected desktop connection without reading candidate inputs.
   - Prepare unrelated fictional English/German application data, a requested CV/letter pair, missing letter metadata and a sufficiently long profile for pagination. Retain exact selected-original document identity and a private output destination.
   - Provide a deterministic test entry and read-only MCP smoke with version, executable/tool identities and privacy-safe evidence locations. Do not treat tool presence as demonstrated formatting support.
