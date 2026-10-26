@@ -49,7 +49,7 @@ Checkboxes above track completed specification pipelines if the batch workflow i
 | M4 — Live refinement | live-application-refinement | User answers questions and improves live documents with meaningful score changes | Preserved manual edits, consistent CV/letter changes, explicit profile-update choice, resume and stop behavior |
 | M5 — Shareable replacement | portable-skill-release | A clean installation works for a new user; obsolete Python workflow is retired | Installed-package end-to-end checks, archive allowlist/privacy audit, license checks, standalone operation and updated instructions |
 
-The profile half of M1 is implemented and validated; the WordCraft session design gate remains open. No complete delivery milestone or release is claimed. M2 strategy requirements may proceed using the validated profile contract.
+The profile half of M1 is implemented and validated; the WordCraft session design gate remains open. No complete delivery milestone or release is claimed. M2 strategy requirements are generated and reviewed, awaiting human approval before design.
 
 ## Execution Waves
 1. Profile and WordCraft session specifications can proceed independently.
