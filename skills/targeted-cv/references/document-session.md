@@ -1,4 +1,35 @@
-# Private document session record
+# Document session
+
+## Handle one request in the host session
+
+This is the entry protocol for the application and refinement workflows. The host follows these instructions directly, using [capability discovery](wordcraft-capabilities.md) and [document operations](wordcraft-operations.md). There is no background process or executable session coordinator. Keep one request in flight at a time, including its read-back and private persistence.
+
+1. Accept the caller's explicit document selection, kind (CV or cover letter), language, requested operation/content scope and selected destination where needed. Keep private draft content with the application. Never fill missing content from a previous applicant, host identity or candidate defaults. Return factual corrections to the owning application workflow for an explicit canonical-profile decision; this session never reads or writes the facts file to apply a correction. Styling, semantic review and question sequencing remain upstream.
+2. Select an ignored private record location or an explicitly selected private location outside the checkout. Load an existing record only as intent and historical evidence. Validate its closed schema and run `inspectSessionIntegrity` below. Invalid records or unavailable validation block writes; retain the original private file and explain the missing validation. Do not silently repair references or promote old evidence.
+3. Discover/revalidate the current desktop connection and its capabilities. At initial authoring, show the desktop through available launch/MCP controls, or request the one-time user foreground action described in the capability reference. Record only observed visibility. Respect subsequent focus changes. For a document or language switch, identify the requested kind, language and document to the user, resolve the current document's unsaved work, then explicitly select the intended document through MCP. A language switch selects a distinct binding; changing a label is not translation or selection. Never reuse the old document's targets or receipts for the new binding.
+4. Route the requested operation using the table below. Resolve capability blockers only for its dependencies. Bind and inspect fresh state using the operation reference; withhold work on ambiguous identity, missing read-back or unknown edit preconditions. Retain the requested change privately, including its original baseline and a precise next action. If unavailable access prevents a new baseline, preserve the existing intent/draft; do not invent an edit baseline to make a record validate.
+5. Before **every** create/edit/save/export dispatch, append a new intent and the inspected pre-dispatch baseline to the private record. Retain the original baseline as well when rebasing; use a new attempt ID and identify its predecessor in private intent context. For creation reserve an unbound logical binding first; only initial creation may lack an inspected baseline. Validate schema and integrity, write the record completely to the selected private location, and read it back to confirm the exact record. Use a temporary sibling and atomic replacement when host storage supports it, preserving the last good record on failure. A failed write/read-back or mismatching persisted record means **no MCP mutation**. Preserve the in-session draft, report the persistence failure and stop. A successful in-memory assignment is not persistence.
+6. Immediately before dispatch, recheck current identity, target/selection, scope, authorization and any destination collision. If those observations changed, update the baseline/intent and persist again. Invoke only the discovered MCP operation. Any dispatched mutation invalidates the binding's current snapshot and makes previous checks stale, even if its response is lost. Read back through MCP, append new snapshots and the operation outcome, then validate and persist the resulting record. Retain earlier pending/uncertain receipts as history; a later confirmation does not rewrite them. If outcome persistence fails after dispatch, report that limitation and retain in-session evidence; on resume treat the saved intent without a definitive completion as potentially dispatched and reconcile before writing. Never claim a durably completed operation from an unwritten result.
+7. Return the outcome and document kind/language/logical identity to the caller, plus confirmed artifact relationship/destination, current snapshot, check scopes and freshness, capability blockers and the next action for pending/uncertain work. Report unavailable or unexecuted checks as `not_assessed`; old checks remain stale. Save confirmation is separate from round-trip, rendering and reading-order checks. No result implies ATS compatibility or semantic accuracy.
+
+| Request | Required demonstrated operations | Host procedure |
+| --- | --- | --- |
+| Create | create, read | Resolve unsaved work; reserve logical binding; persist intent; create, bind and inspect |
+| Select/switch | open_select, read | Resolve unsaved work; open selected document, bind and inspect |
+| Inspect | read; render/extraction only when requested | Inspect selected state; record each requested check independently |
+| Edit | read, edit | Compare baseline/current state, verify exact selection, persist intent, scoped edit and read-back |
+| Save | read, save | Establish identity/destination, persist intent, save and confirm artifact |
+| Export DOCX | read, export | Establish identity and distinct destination/collision decision, persist intent, export and rebind |
+| Reopen/round trip | reopen, read | Resolve unsaved work; reopen exact artifact and inspect its source relationship |
+| Resume/recover | read plus operations required by the recovery inspection | Restore access, rebind, inspect effects; follow reconciliation before any new attempt |
+
+Pending outcomes use `selection`, `conflict` or `capability` with the retained intent ID. Known pre-dispatch persistence/validation failures use `failed` and explicitly state no dispatch. Dispatched ambiguity uses `uncertain`, never a successful or absent result. Read-only requests without an intent report a failed capability/selection outcome and next action in its message instead of manufacturing a mutation intent. The schema and integrity helper validate every outcome before storage, including receipt/intent operation agreement.
+
+## Resume without replay
+
+On resume or restored access, first validate the stored record, rediscover the connection and rebind through fresh MCP selection/identity and inspection. Renew the connection and evidence as specified below. Stored snapshots never establish current state. An intent without a definitive completion is not proof that dispatch never occurred: use the [reconciliation procedure](wordcraft-operations.md#reconcile-interrupted-operations), including the known pre-dispatch versus uncertain distinction. Inspect even when the last stored receipt says pending, since a crash may have occurred between dispatch and outcome persistence.
+
+Confirm a recovered effect without another mutation, linking the new confirmation's evidence to the original attempt and fresh inspection. Unresolved effects retain the uncertain receipt and block further writes on that document. Conclusively absent effects require renewed authorization and all current preconditions, followed by a new intent/baseline persistence. Never replay a stored tool call. A recovered/completed intent is consumed, not submitted again. Other documents may continue only after safe switching and independent binding.
 
 ## Contract integrity
 
@@ -113,3 +144,31 @@ Receipts record actual tool names and dispatched input-schema fingerprints, not 
 Never persist authentication keys, tokens, credentials or raw transport envelopes in this record. Closed objects reject undeclared secret fields; the host must also omit secrets from permitted text fields and fingerprints' source material. Store only selected private document data, with wholly fictional examples in reusable assets. No field permits a canonical-profile update.
 
 Every check conclusion is limited to its recorded scope and observed document state. A render or screenshot can support visual inspection only; it cannot establish parser/ATS compatibility. Reading-order and extraction checks need their own executed MCP evidence. Host semantic and presentation review remain separate from structural and integrity validation.
+
+## Optional dispatch guard
+
+After schema validation, this small pure helper checks the final mutation boundary. Load the unchanged integrity, capability and operation helpers from these references. `operationDecision` is the result of the applicable fresh operation procedure (including host semantic/authorization checks), never a cached decision. `persistedRecord` is the exact record read back from successful private storage, or null on failure. Request document/language must match the selected binding. This helper neither persists nor dispatches, and cannot prove host observations or storage durability. For resumed pending intents, the host must complete reconciliation above before invoking it. A retained uncertain receipt requires reconciliation; a confirmed recovery references that receipt in `evidenceIds`. Reattempt after proven absence uses the host procedure, retaining the uncertainty and its absence evidence, rather than overriding this conservative guard.
+
+```javascript
+function inspectSessionDispatch(input) {
+  const {record, observation, persistedRecord} = input;
+  const intent = record.intents.find(value => value.id === input.intentId);
+  const binding = intent && record.bindings.find(value => value.id === intent.documentId);
+  if (!binding || binding.id !== input.requestDocumentId || binding.language !== input.requestLanguage)
+    return {decision:'selection'};
+  const report = inspectCapabilityReport(record, observation);
+  const blocked = [intent.operation, 'read'].filter(operation => report.blocked.includes(operation));
+  if (blocked.length) return {decision:'capability', blocked};
+  for (const receipt of record.receipts.filter(value => value.documentId === binding.id && value.outcome.status === 'uncertain')) {
+    const recovered = record.receipts.some(value => value.documentId === binding.id &&
+      value.outcome.status === 'confirmed' && value.outcome.evidenceIds.includes(receipt.id));
+    if (!recovered) return {decision:'reconcile'};
+    if (receipt.outcome.intentId === intent.id) return {decision:'completed'};
+  }
+  if (input.operationDecision !== 'proceed') return {decision:input.operationDecision || 'selection'};
+  if (intent.operation !== 'create' && !intent.baselineSnapshotId) return {decision:'selection'};
+  if (!persistedRecord || JSON.stringify(record) !== JSON.stringify(persistedRecord)) return {decision:'persist'};
+  return {decision:'dispatch'};
+}
+```
+

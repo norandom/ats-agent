@@ -58,7 +58,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Boundary: Operation protocol_
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 7.3, 7.4_
 
-- [ ] 5. Integrate session requests, private persistence and downstream handoff
+- [x] 5. Integrate session requests, private persistence and downstream handoff
   - Route one request at a time through capability checks and document operations using the closed record contract.
   - Persist pending intent and baseline before dispatching every mutation; do not dispatch if persistence fails. Append outcomes and resume from fresh MCP state rather than replaying stored actions.
   - Connect document/language switching and operation receipts to callers without importing candidate defaults, changing canonical facts or implementing downstream styling and questions.
