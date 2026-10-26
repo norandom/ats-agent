@@ -30,7 +30,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: StrategyContext_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 7.4, 8.3_
 
-- [ ] 3. Implement employer analysis and evidence questions
+- [x] 3. Implement employer analysis and evidence questions
 - [x] 3.1 Interpret offer criteria and priorities with source references
   - Implement the host analysis protocol for atomic responsibilities, outcomes, qualifications and context with exact source spans.
   - Preserve required/preferred/unspecified priority, retain contradictions and keep inferred needs in a separate labelled collection.
@@ -48,7 +48,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Boundary: EvidencePlanner_
   - _Requirements: 1.5, 1.7, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 8.1, 8.2_
 
-- [ ] 3.3 Prioritize finite question batches and preserve dispositions
+- [x] 3.3 Prioritize finite question batches and preserve dispositions
   - Implement semantic distinction keys, priority tiers and stable ties, selected/deferred/suppressed sets, and the declared default and allowed question limits.
   - Preserve answered, skipped, not-applicable, confirmed-gap and pending states without treating nonanswers as inability.
   - Suppress rephrased duplicates and require a material reason for reopening; retain potential reusable answers as pending upstream updates.
