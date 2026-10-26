@@ -10,6 +10,7 @@ These describe existing code, not the target skill's runtime contract. No vendor
 
 ## Target Architecture
 
+- Use PowerShell for commands on Windows and Bash on Linux. On Windows, invoke `pnpm.exe` directly from PowerShell when a shell wrapper interferes with execution; do not switch to Command Prompt as a workaround.
 - Use Markdown skill instructions, reusable references, JSON schema and blank templates. Do not maintain a replacement Python application.
 - Keep the application flow session-based: the host follows the skill and operates WordCraft MCP. Use `pnpm` for Node tooling; JavaScript is limited to small deterministic helpers and tests, not a replacement application, background service or separate workflow engine. Use `pnpm exec node` for existing standalone checks without adding dependencies unnecessarily.
 - Host-agent reasoning replaces legacy model API calls. Local scripts perform deterministic extraction, validation and comparisons only; no model endpoints, model SDK or API-key requirement. Reuse useful legacy checks after correcting their limitations.

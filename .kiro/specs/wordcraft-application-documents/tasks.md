@@ -49,7 +49,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Requirements: 1.3, 1.4, 1.5, 2.6, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 7.4_
 
 - [ ] 4. Implement the two document presentation profiles
-- [ ] 4.1 Apply the approved CV presentation and dynamic pagination
+- [x] 4.1 Apply the approved CV presentation and dynamic pagination
   - Implement the blue single-column CV profile with prominent identity/role, optional shaded summary, recognizable headings, standard bullets and editable body paragraphs. Keep employer, role and date associations unambiguous.
   - Apply the approved project pattern: title, readable localized month/year range and short evidence paragraph. Keep senior role-scope paragraphs separate from achievement bullets and verify that this hierarchy survives rendering and extraction.
   - Apply the design's typography, spacing and keep-with-next rules through the verified commands. Preserve readable size and content-dependent length; use no photos, rating grids or graphic bullets.
@@ -116,3 +116,5 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
 ## Implementation Notes
 
 - Task 1.2: ordinary body paragraphs support measured recipient placement through document.layout caret line-top/height after reopen. Default text-box inset/wrapping and body extraction failed; do not use that recipe. Footer field cached strings may be empty while true PAGE/NUMPAGES objects persist and render correctly. Evidence remains private.
+
+- Task 4.1: cv-blue-1 is demonstrated on English/German one-page CVs and a two-page German expansion. A recorded cv-blue-1-project-break-1 variant starts projects on page two after visual review. Automatic fields persist; original restored. User requested stopping after this task; next is 4.2.
