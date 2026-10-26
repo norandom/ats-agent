@@ -1,0 +1,67 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"urn:targeted-cv:document-session:1.0",
+  "title":"Private WordCraft document session 1.0",
+  "type":"object", "additionalProperties":false,
+  "required":["schema_version","sessionId","connection","capabilities","bindings","snapshots","intents","receipts","checks"],
+  "properties":{
+    "schema_version":{"const":"1.0"}, "sessionId":{"$ref":"#/$defs/id"},
+    "connection":{"$ref":"#/$defs/connection"},
+    "previousConnections":{"type":"array","items":{"$ref":"#/$defs/connection"}},
+    "capabilities":{"type":"array","items":{"$ref":"#/$defs/capability"}},
+    "bindings":{"type":"array","items":{"$ref":"#/$defs/binding"}},
+    "snapshots":{"type":"array","items":{"$ref":"#/$defs/snapshot"}},
+    "intents":{"type":"array","items":{"$ref":"#/$defs/intent"}},
+    "receipts":{"type":"array","items":{"$ref":"#/$defs/receipt"}},
+    "checks":{"type":"array","items":{"$ref":"#/$defs/check"}}
+  },
+  "$defs":{
+    "id":{"type":"string","minLength":1},
+    "nullableText":{"type":["string","null"],"minLength":1},
+    "fingerprint":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "time":{"type":"string","format":"date-time"},
+    "evidence":{"type":"array","uniqueItems":true,"items":{"$ref":"#/$defs/id"}},
+    "operation":{"enum":["create","open_select","read","edit","save","reopen","export","render","extraction"]},
+    "connection":{
+      "type":"object","additionalProperties":false,"required":["id","server","version","mode","environmentFingerprint"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"server":{"$ref":"#/$defs/id"},"version":{"$ref":"#/$defs/nullableText"},"mode":{"enum":["desktop","headless"]},"environmentFingerprint":{"$ref":"#/$defs/fingerprint"}}
+    },
+    "capability":{
+      "type":"object","additionalProperties":false,"required":["operation","status","tool","inputSchemaFingerprint","format","connectionId","evidenceIds"],
+      "properties":{"operation":{"$ref":"#/$defs/operation"},"status":{"enum":["demonstrated","failed_or_unsupported","unavailable","unverified"]},"tool":{"$ref":"#/$defs/nullableText"},"inputSchemaFingerprint":{"anyOf":[{"$ref":"#/$defs/fingerprint"},{"type":"null"}]},"format":{"$ref":"#/$defs/nullableText"},"connectionId":{"$ref":"#/$defs/id"},"evidenceIds":{"$ref":"#/$defs/evidence"}},
+      "allOf":[{"if":{"properties":{"status":{"const":"demonstrated"}}},"then":{"properties":{"tool":{"type":"string"},"inputSchemaFingerprint":{"type":"string"},"format":{"type":"string"},"evidenceIds":{"minItems":1}}}}]
+    },
+    "binding":{
+      "type":"object","additionalProperties":false,"required":["id","connectionId","kind","language","path","nativeId","currentSnapshotId"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"connectionId":{"$ref":"#/$defs/id"},"kind":{"enum":["cv","cover_letter"]},"language":{"enum":["de","en"]},"path":{"$ref":"#/$defs/nullableText"},"nativeId":{"$ref":"#/$defs/nullableText"},"currentSnapshotId":{"$ref":"#/$defs/nullableText"}}
+    },
+    "snapshot":{
+      "type":"object","additionalProperties":false,"required":["id","documentId","connectionId","fingerprint","text","structure","selection","observedAt"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"documentId":{"$ref":"#/$defs/id"},"connectionId":{"$ref":"#/$defs/id"},"fingerprint":{"$ref":"#/$defs/fingerprint"},"text":{"type":"string"},"structure":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["part","description"],"properties":{"part":{"$ref":"#/$defs/id"},"description":{"type":"string"}}}},"selection":{"$ref":"#/$defs/nullableText"},"observedAt":{"$ref":"#/$defs/time"}}
+    },
+    "intent":{
+      "type":"object","additionalProperties":false,"required":["id","documentId","baselineSnapshotId","operation","target","context","replacement","scope","destination","format"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"documentId":{"$ref":"#/$defs/id"},"baselineSnapshotId":{"$ref":"#/$defs/nullableText"},"operation":{"enum":["create","edit","save","export"]},"target":{"$ref":"#/$defs/nullableText"},"context":{"$ref":"#/$defs/nullableText"},"replacement":{"type":["string","null"]},"scope":{"$ref":"#/$defs/id"},"destination":{"$ref":"#/$defs/nullableText"},"format":{"$ref":"#/$defs/nullableText"}},
+      "allOf":[{"if":{"properties":{"operation":{"const":"edit"}}},"then":{"properties":{"baselineSnapshotId":{"type":"string"},"target":{"type":"string"},"context":{"type":"string"},"replacement":{"type":"string"}}}},{"if":{"properties":{"operation":{"enum":["save","export"]}}},"then":{"properties":{"destination":{"type":"string"},"format":{"type":"string"}}}}]
+    },
+    "artifact":{
+      "type":"object","additionalProperties":false,"required":["documentId","destination","format","relationship"],
+      "properties":{"documentId":{"$ref":"#/$defs/id"},"destination":{"$ref":"#/$defs/id"},"format":{"$ref":"#/$defs/id"},"relationship":{"enum":["saved_document","export"]}}
+    },
+    "outcome":{"oneOf":[
+      {"type":"object","additionalProperties":false,"required":["status","value","evidenceIds"],"properties":{"status":{"const":"confirmed"},"value":{"type":"object","additionalProperties":false,"required":["documentId","snapshotId","artifact"],"properties":{"documentId":{"$ref":"#/$defs/id"},"snapshotId":{"$ref":"#/$defs/nullableText"},"artifact":{"anyOf":[{"$ref":"#/$defs/artifact"},{"type":"null"}]}}},"evidenceIds":{"allOf":[{"$ref":"#/$defs/evidence"},{"minItems":1}]}}},
+      {"type":"object","additionalProperties":false,"required":["status","reason","intentId","nextAction"],"properties":{"status":{"const":"pending"},"reason":{"enum":["selection","conflict","capability"]},"intentId":{"$ref":"#/$defs/id"},"nextAction":{"$ref":"#/$defs/id"}}},
+      {"type":"object","additionalProperties":false,"required":["status","intentId","evidenceIds","nextAction"],"properties":{"status":{"const":"uncertain"},"intentId":{"$ref":"#/$defs/id"},"evidenceIds":{"$ref":"#/$defs/evidence"},"nextAction":{"$ref":"#/$defs/id"}}},
+      {"type":"object","additionalProperties":false,"required":["status","code","message","evidenceIds"],"properties":{"status":{"const":"failed"},"code":{"$ref":"#/$defs/id"},"message":{"$ref":"#/$defs/id"},"evidenceIds":{"$ref":"#/$defs/evidence"}}}
+    ]},
+    "receipt":{
+      "type":"object","additionalProperties":false,"required":["id","documentId","connectionId","operation","tool","inputSchemaFingerprint","format","executedAt","outcome"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"documentId":{"$ref":"#/$defs/id"},"connectionId":{"$ref":"#/$defs/id"},"operation":{"$ref":"#/$defs/operation"},"tool":{"$ref":"#/$defs/nullableText"},"inputSchemaFingerprint":{"anyOf":[{"$ref":"#/$defs/fingerprint"},{"type":"null"}]},"format":{"$ref":"#/$defs/nullableText"},"executedAt":{"anyOf":[{"$ref":"#/$defs/time"},{"type":"null"}]},"outcome":{"$ref":"#/$defs/outcome"}}
+    },
+    "check":{
+      "type":"object","additionalProperties":false,"required":["id","documentId","snapshotId","snapshotFingerprint","producerTool","executedAt","scope","kind","status","freshness","evidenceIds","reason"],
+      "properties":{"id":{"$ref":"#/$defs/id"},"documentId":{"$ref":"#/$defs/id"},"snapshotId":{"$ref":"#/$defs/id"},"snapshotFingerprint":{"$ref":"#/$defs/fingerprint"},"producerTool":{"$ref":"#/$defs/nullableText"},"executedAt":{"anyOf":[{"$ref":"#/$defs/time"},{"type":"null"}]},"scope":{"$ref":"#/$defs/id"},"kind":{"enum":["content","structure","render","extraction","reading_order","round_trip","preservation"]},"status":{"enum":["passed","failed","not_assessed"]},"freshness":{"enum":["current","stale"]},"evidenceIds":{"$ref":"#/$defs/evidence"},"reason":{"$ref":"#/$defs/nullableText"}},
+      "allOf":[{"if":{"properties":{"status":{"const":"not_assessed"}}},"then":{"properties":{"reason":{"type":"string"}}},"else":{"properties":{"producerTool":{"type":"string"},"executedAt":{"type":"string"},"evidenceIds":{"minItems":1}}}}]
+    }
+  }
+}

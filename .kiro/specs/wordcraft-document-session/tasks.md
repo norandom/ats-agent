@@ -14,7 +14,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - _Boundary: Acceptance harness_
   - _Requirements: 1.5, 7.4, 7.5, 7.7_
 
-- [ ] 2. Establish private session records and operation evidence
+- [x] 2. Establish private session records and operation evidence
   - Implement the closed versioned record schema for capabilities, bindings, snapshots, pending intents, receipts and checks.
   - Define unique identifiers, resolvable references, state fingerprints, document relationships, outcome variants and explicit evidence freshness. Exclude authentication material.
   - Cover valid records, malformed or extra fields, broken references, mismatched states and unavailable checks. Do not confuse structural validity with semantic accuracy.
@@ -85,3 +85,7 @@ Tasks run sequentially because operation tasks share one reference and tests sha
   - Completion is fresh feature-level verification with executable smoke evidence, requirements/design alignment and an honest GO or outstanding-case report.
   - _Boundary: Acceptance harness_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
+
+## Implementation Notes
+
+- Task 2 review: when integrating pending/uncertain outcomes, add full schema-plus-integrity examples with matching receipt/intent operation types; current variant tests establish shape only.
