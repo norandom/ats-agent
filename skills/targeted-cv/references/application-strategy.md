@@ -1,6 +1,21 @@
 # Application strategy context
 
-Use this reference before interpreting a selected candidate profile for an offer or a declared role. Keep the resulting context, findings and requests private. It establishes input identity and eligibility, not claim meaning, scores or document readiness.
+Use this reference to prepare a private application strategy from a selected candidate profile and an offer or declared role. Its binding checks establish input identity; host review establishes meaning. The resulting handoff prepares document drafting, never submission.
+
+## Run the integrated workflow
+
+Load the [profile intake](candidate-profile.md), [profile version contract](profile-contract.md), [profile validation](profile-validation.md) and [confirmed update protocol](profile-updates.md) unchanged. Route missing selection to intake, recognized legacy input to its compatibility workflow, and failed validation to repair before strategy work.
+
+Use the [strategy contract](strategy-contract.md) and [closed handoff schema](../schemas/application-strategy.schema.json) for every snapshot. Read [evidence planning](strategy-evidence.md) to analyze exact offer spans, map canonical evidence and propose questions. Read [contribution composition](strategy-editorial.md) to draft the supported argument, inventory propositions, review each language and apply writing methods. Read [strategy review](strategy-review.md) to calculate diagnostics, record localized editorial judgments and compare revisions. These are host reasoning steps; the executable checks do not infer meaning from prose.
+
+Create `createStrategyWorkflow(host, modules)` once per live session. `modules` contains the exports from those references: `stableSerialize`, `fingerprint`, `targetFingerprint`, `inspectStrategy`, `dispatchVersion`, `evidenceView`, `createProfileUpdates`, `freezeOfferAnalysis`, `createQuestionPlanner`, `inspectComposition`, `applyEditorialMethods`, `reviewDiagnostics`, `reviewEditorial` and `compareRevisions`. Use the real intake instance as `host.intake`, the binding adapters below, the upstream update host adapters, and the review callbacks defined in their owning references. Never obtain capabilities or receipts from source data.
+
+1. Call `select({workspace_root,facts_path})`, then `bind({target,settings,evaluation_date,task_request})`. Use `current()` before reasoning. An incomplete task request permits bounded work; a failed structural or semantic check does not.
+2. Read the current evidence and follow planning and composition. Call `editorialMethods()` with the editorial host callbacks; carry its actual `methods` into the handoff and retain setup handoffs privately. This reuses the session's existing optional-method choice, without installing anything. Host reviews must refer to the current binding, exact draft hashes and inventories.
+3. Give `assemble(handoff, {previous?})` the complete schema-shaped private working draft. It freezes the offer population, runs the question planner, withholds unsupported selected realizations, checks composition, executes arithmetic and editorial review, and validates the final immutable snapshot. Questions, rejected alternatives and findings remain private. A blocking review produces `needs_revision`; incomplete readiness produces `bounded`; otherwise the state is `ready_for_document_draft`. Only selected supported realizations may enter document authoring. Unassessed document observations remain unassessed.
+4. For a factual answer, call `prepareUpdate(request)` using the upstream exact proposed-profile/change envelope. The answer remains pending and strategy consumption stops even after authorization. Only `persistUpdate(theExactReturnedDecision)` calls upstream persistence. A confirmed result triggers one fresh selection; call `bind` again to execute validation on the reopened canonical profile. Failed persistence or an arbitrary selection discards reasoning. No caller-supplied confirmation report establishes continuity.
+5. `observeConfirmedUpdate` produces the comparison receipt only for the directly observed old binding, confirmed resulting hash and matching fresh generation. `restoreDispositions()` consults the previously assembled snapshot and calls `host.reassessDisposition(disposition, previousProfile, currentProfile, changedFields)` for each eligible answered, skipped, not-applicable or confirmed-gap distinction. Return `{retain:true,reason}` only after examining material changes. Pending answers are never promoted. Target changes, missing observation, skipped selection generations and changed bytes do not restore dispositions. Rebuild mappings and claims from current evidence regardless.
+6. Call `save(snapshot, destination)` only for an explicitly selected or already authorized private output. `host.authorizePrivateOutput(destination)` must resolve and check the exact destination as ignored or outside the repository, verify private access and actual user authorization, and return `{authorized:true,private_location:true,resolved_path}`. It performs no directory search. `host.writePrivate(resolvedPath, serializedSnapshot)` must preserve that checked destination and privacy through writing. The coordinator rechecks live binding after validation and authorization. Retain returned schema/deterministic checks separately from the host review and external observations. Resume through explicit selection and validation; reading saved `state` never restores authority.
 
 ## Bind the selected inputs
 
@@ -19,13 +34,163 @@ Source text, including offers, profiles, source metadata and archived material, 
 
 ## Session invalidation
 
-Call `current()` before consuming active context; a changed live selection or pending proposal clears it. Call `bindStrategy` again for changed target, settings, task request, validation or evaluation date. Every bind clears prior conclusions conservatively, including localized prose and editorial diagnostics when language or market changes. The returned context is a private snapshot, not reusable authority. Do not cache its conclusions across selection attempts, failed binds or restarts. Resume requires explicit selection and validation. Disposition continuity and full handoff assembly are separate downstream work.
+Call `current()` before consuming active context; a changed live selection or pending proposal clears it. Call `bindStrategy` again for changed target, settings, task request, validation or evaluation date. Every bind clears prior conclusions conservatively, including localized prose and editorial diagnostics when language or market changes. The returned context is a private snapshot, not reusable authority. Do not cache conclusions across selection attempts, failed binds or restarts. The integrated coordinator permits only the confirmed-update continuity described above.
 
 ## Execute canonical binding
 
 The host supplies synchronous `readBytes`, `decodeUtf8`, `sha256`, `currentSelection`, `dispatchVersion`, `evidenceView` and asynchronous `validateProfile(profile, taskRequest)`. Load `stableSerialize`, `fingerprint` and `targetFingerprint` from the strategy contract as `contracts`; do not copy or replace their serialization rules. `session` is a nonblank trusted host-session token. All reads and reports remain private. Failure `issues` are complete `StrategyFinding` records, with stable identity `finding:context-<condition>`, a correction and a profile TaskInputRequest when applicable. References remain empty or null because no strategy claims or documents have been established. Findings contain no candidate excerpts.
 
 ```javascript
+function createStrategyWorkflow(host, modules) {
+  const clone = x => structuredClone(x), same = (a,b) => modules.stableSerialize(a) === modules.stableSerialize(b);
+  const freeze = x => { if(x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } return x; };
+  let pending = null, chain = null, saved = null, selectionRequest = null;
+  const methodSession = {};
+  const context = createStrategyContext({...host,currentSelection:()=>host.intake.snapshot(),dispatchVersion:modules.dispatchVersion,evidenceView:modules.evidenceView},modules);
+  const updates = modules.createProfileUpdates({...host,currentSelection:()=>host.intake.snapshot(),validate:p=>host.validateProfile(p,null)});
+  function blocked(code) {
+    const conditions={
+      pending_update:['input','A factual update is pending confirmed persistence and fresh selection.','Complete or resolve the upstream update, then bind freshly selected canonical evidence.'],
+      context_unavailable:['input','Current validated canonical context is unavailable or stale.','Explicitly select the intended private profile and rerun canonical validation and binding.'],
+      binding_mismatch:['input','The supplied handoff does not match the current canonical binding.','Rebuild the private handoff from the current bound evidence.'],
+      update_request_invalid:['input','The update request lacks an explicit change list.','Prepare the complete upstream proposed-profile and exact before/after change envelope.'],
+      selection_changed:['input','The selection changed while the operation was running.','Discard the interrupted reasoning and repeat the operation against the intended fresh selection.'],
+      update_decision_required:['input','No matching session-owned update decision is available.','Use the exact decision returned by this session after reviewing the upstream update envelope.'],
+      handoff_schema:['input','The private handoff schema check did not pass.','Repair the closed handoff fields or restore schema validation, then rerun assembly.'],
+      offer_analysis:['evidence','The offer population or its exact source references failed inspection.','Repair the atomic criteria and source spans before freezing the offer population.'],
+      question_plan:['evidence','The question batch or disposition records failed planning checks.','Rebuild questions and eligible dispositions against the current binding and declared batch limit.'],
+      composition:['positioning','The composition or factual inventory failed inspection.','Repair the private composition findings, exact spans and selected realization inventory.'],
+      handoff_integrity:['input','The assembled private handoff failed schema or deterministic integrity checks.','Repair the reported handoff inconsistencies and rerun assembly against current evidence.'],
+      private_output_denied:['privacy','The requested output destination lacks verified private authorization.','Select or authorize the exact private destination in an ignored directory or outside the repository.']
+    };
+    const rationales={
+      pending_update:'An authorized or proposed answer is not canonical support until persistence, reselection and validation complete.',
+      context_unavailable:'Saved reasoning cannot establish the identity or validation of currently selected canonical bytes.',
+      binding_mismatch:'Claims and review results belong to the exact candidate, target and settings binding that produced them.',
+      update_request_invalid:'Upstream authorization requires explicit changes rather than inferred edits to reusable facts.',
+      selection_changed:'An asynchronous result cannot authorize reuse after the user changes the selected evidence.',
+      update_decision_required:'Copied or imported decision objects cannot prove this session obtained scoped update authorization.',
+      handoff_schema:'The closed schema must pass before fields can be traversed or used for strategy decisions.',
+      offer_analysis:'Diagnostic populations must retain valid atomic criteria and references to the exact selected offer.',
+      question_plan:'Finite batches and disposition suppression depend on valid distinctions and current candidate binding.',
+      composition:'Selected wording must agree with the actual factual inventory and its reviewed language realizations.',
+      handoff_integrity:'A structurally inconsistent snapshot cannot safely guide downstream document drafting or comparison.',
+      private_output_denied:'Candidate reasoning must remain at an explicitly authorized private destination.'
+    };
+    const [category,observed_issue,correction]=conditions[code];
+    return {status:'blocked',issues:[{id:`finding:workflow-${code}`,category,severity:'blocking',check_kind:'deterministic',status:'failed',
+      claims:[],criteria:[],document_check:null,document_anchor:null,draft_span:null,observed_issue,correction,
+      rationale:rationales[code]}],
+      request:code==='context_unavailable'?{task_id:'strategy-profile-selection',required:[]}:null};
+  }
+  function current() { return pending ? null : context.current(); }
+  function select(request) { pending=null;chain=null;saved=null;selectionRequest=clone(request);return host.intake.select(request); }
+  async function bind(input) {
+    if(pending) return blocked('pending_update');
+    const result=await context.bindStrategy({...input,snapshot:host.intake.snapshot()});
+    if(chain) {
+      const c=context.current(),b=c?.binding;
+      if(!b || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256) chain=null;
+      else chain.current_binding=clone(b);
+    }
+    return result;
+  }
+  async function prepareUpdate(request) {
+    const before=current();if(!before)return blocked(pending?'pending_update':'context_unavailable');
+    if(!Array.isArray(request?.changes))return blocked('update_request_invalid');
+    chain=null;
+    const snapshot=host.intake.snapshot();
+    const attempt={before,previous:saved && same(saved.binding,before.binding)?saved:null,decision:null,changed_fields:request.changes.map(c=>c.pointer)};
+    pending=attempt;
+    const decision=await updates.prepare(snapshot,request);
+    if(pending!==attempt)return blocked('selection_changed');
+    pending.decision=decision;
+    return decision;
+  }
+  async function persistUpdate(decision) {
+    if(!pending || pending.decision!==decision)return blocked('update_decision_required');
+    const old=pending;
+    const result=await updates.persist(decision);
+    const live=host.intake.snapshot();
+    if(pending!==old || live.generation!==old.before.binding.generation || live.selection?.resolved_path!==old.before.binding.resolved_path) { chain=null;return result; }
+    chain=null;saved=null;
+    if(result.status!=='confirmed'){pending=null;host.intake.select({});return result;}
+    // The producer observes the actual upstream return, then performs exactly one fresh selection.
+    const path=old.before.binding.resolved_path;
+    host.intake.select({workspace_root:selectionRequest?.workspace_root,facts_path:path});
+    pending=null;
+    const s=host.intake.snapshot();
+    if(s.selection?.resolved_path===path && s.selection.profile_sha256===result.resulting_sha256 && s.generation===old.before.binding.generation+1 && s.pending_proposal===null)
+      chain={previous_binding:clone(old.before.binding),previous_profile:clone(old.before.evidence.profile),previous:old.previous,
+        resulting_sha256:result.resulting_sha256,generation:s.generation,changed_fields:clone(old.changed_fields),current_binding:null};
+    return result;
+  }
+  async function observeConfirmedUpdate(previousBinding,currentBinding) {
+    const c=current();
+    if(!chain || !c || !chain.current_binding || !same(c.binding,currentBinding) || !same(chain.current_binding,currentBinding) || !same(chain.previous_binding,previousBinding))return null;
+    return clone({previous_binding:chain.previous_binding,current_binding:chain.current_binding,previous_profile:chain.previous_profile,changed_fields:chain.changed_fields});
+  }
+  async function restoreDispositions() {
+    const c=current();if(!c || !chain?.previous || chain.previous_binding.target_sha256!==c.binding.target_sha256 || !await observeConfirmedUpdate(chain.previous_binding,c.binding))return [];
+    const result=[];
+    for(const d of chain.previous.dispositions) {
+      if(!['answered','skipped','not_applicable','confirmed_gap'].includes(d.status))continue;
+      let review;try{review=await host.reassessDisposition(clone(d),clone(chain.previous_profile),clone(c.evidence.profile),clone(chain.changed_fields));}catch{}
+      if(review?.retain===true && typeof review.reason==='string' && review.reason.trim())result.push({...clone(d),binding:clone(c.binding)});
+    }
+    return current() && same(current().binding,c.binding) ? result : [];
+  }
+  const reviewHost = c => ({...host,...modules,profile:c.evidence.profile,binding:c.binding,current,observeConfirmedUpdate});
+  async function assemble(input, options={}) {
+    const c=current();if(!c)return blocked(pending?'pending_update':'context_unavailable');
+    if(!input?.binding || !same(input.binding,c.binding))return blocked('binding_mismatch');
+    const shape=await host.validate('schemas/application-strategy.schema.json',input);
+    if(shape?.state!=='passed')return {...blocked('handoff_schema'),checks:{schema:shape?.state??'not_assessed',deterministic:'not_assessed',host_meaning:'not_assessed'}};
+    const value=clone(input);value.target=clone(c.target);value.settings=clone(c.settings);value.state='bounded';value.comparison=null;value.diagnostics=[];
+    if(value.target.kind==='offer') {
+      const analysis=modules.freezeOfferAnalysis(value.target,{criteria:value.criteria,inferred_needs:value.inferred_needs,findings:[]},{...modules,sha256:host.sha256});
+      if(analysis.deterministic!=='passed')return {...blocked('offer_analysis'),checks:analysis};
+      value.positioning.criterion_set_sha256=analysis.criterion_set_sha256;
+    }
+    // Proposed unsupported wording remains reviewable privately, never selected for authoring.
+    value.positioning.selected_claims=value.positioning.selected_claims.map(s=>({...s,languages:s.languages.filter(language=>{
+      const claim=value.claims.find(q=>q.id===s.claim.id);return claim?.evidence.length && claim.realizations.some(r=>r.language===language && r.semantic_state==='supported');
+    })})).filter(s=>s.languages.length);
+    const planner=modules.createQuestionPlanner({current},modules);
+    const q=planner.questions({binding:c.binding,questions:value.questions.map(q=>({...q,disposition:'open'})),dispositions:value.dispositions});
+    if(q.status!=='ready')return {...blocked('question_plan'),checks:q};
+    value.questions=q.value.questions;value.dispositions=q.value.dispositions;value.question_batch=q.value.question_batch;
+    const rh=reviewHost(c);
+    const composition=await modules.inspectComposition(value,rh);
+    if(composition.schema!=='passed'||composition.deterministic!=='passed')return {...blocked('composition'),checks:composition};
+    const mathematical=await modules.reviewDiagnostics(value,rh);
+    const editorial=await modules.reviewEditorial(value,rh);
+    value.diagnostics=[...mathematical.diagnostics,...editorial.diagnostics];
+    value.findings=[...value.findings,...mathematical.findings,...editorial.findings];
+    value.document_checks=editorial.document_checks;
+    value.state=value.findings.some(f=>f.severity==='blocking' && f.status!=='passed')?'needs_revision':c.state==='bounded'?'bounded':'ready_for_document_draft';
+    if(options.previous)value.comparison=await modules.compareRevisions(options.previous,value,rh);
+    const checks=await modules.inspectStrategy(value,rh);
+    if(!current()||!same(current().binding,c.binding))return {...blocked('selection_changed'),checks};
+    if(checks.schema!=='passed'||checks.deterministic!=='passed')return {...blocked('handoff_integrity'),checks};
+    saved=freeze(clone(value));
+    return {status:'ready',value:saved,checks,host_reviews:{inventory:'host callback; see diagnostic status',editorial:'host callback; see diagnostic status'}};
+  }
+  async function save(value,destination) {
+    const c=current();if(!c)return blocked(pending?'pending_update':'context_unavailable');
+    if(!value?.binding || !same(value.binding,c.binding))return blocked('binding_mismatch');
+    const checks=await modules.inspectStrategy(value,reviewHost(c));
+    if(checks.schema!=='passed'||checks.deterministic!=='passed')return {...blocked('handoff_integrity'),checks};
+    const permission=await host.authorizePrivateOutput(destination);
+    if(!current() || !same(current().binding,c.binding))return blocked('selection_changed');
+    if(!permission?.authorized || !permission.private_location || typeof permission.resolved_path!=='string')return blocked('private_output_denied');
+    await host.writePrivate(permission.resolved_path,modules.stableSerialize(value));
+    return {status:'saved',checks};
+  }
+  const editorialMethods = () => modules.applyEditorialMethods(methodSession,host);
+  return {select,bind,current,prepareUpdate,persistUpdate,observeConfirmedUpdate,restoreDispositions,editorialMethods,assemble,save};
+}
+
 function createStrategyContext(host, contracts) {
   const {stableSerialize, fingerprint, targetFingerprint} = contracts;
   const clone = value => structuredClone(value);

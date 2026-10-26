@@ -101,7 +101,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Requirements: 6.1, 6.3, 7.1, 7.3, 7.4_
 
 - [ ] 6. Integrate and validate the portable strategy capability
-- [ ] 6.1 Integrate canonical updates, continuity and private handoff
+- [x] 6.1 Integrate canonical updates, continuity and private handoff
   - Connect context, planning, composition and review with the unchanged upstream profile workflow and authorized private output locations.
   - Demonstrate a proposed answer staying pending until confirmed persistence and fresh selection; use a host-observed continuity record to restore eligible dispositions and comparisons only across that verified chain.
   - Assemble and validate bounded, needs-revision and ready-for-document-draft handoffs, withholding unsupported selected claims while retaining useful private questions and diagnostics.
@@ -126,3 +126,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - Demonstrate a clean final handoff and all acceptance coverage with executable assertions separated from editorial review. Record unresolved checks honestly; do not claim WordCraft authoring, package release or legacy retirement.
   - _Boundary: Verification_
   - _Requirements: 1.2, 1.8, 6.1, 6.2, 6.3, 6.4, 6.7, 6.8, 7.1, 7.2, 7.3, 7.4, 8.3, 8.4, 8.5_
+
+## Implementation Notes
+
+- Coordinator failures must use the complete StrategyFinding result union; validate failure envelopes against the closed schema as well as successful handoffs.
