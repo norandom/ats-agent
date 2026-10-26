@@ -13,7 +13,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
   - _Requirements: 1.1, 8.4, 8.5_
 
 - [ ] 2. Establish private strategy contracts and trusted context
-- [ ] 2.1 Define the versioned handoff and reference integrity rules
+- [x] 2.1 Define the versioned handoff and reference integrity rules
   - Implement the closed strategy contract, local schema definitions, typed ID namespaces, null rules, exact text spans and stable serialization for fingerprints.
   - Define all planned evidence, claim, question, guidance, diagnostic, method and document-observation records without adding fields to canonical candidate facts.
   - Supply deterministic checks for invalid references, malformed bindings, duplicate IDs, out-of-range spans and invalid handoff states.

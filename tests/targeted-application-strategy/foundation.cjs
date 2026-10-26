@@ -9,7 +9,7 @@ const { spawnSync } = require('node:child_process');
 const { classifyCheck } = require('../portable-candidate-profile/foundation.cjs');
 const root = path.resolve(__dirname, '../..');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-const assetNames = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-v1.schema.json', 'templates/cv-facts.blank.json'];
+const assetNames = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-v1.schema.json', 'templates/cv-facts.blank.json', 'references/strategy-contract.md', 'schemas/application-strategy.schema.json'];
 const validatorArgs = ['--from', 'check-jsonschema==0.38.2', 'check-jsonschema'];
 function extractBlock(text, names) {
   const blocks = [...text.matchAll(/^```javascript\r?\n([\s\S]*?)^```\s*$/gm)];
