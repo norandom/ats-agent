@@ -69,7 +69,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Requirements: 3.1, 3.5, 3.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
 - [ ] 5. Establish document checks and their consumer handoff
-- [ ] 5.1 Verify observed text, structure and all-page layout
+- [x] 5.1 Verify observed text, structure and all-page layout
   - Implement the verification protocol for exact read-back and separate semantic review, reading-order associations, field/part inspection, every rendered page and the applicable sourced letter checklist.
   - Measure resulting layout rather than trust command arguments; retain render scale, page coverage, producer, method and evidence. Body-only extraction cannot establish footer fields, and screenshots cannot establish reading order.
   - Bind checks to observed snapshots and saved/reopened artifact bytes. Invalidate affected results after edits and distinguish passed, failed and not assessed without hiding missing pages or unobservable properties.
