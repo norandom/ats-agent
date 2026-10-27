@@ -48,7 +48,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Boundary: Composition_
   - _Requirements: 1.3, 1.4, 1.5, 2.6, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 7.4_
 
-- [ ] 4. Implement the two document presentation profiles
+- [x] 4. Implement the two document presentation profiles
 - [x] 4.1 Apply the approved CV presentation and dynamic pagination
   - Implement the blue single-column CV profile with prominent identity/role, optional shaded summary, recognizable headings, standard bullets and editable body paragraphs. Keep employer, role and date associations unambiguous.
   - Apply the approved project pattern: title, readable localized month/year range and short evidence paragraph. Keep senior role-scope paragraphs separate from achievement bullets and verify that this hierarchy survives rendering and extraction.
@@ -59,7 +59,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 1.2, 2, 3.1, 3.2_
   - _Requirements: 3.1, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 4.2 Apply confirmed letter inputs and the sourced Germany layout
+- [x] 4.2 Apply confirmed letter inputs and the sourced Germany layout
   - Implement letter preparation from confirmed sender, recipient, application date and selected enclosures, with an appropriate named or reviewed neutral salutation. Never infer addresses, signature images or accompanying documents.
   - Implement the personal Form B profile in either language using the verified placement mechanism. Encode the sourced zones/spacing and project typography/branding separately, with edition, authority and access limits attached to checklist rules.
   - Keep missing required inputs pending only for the affected letter. Let the letter structure take precedence over decorative examples; outside Germany, do not assert a DIN convention unless requested.
