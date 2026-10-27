@@ -76,6 +76,18 @@ Context, evidence planning, composition and review cover the required seams with
 - Optional skills can drift: record actual execution/version, preserve user constraints and test the fallback.
 - Text-only success can be mistaken for full application readiness: handoff state authorizes document drafting only; document checks retain their separate scope.
 
+## Application-context correction discovery (27 October 2026)
+
+Integration-focused discovery followed `kiro-spec-design` and its light-discovery, synthesis and review rules. The approved correction preserves career evidence and adds claim-only context references. No new dependency or external API is needed. COBESY/Humanizer guidance keeps the explanation centered on the source boundary.
+
+The existing schema and reference blocks confirm four related failure points: assembly, editorial review, diagnostic calculation and diagnostic integrity recomputation all equate an empty career-evidence array with unsupported content. They must consume one source-eligibility rule together. Claim classification is new and must receive semantic review; structure cannot detect a qualification disguised as application intent.
+
+`createStrategyContext.current()` currently rechecks profile selection only. Current target/context checks and post-await checks are necessary to prevent stale confirmation reuse. Revision comparison also needs independently retained prior source observations and signatures that include source classification and references.
+
+Document manifests currently accept truthy confirmation and nonempty provenance strings for letter inputs, and reference the mutable current strategy Binding schema. The correction therefore includes explicit metadata-to-context linkage and versioned historical document schema references. This is consumer integration, not a second document support engine.
+
+Synthesis: preserve canonical EvidenceRef and qualification mappings; extend only claim sources and their application binding. Use existing JSON Schema, deterministic reference blocks and host semantic review. Avoid a generic evidence service, new runtime or canonical-profile fields for application data. See [the design amendment](application-context-design.md).
+
 ## References
 
 - [Approved requirements](requirements.md).

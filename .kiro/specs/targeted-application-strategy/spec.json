@@ -1,9 +1,9 @@
 {
   "feature_name": "targeted-application-strategy",
   "created_at": "2026-10-26T07:52:52.6528929+01:00",
-  "updated_at": "2026-10-26T14:00:31.5153655+01:00",
+  "updated_at": "2026-10-27T13:09:00+01:00",
   "language": "en",
-  "phase": "implementation-complete",
+  "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -19,9 +19,20 @@
     }
   },
   "ready_for_implementation": true,
-  "validation": {
+  "validation_history": [{
     "decision": "GO",
     "report": "validation-report.md",
-    "validated_on": "2026-10-26"
+    "validated_on": "2026-10-26",
+    "scope": "Original 1.0 implementation before application-context correction"
+  }],
+  "amendment": {
+    "direction_approved": true,
+    "design": "application-context-design.md",
+    "review": "application-context-design-review.md",
+    "design_gate": "PASS",
+    "implementation_status": "in-progress",
+    "task_plan_status": "approved; completed original tasks retained",
+    "task_plan_gate": "PASS",
+    "task_plan_review": "application-context-task-review.md"
   }
 }

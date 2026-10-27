@@ -1,5 +1,7 @@
 # Design: targeted application strategy
 
+The approved [application-context amendment](application-context-design.md) defines the 1.1 correction to this design. Its explicit source, binding, compatibility and consumer rules supersede the corresponding 1.0 rules below. The original implementation and validation remain historical evidence; the amendment has not been implemented.
+
 ## Overview
 
 Application Strategy turns an explicitly selected private profile and an offer or declared role into a contribution argument, supported claims, useful questions and qualified diagnostics. The host agent interprets evidence and writes. Deterministic checks enforce input bindings, reference integrity, question limits and score arithmetic.

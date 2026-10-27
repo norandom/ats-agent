@@ -130,3 +130,56 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
 ## Implementation Notes
 
 - Coordinator failures must use the complete StrategyFinding result union; validate failure envelopes against the closed schema as well as successful handoffs.
+
+## Application-context correction
+
+The approved [design amendment](application-context-design.md) extends the completed 1.0 work above. Tasks 7 through 11 are sequential because they share the contract, reference blocks and fixtures. Existing pnpm, uvx validation and upstream adapters from task 1 are reused; no new service or dependency setup is required. Each task includes its focused checks and task-local review. Original completion records remain historical evidence, not acceptance of the correction.
+
+- [ ] 7. Extend the versioned source contract and shared support eligibility
+  - Preserve the original strategy schema for historical validation and introduce the approved 1.1 context, binding, subject and contextual-reference shapes. Reject unknown versions and require fresh reconstruction rather than upgrading ready states by inserting defaults.
+  - Keep career evidence unchanged and exclusive to qualification mappings. Resolve offer spans and application-value pointers against independently supplied sources, with one shared eligibility rule for subsequent consumers.
+  - Preserve unsupported claims with empty arrays and distinguish well-formed pending confirmation from malformed, forged, stale or wrong-application evidence. Support confirmed empty enclosures and the existing deterministic hash convention.
+  - Reuse the real schema validator and shipped-reference test loader. Update fictional contract fixtures and test source classification, closed shapes, exact spans, context bindings, null context and archived validation without weakening career checks.
+  - Completion is passing focused real-schema and reference-integrity checks, with original 1.0 historical fixtures still valid against their archive and rejected by the current consumer.
+  - _Boundary: StrategyContext_
+  - _Requirements: 1.1, 1.3, 1.5, 1.6, 1.8, 3.1, 3.2, 7.1, 7.4, 8.3, 8.4, 8.5_
+
+- [ ] 8. Bind independently selected application inputs throughout the host session
+  - Connect private application context and confirmation observations to current profile and target selection. Recheck current selections after asynchronous operations and before assembly; never let an imported draft establish its own confirmation.
+  - Keep application records outside career facts. Reusable factual answers still require the existing confirmed profile-update path. Resume requires independent context selection and confirmation, while a canonical-only CV can proceed without letter context.
+  - Invalidate affected claims and observations after context, target or confirmation changes. Retain independently established prior source observations for later comparisons; saved handoff bindings alone cannot establish historical trust.
+  - Connect assembly to shared eligibility and retain pending contextual claims without authorizing their selected draft output. Exercise selection changes during validation, forged confirmation, wrong-application reuse, role-only targets and null context.
+  - Completion is passing host-flow integration checks through real upstream profile validation, demonstrating no canonical writes and no ready handoff from stale selections.
+  - _Boundary: StrategyContext_
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 7.1, 7.4, 8.3, 8.4_
+
+- [ ] 9. Integrate contextual claims with editorial review and comparable diagnostics
+  - Route missing or pending application context to a focused application-specific input request through evidence planning. Verify that the request names the missing distinction, respects existing question limits/dispositions, and does not become a career-profile update or qualification gap.
+  - Apply reviewed candidate, offer, application and mixed subject distinctions. Split independent propositions and retain every needed source for wording that relates candidate experience to employer needs.
+  - Connect editorial review, support calculation and integrity recomputation to the same eligibility result. Preserve the complete factual inventory, existing formulas, weights and career-only offer-coverage mappings.
+  - Review English and German realizations independently. Demonstrate a candidate qualification disguised as application intent being rejected by semantic review; distinguish executed structural checks from host judgment. Pending letter evidence must not invalidate independently supported CV content.
+  - Compare support and editorial results only with independently trusted prior context and matching application identity/context, subject and reference populations. Explain non-comparability after changes; retain eligible career-only coverage comparison under its existing conditions.
+  - Completion is consistent assembly/editorial/diagnostic outcomes for contextual-only and mixed claims, unchanged arithmetic regressions, and reviewed bilingual negative cases for misclassification and inflated relationships.
+  - _Boundary: Integration: EvidencePlanner, PositioningEditor, StrategyReview_
+  - _Depends: 7, 8_
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.4, 5.1, 6.1, 6.2, 6.3, 6.4, 6.8, 7.1, 7.2, 7.3, 7.4_
+
+- [ ] 10. Integrate confirmed context into the document consumer
+  - Introduce document manifest 1.1 and archive 1.0 with its historical strategy-binding reference pinned. Reject unknown/current-incompatible versions and rebuild current manifests from reviewed strategy inputs without inheriting old delivery status.
+  - Link recipient, date, salutation and enclosure metadata to ordered upstream confirmed context references. Verify exact values and declared language formatting, including confirmed no enclosures. Caller-supplied confirmation flags or arbitrary provenance strings are insufficient.
+  - Keep missing references and pending confirmation local to the affected letter. Preserve supported CV output, existing document identity/manual-edit handling and the unchanged WordCraft session interface.
+  - Reject context changes through the check-only refresh path; compose and review changed content through the corrected upstream strategy instead. Update actual acceptance fixtures to consume the new contract without inventing canonical facts or a second support evaluator.
+  - Completion is passing document-consumer integration checks against real 1.1 strategy data, stable historical manifest validation, and rejection of metadata mismatch, stale refresh and forged confirmation. Full WordCraft acceptance remains M3 tasks 7.1 and 7.2.
+  - _Boundary: Document consumer integration_
+  - _Depends: 7, 8, 9_
+  - _Requirements: 1.3, 1.5, 3.2, 4.4, 6.3, 6.4, 7.1, 7.3, 7.4, 8.4_
+
+- [ ] 11. Validate the corrected strategy and release the M3 acceptance dependency
+  - Run fresh canonical, context, editorial, comparison and consumer regression checks against the exact current shipped assets; retain actual source and asset bindings in the private evidence.
+  - Run the corrected assets and schema archives outside the checkout with explicit allowlists, using existing tooling without sibling repositories, candidate data, model credentials or new endpoints. Recheck all 48 criteria against original coverage plus the correction, rather than repeating unrelated implementation.
+  - Complete semantic review of the bilingual contextual and mixed-source cases, and separately verify deterministic rejection cases. Run repository/index privacy checks and inspect the shareable changes manually.
+  - Completion is a reviewed strategy validation report that states the current contract version, tests, evidence limits and GO or unresolved findings. Preserve the prior 1.0 GO as historical; do not claim complete WordCraft application acceptance from strategy tests.
+  - On GO, resume existing application-document tasks 7.1 and 7.2 for actual bilingual CV/letter authoring, read-back, save/reopen, all-page review, manual-edit preservation, relocation and final feature validation. Those tasks retain ownership of M3 completion.
+  - _Boundary: Verification_
+  - _Depends: 7, 8, 9, 10_
+  - _Requirements: 1.1, 1.8, 3.2, 4.4, 6.1, 6.3, 6.4, 6.8, 7.1, 7.3, 7.4, 8.3, 8.4, 8.5_
