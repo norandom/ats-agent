@@ -1,6 +1,6 @@
 # Design: targeted application strategy
 
-The approved [application-context amendment](application-context-design.md) defines the 1.1 correction to this design. Its explicit source, binding, compatibility and consumer rules supersede the corresponding 1.0 rules below. The original implementation and validation remain historical evidence; the amendment has not been implemented.
+The approved [application-context amendment](application-context-design.md) defines the 1.1 correction to this design. Its explicit source, binding, compatibility and consumer rules supersede the corresponding 1.0 rules below. The original implementation and validation remain historical evidence; the amendment is implemented and validated in contract 1.1.
 
 ## Overview
 

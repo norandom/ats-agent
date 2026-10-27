@@ -3,7 +3,11 @@
     "requirement": "1.1",
     "suite": "context.test.cjs",
     "assertion": "assert.equal(r.status,'ready'); assert.deepEqual(validated,p);",
-    "property": "Exact selected parsed profile validation"
+    "property": "Exact selected parsed profile validation",
+    "correction": {
+      "suite": "application-context.test.cjs",
+      "assertion": "assert.deepEqual(currentSchema.$defs.EvidenceRef,archiveSchema.$defs.EvidenceRef);"
+    }
   },
   {
     "requirement": "1.2",
@@ -15,7 +19,11 @@
     "requirement": "1.3",
     "suite": "context.test.cjs",
     "assertion": "assert.equal(r.value.target.sha256,hash(fixtures.offer('operations').text));",
-    "property": "Separate offer fingerprint"
+    "property": "Separate offer fingerprint",
+    "correction": {
+      "suite": "host-context.test.cjs",
+      "assertion": "let r=await bind();assert.equal(r.status,'ready');assert.equal(r.value.binding.application_id,application.application_id);"
+    }
   },
   {
     "requirement": "1.4",
@@ -27,13 +35,21 @@
     "requirement": "1.5",
     "suite": "context.test.cjs",
     "assertion": "assert.equal(incomplete.value.state,'bounded'); assert.equal(incomplete.value.evidence.validation.readiness,'incomplete');",
-    "property": "Incomplete readiness bounds positioning"
+    "property": "Incomplete readiness bounds positioning",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "const pendingBuilt=await workflow.assemble(pending);assert.equal(pendingBuilt.status,'ready',JSON.stringify(pendingBuilt));assert.equal(pendingBuilt.application_input_requests.length,1);assert.equal(pendingBuilt.value.positioning.selected_claims[0].claim.id,career.id);const pendingScore=pendingBuilt.value.diagnostics.find(d=>d.dimension==='claim_support');assert.equal(pendingScore.value,50);assert.equal(pendingScore.counts.unresolved,1);assert.equal(pendingScore.denominator,2);"
+    }
   },
   {
     "requirement": "1.6",
     "suite": "integration.test.cjs",
-    "assertion": "const decision=await w.prepareUpdate(request);assert.equal(decision.decision_state,'authorized');assert.equal(w.current(),null);reject(await w.assemble(seed),'pending_update');reject(await w.bind(input),'pending_update');assert.equal(JSON.parse(fs.readFileSync(a.selectedPath)).candidate.email,null);",
-    "property": "Pending update withholds canonical support"
+    "assertion": "const decision=await w.prepareUpdate(request);assert.equal(decision.decision_state,'authorized');assert.equal(w.current(),null);reject(await w.assemble(seed),'pending_update');reject(await bind(input),'pending_update');assert.equal(JSON.parse(fs.readFileSync(a.selectedPath)).candidate.email,null);",
+    "property": "Pending update withholds canonical support",
+    "correction": {
+      "suite": "host-context.test.cjs",
+      "assertion": "assert.deepEqual(fs.readFileSync(selected.snapshot.selection.resolved_path),before);"
+    }
   },
   {
     "requirement": "1.7",
@@ -44,8 +60,12 @@
   {
     "requirement": "1.8",
     "suite": "integration.test.cjs",
-    "assertion": "const invalid=profile('laboratory',h.blank);invalid.candidate.name=42;const invalidSelection=h.select(invalid);w.select({workspace_root:h.workspace,facts_path:invalidSelection.snapshot.selection.resolved_path});const failed=await w.bind(input);assert.equal(failed.status,'blocked');assert.ok(failed.issues.length);assert.ok(Object.hasOwn(failed,'request'));rejected.push(...failed.issues);reject(await w.assemble(null),'context_unavailable');",
-    "property": "Invalid profile blocks assembly"
+    "assertion": "const invalid=profile('laboratory',h.blank);invalid.candidate.name=42;const invalidSelection=h.select(invalid);w.select({workspace_root:h.workspace,facts_path:invalidSelection.snapshot.selection.resolved_path});const failed=await bind(input);assert.equal(failed.status,'blocked');assert.ok(failed.issues.length);assert.ok(Object.hasOwn(failed,'request'));rejected.push(...failed.issues);reject(await w.assemble(null),'context_unavailable');",
+    "property": "Invalid profile blocks assembly",
+    "correction": {
+      "suite": "application-context.test.cjs",
+      "assertion": "assert.equal(x.schema_version, '1.1');"
+    }
   },
   {
     "requirement": "2.1",
@@ -90,7 +110,11 @@
     "requirement": "3.1",
     "suite": "evidence.test.cjs",
     "assertion": "assert.equal(r.reference.original_state,status); assert.equal(r.host_meaning,'not_assessed');",
-    "property": "Five original evidence states"
+    "property": "Five original evidence states",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "for(const test of semanticCases){const v=applyCase(structuredClone(x),test);const built=await workflow.assemble(v);assert.equal(built.status,'ready',JSON.stringify(built));for(const [i,language] of ['en','de'].entries()){const d=built.value.diagnostics.find(d=>d.dimension==='claim_support'&&d.scope.language===language);assert.equal(d.value,test.states[i]==='supported'?100:0);assert.equal(d.denominator,1);}assert.equal(built.value.diagnostics.find(d=>d.dimension==='offer_coverage'&&d.scope.priority==='required').value,100);assembled.push(built.value);}"
+    }
   },
   {
     "requirement": "3.2",
@@ -100,7 +124,11 @@
     "host_observations": [
       "unsupported-appeal",
       "language-drift"
-    ]
+    ],
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "for(const test of semanticCases){const v=applyCase(structuredClone(x),test);const built=await workflow.assemble(v);assert.equal(built.status,'ready',JSON.stringify(built));for(const [i,language] of ['en','de'].entries()){const d=built.value.diagnostics.find(d=>d.dimension==='claim_support'&&d.scope.language===language);assert.equal(d.value,test.states[i]==='supported'?100:0);assert.equal(d.denominator,1);}assert.equal(built.value.diagnostics.find(d=>d.dimension==='offer_coverage'&&d.scope.priority==='required').value,100);assembled.push(built.value);}"
+    }
   },
   {
     "requirement": "3.3",
@@ -118,7 +146,11 @@
     "property": "Inflated ownership/impact withheld after host judgment",
     "host_observations": [
       "authority"
-    ]
+    ],
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "for(const test of semanticCases){const v=applyCase(structuredClone(x),test);const built=await workflow.assemble(v);assert.equal(built.status,'ready',JSON.stringify(built));for(const [i,language] of ['en','de'].entries()){const d=built.value.diagnostics.find(d=>d.dimension==='claim_support'&&d.scope.language===language);assert.equal(d.value,test.states[i]==='supported'?100:0);assert.equal(d.denominator,1);}assert.equal(built.value.diagnostics.find(d=>d.dimension==='offer_coverage'&&d.scope.priority==='required').value,100);assembled.push(built.value);}"
+    }
   },
   {
     "requirement": "3.5",
@@ -183,7 +215,11 @@
     "property": "German drift withheld independently of English",
     "host_observations": [
       "language-drift"
-    ]
+    ],
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "for(const test of semanticCases){const v=applyCase(structuredClone(x),test);const built=await workflow.assemble(v);assert.equal(built.status,'ready',JSON.stringify(built));for(const [i,language] of ['en','de'].entries()){const d=built.value.diagnostics.find(d=>d.dimension==='claim_support'&&d.scope.language===language);assert.equal(d.value,test.states[i]==='supported'?100:0);assert.equal(d.denominator,1);}assert.equal(built.value.diagnostics.find(d=>d.dimension==='offer_coverage'&&d.scope.priority==='required').value,100);assembled.push(built.value);}"
+    }
   },
   {
     "requirement": "4.5",
@@ -245,25 +281,41 @@
     "requirement": "6.1",
     "suite": "diagnostics.test.cjs",
     "assertion": "for(const d of result.diagnostics){assert.equal(d.rubric.version,'strategy-review/1.0');assert.ok(d.rubric.weights.every(w=>w.weight===1));assert.equal(d.population_sha256,contracts.fingerprint(d.population,sha256));assert.equal(d.rubric_sha256,contracts.fingerprint(d.rubric,sha256));}",
-    "property": "Rubric version weights population and fingerprints"
+    "property": "Rubric version weights population and fingerprints",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "const pendingBuilt=await workflow.assemble(pending);assert.equal(pendingBuilt.status,'ready',JSON.stringify(pendingBuilt));assert.equal(pendingBuilt.application_input_requests.length,1);assert.equal(pendingBuilt.value.positioning.selected_claims[0].claim.id,career.id);const pendingScore=pendingBuilt.value.diagnostics.find(d=>d.dimension==='claim_support');assert.equal(pendingScore.value,50);assert.equal(pendingScore.counts.unresolved,1);assert.equal(pendingScore.denominator,2);"
+    }
   },
   {
     "requirement": "6.2",
     "suite": "diagnostics.test.cjs",
     "assertion": "assert.deepEqual(get(result,'offer_coverage','required').counts,{supported:1,absent:0,uncertain:1,transferable:1,confirmed_gap:1,unsupported:0,unresolved:0});",
-    "property": "Distinct priority coverage and state counts"
+    "property": "Distinct priority coverage and state counts",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "for(const test of semanticCases){const v=applyCase(structuredClone(x),test);const built=await workflow.assemble(v);assert.equal(built.status,'ready',JSON.stringify(built));for(const [i,language] of ['en','de'].entries()){const d=built.value.diagnostics.find(d=>d.dimension==='claim_support'&&d.scope.language===language);assert.equal(d.value,test.states[i]==='supported'?100:0);assert.equal(d.denominator,1);}assert.equal(built.value.diagnostics.find(d=>d.dimension==='offer_coverage'&&d.scope.priority==='required').value,100);assembled.push(built.value);}"
+    }
   },
   {
     "requirement": "6.3",
     "suite": "editorial-review.test.cjs",
     "assertion": "assert.equal(result.document_checks[0].result,'passed');",
-    "property": "Document observations distinct from evidence/editorial judgment"
+    "property": "Document observations distinct from evidence/editorial judgment",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "const result=await review.reviewDiagnostics(x,host);assert.equal(result.diagnostics.find(d=>d.dimension==='claim_support').value,100);"
+    }
   },
   {
     "requirement": "6.4",
     "suite": "editorial-review.test.cjs",
     "assertion": "assert.equal((await review(s,{observeDocumentArtifacts:async()=>[]})).document_checks[0].result,'not_assessed');",
-    "property": "Unavailable document evidence not assessed"
+    "property": "Unavailable document evidence not assessed",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "const editorial=await review.reviewEditorial(x,{...host,reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]});assert.ok(!editorial.findings.some(f=>f.category==='evidence'&&f.severity==='blocking'));"
+    }
   },
   {
     "requirement": "6.5",
@@ -291,13 +343,21 @@
     "requirement": "6.8",
     "suite": "editorial-review.test.cjs",
     "assertion": "assert.equal(get(result,'employer_appeal','en').value,1);",
-    "property": "Separate appeal/readability evidence/document dimensions"
+    "property": "Separate appeal/readability evidence/document dimensions",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "const pendingBuilt=await workflow.assemble(pending);assert.equal(pendingBuilt.status,'ready',JSON.stringify(pendingBuilt));assert.equal(pendingBuilt.application_input_requests.length,1);assert.equal(pendingBuilt.value.positioning.selected_claims[0].claim.id,career.id);const pendingScore=pendingBuilt.value.diagnostics.find(d=>d.dimension==='claim_support');assert.equal(pendingScore.value,50);assert.equal(pendingScore.counts.unresolved,1);assert.equal(pendingScore.denominator,2);"
+    }
   },
   {
     "requirement": "7.1",
     "suite": "integration.test.cjs",
     "assertion": "let built=await w.assemble(make());assert.equal(built.status,'ready',JSON.stringify(built));assert.equal(built.value.state,'ready_for_document_draft');assert.ok(Object.isFrozen(built.value.claims[0]));assert.equal(built.checks.schema,'passed');assert.equal(built.checks.host_meaning,'not_assessed');",
-    "property": "Closed private handoff ready for document drafting"
+    "property": "Closed private handoff ready for document drafting",
+    "correction": {
+      "suite": "../wordcraft-application-documents/context.test.cjs",
+      "assertion": "const f=await fresh();assert.equal(f.manifest.schema_version,'1.1');"
+    }
   },
   {
     "requirement": "7.2",
@@ -309,13 +369,21 @@
     "requirement": "7.3",
     "suite": "comparison.test.cjs",
     "assertion": "const x=structuredClone(s);mutate(x);const r=await run(s,x);assert.equal(row(r,'claim_support').delta,null);assert.match(row(r,'claim_support').reasons.join(' '),/population|proposition/);assert.equal(row(r,'offer_coverage').delta,0);",
-    "property": "Changed population suppresses affected delta"
+    "property": "Changed population suppresses affected delta",
+    "correction": {
+      "suite": "context-review.test.cjs",
+      "assertion": "sources.application_context_bytes+=' ';await workflow.bind({target:x.target,settings:x.settings,evaluation_date:'2026-01-03'});const changed=applyCase(structuredClone(x),semanticCases[1]);changed.binding=workflow.current().binding;const changedContext=await workflow.assemble(changed,{previous:prior});assert.equal(changedContext.status,'ready',JSON.stringify(changedContext));assert.equal(changedContext.value.comparison.dimensions.find(d=>d.dimension==='claim_support').delta,null);assert.equal(changedContext.value.comparison.dimensions.find(d=>d.dimension==='offer_coverage').delta,0);"
+    }
   },
   {
     "requirement": "7.4",
     "suite": "context.test.cjs",
     "assertion": "assert.equal(JSON.stringify(other).includes('candidate-operations'),false);",
-    "property": "Unrelated candidate isolation; integration also checks same-path and continuity"
+    "property": "Unrelated candidate isolation; integration also checks same-path and continuity",
+    "correction": {
+      "suite": "../wordcraft-application-documents/context.test.cjs",
+      "assertion": "assert.ok((await inspectDocumentManifest(f.manifest,f.trusted)).some(x=>x.code==='context_unavailable'));"
+    }
   },
   {
     "requirement": "8.1",
@@ -342,18 +410,30 @@
     "property": "Read authority confined to selected profile",
     "host_observations": [
       "source-instructions"
-    ]
+    ],
+    "correction": {
+      "suite": "application-context.test.cjs",
+      "assertion": "assert.equal((await api.inspectStrategy(forged,bind(forged))).deterministic,'failed');"
+    }
   },
   {
     "requirement": "8.4",
     "suite": "integration.test.cjs",
     "assertion": "reject(await w.save(previous,path.join(h.workspace,'saved.json')),'private_output_denied');allowWrite=true;assert.equal((await w.save(previous,path.join(h.workspace,'saved.json'))).status,'saved');",
-    "property": "Authorized private destination required; root privacy scan separate"
+    "property": "Authorized private destination required; root privacy scan separate",
+    "correction": {
+      "suite": "../wordcraft-application-documents/context.test.cjs",
+      "assertion": "assert.equal((await f.validate('schemas/application-documents-v1.schema.json',old)).state,'passed');"
+    }
   },
   {
     "requirement": "8.5",
     "suite": "methods.test.cjs",
     "assertion": "assert.equal(unauthorized.handoffs.length,0,'assistance without authorization cannot dispatch installer');",
-    "property": "No unauthorized installation; helper dependency inspection and no model credentials"
+    "property": "No unauthorized installation; helper dependency inspection and no model credentials",
+    "correction": {
+      "suite": "full-acceptance.test.cjs",
+      "assertion": "try { assert.equal(api.environment(dir).STRATEGY_TEST_MODEL_CREDENTIAL,undefined,'model credentials are not forwarded'); } finally { delete process.env.STRATEGY_TEST_MODEL_CREDENTIAL; }"
+    }
   }
 ]

@@ -174,7 +174,7 @@ The approved [design amendment](application-context-design.md) extends the compl
   - _Depends: 7, 8, 9_
   - _Requirements: 1.3, 1.5, 3.2, 4.4, 6.3, 6.4, 7.1, 7.3, 7.4, 8.4_
 
-- [ ] 11. Validate the corrected strategy and release the M3 acceptance dependency
+- [x] 11. Validate the corrected strategy and release the M3 acceptance dependency
   - Run fresh canonical, context, editorial, comparison and consumer regression checks against the exact current shipped assets; retain actual source and asset bindings in the private evidence.
   - Run the corrected assets and schema archives outside the checkout with explicit allowlists, using existing tooling without sibling repositories, candidate data, model credentials or new endpoints. Recheck all 48 criteria against original coverage plus the correction, rather than repeating unrelated implementation.
   - Complete semantic review of the bilingual contextual and mixed-source cases, and separately verify deterministic rejection cases. Run repository/index privacy checks and inspect the shareable changes manually.

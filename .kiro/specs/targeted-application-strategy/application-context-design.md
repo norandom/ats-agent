@@ -1,6 +1,6 @@
 # Application evidence design amendment
 
-Status: design gate PASS after one bounded repair; human-approved on 27 October 2026. Runtime changes are not implemented. This amendment extends the existing strategy design; unaffected contracts and all 48 existing requirements remain in force.
+Status: design gate PASS after one bounded repair; human-approved on 27 October 2026. Runtime changes are implemented and validated; see [current validation](application-context-validation.md). This amendment extends the existing strategy design; unaffected contracts and all 48 existing requirements remain in force.
 
 ## Overview
 

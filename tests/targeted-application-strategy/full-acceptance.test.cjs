@@ -9,7 +9,7 @@ fs.writeFileSync(path.join(dir,'asset'),'changed');
 assert.throws(()=>api.verifyManifest(dir,manifest),/hash/);
 fs.unlinkSync(path.join(dir,'asset'));
 assert.throws(()=>api.verifyManifest(dir,manifest),/missing/);
-const full=['foundation','contracts','context','offer','evidence','questions','composition','methods','diagnostics','editorial-review','comparison','integration','semantic-acceptance','full-acceptance'].map(s=>({suite:s+'.test.cjs',exit_code:0}));
+const full=['foundation','contracts','context','application-context','host-context','context-review','offer','evidence','questions','composition','methods','diagnostics','editorial-review','comparison','integration','semantic-acceptance','full-acceptance'].map(s=>({suite:s+'.test.cjs',exit_code:0})).concat(['context','contracts','composition','languages','consumer','integration','acceptance'].map(s=>({suite:'../wordcraft-application-documents/'+s+'.test.cjs',exit_code:0})));
 const smoke=[{suite:'integration.test.cjs',exit_code:0}];
 api.checkResults(full,'full');api.checkResults(smoke,'smoke');
 assert.throws(()=>api.checkResults(full.filter(r=>!['foundation.test.cjs','contracts.test.cjs','full-acceptance.test.cjs'].includes(r.suite)),'full'),/suite/);
@@ -27,4 +27,8 @@ assert.throws(()=>api.checkResults([{...smoke[0],exit_code:null}],'smoke'),/fail
 assert.throws(()=>api.checkCoverage([]),/coverage/);
 api.checkCoverage(api.coverage);
 assert.throws(()=>api.checkCoverage(api.coverage.slice(1)),/coverage/);
+
+
+process.env.STRATEGY_TEST_MODEL_CREDENTIAL='fictional-sentinel';
+try { assert.equal(api.environment(dir).STRATEGY_TEST_MODEL_CREDENTIAL,undefined,'model credentials are not forwarded'); } finally { delete process.env.STRATEGY_TEST_MODEL_CREDENTIAL; }
 console.log('PASS acceptance harness rejects missing assets, byte mismatch, missing/duplicate/unexpected suites, absent/wrong modes, failed/unexecuted suites and omitted coverage; valid full and smoke inventories pass.');
