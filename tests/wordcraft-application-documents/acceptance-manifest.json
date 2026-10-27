@@ -1,0 +1,364 @@
+{
+  "version": 1,
+  "runtime": [
+    "skills/targeted-cv/references/candidate-profile.md",
+    "skills/targeted-cv/references/profile-contract.md",
+    "skills/targeted-cv/references/profile-validation.md",
+    "skills/targeted-cv/references/profile-updates.md",
+    "skills/targeted-cv/references/strategy-contract.md",
+    "skills/targeted-cv/references/application-strategy.md",
+    "skills/targeted-cv/references/strategy-evidence.md",
+    "skills/targeted-cv/references/strategy-editorial.md",
+    "skills/targeted-cv/references/strategy-review.md",
+    "skills/targeted-cv/schemas/cv-facts.schema.json",
+    "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+    "skills/targeted-cv/schemas/application-strategy.schema.json",
+    "skills/targeted-cv/templates/cv-facts.blank.json",
+    "skills/targeted-cv/SKILL.md",
+    "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+    "skills/targeted-cv/schemas/application-documents.schema.json",
+    "skills/targeted-cv/schemas/application-documents-v1.schema.json",
+    "skills/targeted-cv/schemas/document-session.schema.json",
+    "skills/targeted-cv/references/application-documents.md",
+    "skills/targeted-cv/references/document-presentation.md",
+    "skills/targeted-cv/references/document-verification.md",
+    "skills/targeted-cv/references/germany-cover-letter.md",
+    "skills/targeted-cv/references/document-session.md",
+    "skills/targeted-cv/references/wordcraft-operations.md",
+    "skills/targeted-cv/references/wordcraft-capabilities.md"
+  ],
+  "suites": [
+    "acceptance.test.cjs",
+    "composition.test.cjs",
+    "consumer.test.cjs",
+    "context.test.cjs",
+    "contracts.test.cjs",
+    "formatting-probe.test.cjs",
+    "foundation.test.cjs",
+    "full-acceptance.test.cjs",
+    "integration.test.cjs",
+    "languages.test.cjs",
+    "letter.test.cjs",
+    "presentation.test.cjs",
+    "verification.test.cjs"
+  ],
+  "support": [
+    "acceptance-check.cjs",
+    "acceptance-fixture.cjs",
+    "acceptance-upstream.cjs",
+    "composition-cases.json",
+    "fixtures.json",
+    "formatting-probe.cjs",
+    "foundation.cjs",
+    "integration-fixture.cjs",
+    "language-pair-cases.json",
+    "letter-check.cjs",
+    "letter-fixture.cjs",
+    "manifest-fixture.cjs",
+    "presentation-exercise.cjs",
+    "verification-replay.cjs"
+  ],
+  "upstream": [
+    "tests/targeted-application-strategy/foundation.cjs",
+    "tests/targeted-application-strategy/fixtures.cjs",
+    "tests/targeted-application-strategy/contract-fixture.cjs",
+    "tests/portable-candidate-profile/foundation.cjs",
+    "tests/wordcraft-document-session/foundation.cjs"
+  ],
+  "coverage": [
+    {
+      "requirement": "1.1",
+      "suite": "contracts.test.cjs",
+      "assertion": "independent binding and exact current snapshot reject cross-candidate and stale data",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "1.2",
+      "suite": "contracts.test.cjs",
+      "assertion": "requested members and private destinations are enforced",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "1.3",
+      "suite": "contracts.test.cjs",
+      "assertion": "independent binding and exact current snapshot reject cross-candidate and stale data",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "1.4",
+      "suite": "contracts.test.cjs",
+      "assertion": "pending letter and unsupported language do not block another draft member",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "1.5",
+      "suite": "contracts.test.cjs",
+      "assertion": "CV-only selection is accepted and technical anchors cannot enter emitted text",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "1.6",
+      "suite": "foundation.test.cjs",
+      "assertion": "private destinations and inspection allowlist fail closed",
+      "actual_assertion": "Exact upstream source/strategy/manifest/authoring binding failed",
+      "host_review": "Mechanical input controls; actual upstream source binding."
+    },
+    {
+      "requirement": "2.1",
+      "suite": "composition.test.cjs",
+      "assertion": "actual upstream assembly and review receipts feed the document mapping",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "2.2",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "2.3",
+      "suite": "composition.test.cjs",
+      "assertion": "code-point slices preserve the entire factual proposition and qualifier",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "2.4",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "2.5",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "2.6",
+      "suite": "composition.test.cjs",
+      "assertion": "private review material remains outside emitted ranges, even with a scoped blocking finding",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.1",
+      "suite": "languages.test.cjs",
+      "assertion": "real upstream assembly keeps English usable when German support and letter inputs are pending",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.2",
+      "suite": "languages.test.cjs",
+      "assertion": "real upstream assembly keeps English usable when German support and letter inputs are pending",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.3",
+      "suite": "composition.test.cjs",
+      "assertion": "different wording requires a separate reviewed claim; a reused realization fails upstream",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.4",
+      "suite": "languages.test.cjs",
+      "assertion": "pair cases are review inputs, never automated semantic approvals",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.5",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "3.6",
+      "suite": "context.test.cjs",
+      "assertion": "unconfirmed metadata leaves only the affected letter pending and cannot use check-only refresh",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.1",
+      "suite": "presentation.test.cjs",
+      "assertion": "fictional compositions have unique paragraphs and localized labels",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.2",
+      "suite": "verification.test.cjs",
+      "assertion": "missing pages, body-only field codes and screenshots cannot pass independent checks",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.3",
+      "suite": "presentation.test.cjs",
+      "assertion": "receipt gate checks exact text, field identity, all pages and rendered review",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.4",
+      "suite": "presentation.test.cjs",
+      "assertion": "fictional compositions have unique paragraphs and localized labels",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.5",
+      "suite": "presentation.test.cjs",
+      "assertion": "receipt gate checks exact text, field identity, all pages and rendered review",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "4.6",
+      "suite": "verification.test.cjs",
+      "assertion": "missing pages, body-only field codes and screenshots cannot pass independent checks",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.1",
+      "suite": "letter.test.cjs",
+      "assertion": "portable letter recipe states required inputs, sourced limits and measured verification",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.2",
+      "suite": "context.test.cjs",
+      "assertion": "ordered recipient, localized dates, salutations and empty enclosures match current records",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.3",
+      "suite": "context.test.cjs",
+      "assertion": "context metadata is versioned and caller confirmation alone cannot release a letter",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.4",
+      "suite": "verification.test.cjs",
+      "assertion": "unobservable geometry and command arguments cannot pass letter checklist",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.5",
+      "suite": "verification.test.cjs",
+      "assertion": "unobservable geometry and command arguments cannot pass letter checklist",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "5.6",
+      "suite": "letter.test.cjs",
+      "assertion": "portable letter recipe states required inputs, sourced limits and measured verification",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.1",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.2",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.3",
+      "suite": "contracts.test.cjs",
+      "assertion": "revision and anchors reject stale or forged observations",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.4",
+      "suite": "acceptance.test.cjs",
+      "assertion": "fictional bilingual source material traverses actual strategy assembly and manifest integrity",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.5",
+      "suite": "formatting-probe.test.cjs",
+      "assertion": "probe gate refuses command-only geometry, missing page coverage and static fields",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "6.6",
+      "suite": "contracts.test.cjs",
+      "assertion": "observed states remain distinct and mandatory failures never deliver",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.1",
+      "suite": "verification.test.cjs",
+      "assertion": "exact body and independent semantic judgments stay distinct",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.2",
+      "suite": "verification.test.cjs",
+      "assertion": "missing pages, body-only field codes and screenshots cannot pass independent checks",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.3",
+      "suite": "verification.test.cjs",
+      "assertion": "missing pages, body-only field codes and screenshots cannot pass independent checks",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.4",
+      "suite": "verification.test.cjs",
+      "assertion": "stale bytes, changed snapshot, missing continuity and inaccessible evidence invalidate results",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.5",
+      "suite": "consumer.test.cjs",
+      "assertion": "unchanged strategy consumer verifies independent checks and refuses forged incoming results",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    },
+    {
+      "requirement": "7.6",
+      "suite": "acceptance.test.cjs",
+      "assertion": "mandatory actual receipt cannot be replaced by absent evidence",
+      "actual_assertion": "all-page visual review",
+      "host_review": "Independent semantic, reading-order, metadata and all-page review of exact receipt; see scenarios.md."
+    }
+  ]
+}

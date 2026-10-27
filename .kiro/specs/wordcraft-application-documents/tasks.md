@@ -96,7 +96,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 3.2, 4.1, 4.2, 5.1, 5.2_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 3.2, 3.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.4, 7.5_
 
-- [ ] 7. Validate complete applications and portable assets
+- [x] 7. Validate complete applications and portable assets
 - [x] 7.1 Execute bilingual document acceptance in WordCraft
   - Create wholly fictional English/German CVs and Germany-targeted letters through the completed host protocol, with supported strategy text and confirmed application metadata.
   - Read back, save/reopen and inspect every rendered page. Verify dynamic fields before/after a multi-page edit, reading-order associations, measured letter checklist rules, editable text, document switching and preservation of an intervening manual change.
@@ -106,7 +106,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 6_
   - _Requirements: 1.6, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
-- [ ] 7.2 Validate relocation, privacy and feature completeness
+- [x] 7.2 Validate relocation, privacy and feature completeness
   - Copy the six current runtime assets, including `SKILL.md`, plus the historical document schema introduced by the approved strategy correction and required upstream/test allowlists outside the checkout, then run the complete checks through pnpm without sibling repositories, real candidate input or model credentials.
   - Verify all 42 criteria, current copied hashes, exact test membership, actual receipt provenance, semantic/visual review scope and unchanged upstream contracts. Reject skipped mandatory scenarios and stale evidence.
   - Run repository/index privacy scanning and manual review, including candidate-free specs and reusable assets. Keep release packaging and legacy retirement out of this feature.

@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-10-26. M1 and M2 are validated: portable profile (14 tasks, 41 criteria), WordCraft session (9 tasks, 39 criteria) and application strategy (14 tasks, 48 criteria). M3 application documents is next.
+Updated 2026-10-27. M1 through M3 are validated: portable profile (14 tasks, 41 criteria), WordCraft session (9 tasks, 39 criteria), application strategy (14 original tasks plus five correction tasks, 48 criteria) and application documents (12 tasks, 42 criteria). M4 live refinement is next; its brief does not authorize implementation.
 
 ## Overview
 Replace the legacy CV scorer with a separately distributable skill that reads private structured candidate data, interprets a pasted offer, develops an employer-oriented contribution argument, and creates/refines German or English application documents live in WordCraft MCP. Evidence constrains claims without dictating the narrative. Transparent diagnostics guide questions and improvements.
@@ -50,7 +50,7 @@ Checkboxes above track completed specification pipelines if the batch workflow i
 | M4 — Live refinement | live-application-refinement | User answers questions and improves live documents with meaningful score changes | Preserved manual edits, consistent CV/letter changes, explicit profile-update choice, resume and stop behavior |
 | M5 — Shareable replacement | portable-skill-release | A clean installation works for a new user; obsolete Python workflow is retired | Installed-package end-to-end checks, archive allowlist/privacy audit, license checks, standalone operation and updated instructions |
 
-M1 is implemented and validated. WordCraft session acceptance covers fictional CV and letter lifecycles, inspected manual-change preservation and uncertain-write recovery through existing MCP. Its 65 tests passed outside the checkout. M2 strategy is also validated, including independently reviewed bilingual semantic cases. Application documents, live refinement and release remain their own delivery work. The English research synthesis in `docs/recruiting-signals-2026.md` supplies evidence and explicit hypotheses without changing approved requirements.
+M1 is implemented and validated. WordCraft session acceptance covers fictional CV and letter lifecycles, inspected manual-change preservation and uncertain-write recovery through existing MCP. Its 65 tests passed outside the checkout. M2 strategy 1.1 is validated, including independent bilingual semantic review and separate career, offer and application evidence. M3 produced separate English/German CVs and letters through live WordCraft, with all-page review, automatic pagination and preserved manual edits. Its final relocation passed 13 suites and 54 tests. Live refinement and release remain their own delivery work. The English research synthesis in `docs/recruiting-signals-2026.md` supplies evidence and explicit hypotheses without changing approved requirements.
 
 ## Execution Waves
 1. Profile and WordCraft session specifications can proceed independently.
@@ -75,10 +75,10 @@ None in this discovery step. Existing schema/template/ignore changes remain prel
 - Private input/reference files are read only by tasks that need them; never copied into committed specs or review prompts.
 
 ## Review and Next Step
-An independent discovery review accepted the decomposition. WordCraft session operations now have validated evidence; detailed DIN layout and redistribution acceptance remain with their owning features.
+An independent discovery review accepted the decomposition. WordCraft session operations and the sourced Germany letter checklist now have validated evidence. Full-standard DIN certification is not claimed; redistribution acceptance remains with release.
 
 M1 status: profile and session are implementation-complete with GO validation. All nine session tasks passed independent review, followed by coverage and integration review. The existing MCP remains the only document interface. Custom bridge work is dropped. See [session validation](../specs/wordcraft-document-session/validation-report.md) for the exact scope and evidence limits.
 
-M3 implementation is authorized and underway against the twelve reviewed [application-document tasks](../specs/wordcraft-application-documents/tasks.md). The foundation and actual WordCraft formatting probes passed independent review: saved/reopened dynamic pagination and measured recipient placement are demonstrated. Complete application composition and delivery remain pending. The design connects validated strategy to composition and layout through six runtime assets, including a thin SKILL.md entrypoint in task 6. Technical recovery/concurrency evidence stays in the session notes; report concrete limitations at the affected operation. Strategy consumers must retain language-specific selections, fresh bindings, complete findings and observed update continuity.
+M3 is complete with GO [application-document validation](../specs/wordcraft-application-documents/validation-report.md). All twelve tasks passed independent review. The checkout entrypoint connects profile, strategy, session and document capabilities; six current document assets and a historical schema remain distinct from release packaging. M4 must consume strategy and document contracts 1.1, preserve current source bindings and manual edits, and keep canonical profile updates explicit. Its next step is requirements and the normal review gates, followed by design and tasks. M5 remains a discovery brief.
 
 `$kiro-spec-batch` is an available optional fast-track, not executed here: it automatically passes `-y` to design and tasks. Use only when that fast-track is intentionally requested.
