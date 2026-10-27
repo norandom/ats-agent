@@ -9,7 +9,7 @@ const span=text=>({start:0,end:Array.from(text).length,excerpt:text});
 const ref=(namespace,id)=>({namespace,id:`${namespace}:${id}`});
 async function run(inputs,reviews){
  const h=createHarness();let serial=0;
- const modules={...h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']),...h.load('profile-contract.md',['dispatchVersion']),...h.load('profile-validation.md',['evidenceView']),...h.load('profile-updates.md',['createProfileUpdates']),...h.load('strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']),...h.load('strategy-editorial.md',['inspectComposition','applyEditorialMethods']),...h.load('strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions'])};
+ const modules={...h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']),...h.load('profile-contract.md',['dispatchVersion']),...h.load('profile-validation.md',['evidenceView']),...h.load('profile-updates.md',['createProfileUpdates']),...h.load('strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']),...h.load('strategy-editorial.md',['inspectComposition','applyEditorialMethods']),...h.load('strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions'])};
  const {createStrategyWorkflow}=h.load('application-strategy.md',['createStrategyWorkflow']);
  const results=[];
  const runs=inputs.flatMap(input=>{const review=reviews.find(r=>r.id===input.id);return [{input,review},...(review.correction?[{input:{...input,id:input.id+'-revision'},review:{...review,...review.correction,en_state:'supported',de_state:'supported',reason:'The revised action is stated in the fictional source; no outcome, authority or unsupervised scope is added.',finding:'Supported revision replaces the rejected assertion while retaining the original evidence limits.',appeal:2,correction:null}}]:[])];});
@@ -18,7 +18,8 @@ async function run(inputs,reviews){
   p.employment[0].claims[0].statement=input.source_statement;
   if(input.id==='old-tools')p.employment[0].start='2012';
   const selected=h.select(p);let receiptDraft;
-  const host={session:`semantic-${input.id}`,intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
+  const selectedTarget={kind:'offer',text:input.offer,sha256:sha256(input.offer)};
+  const host={currentApplicationSelection:()=>({target:structuredClone(selectedTarget),application_context_bytes:null,confirmation_observations:[]}),session:`semantic-${input.id}`,intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
    validateProfile:(v,t)=>h.validate(v,{taskRequest:t}),
    validate:async(schema,v)=>{const file=path.join(h.workspace,`semantic-${++serial}.json`);fs.writeFileSync(file,JSON.stringify(v));const r=spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(h.skillRoot,schema),file],{encoding:'utf8',windowsHide:true});return {state:classifyCheck(r),findings:[]};},
    // Receipts below replay the separate, host-reviewed exact prose artifact.

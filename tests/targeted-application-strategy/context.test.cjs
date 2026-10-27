@@ -9,18 +9,19 @@ const fixtures = require('./fixtures.cjs');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 (async () => {
   const h = createHarness();
-  const contracts = h.load('strategy-contract.md', ['stableSerialize','fingerprint','targetFingerprint']);
+  const contracts = h.load('strategy-contract.md', ['stableSerialize','fingerprint','targetFingerprint','inspectApplicationContext']);
   const {createStrategyContext} = h.load('application-strategy.md', ['createStrategyContext']);
   const {evidenceView} = h.load('profile-validation.md', ['evidenceView']);
   const {dispatchVersion} = h.load('profile-contract.md', ['dispatchVersion']);
   let validationOptions = {}, duringValidation = null, validated;
-  const host = {session: 'fictional-context-session', currentSelection: () => h.intake.snapshot(), readBytes: fs.readFileSync,
+  let applicationSelection;
+  const host = {currentApplicationSelection:()=>applicationSelection, session: 'fictional-context-session', currentSelection: () => h.intake.snapshot(), readBytes: fs.readFileSync,
     decodeUtf8: b => new TextDecoder('utf-8',{fatal:true}).decode(b), sha256:hash,
     validateProfile: async (p, taskRequest) => { validated = structuredClone(p); const report = await h.validate(p,{...validationOptions,taskRequest}); if(duringValidation) duringValidation(); return report; }, evidenceView, dispatchVersion};
   const context = createStrategyContext(host, contracts);
   const settings = {languages:['en'],market:'DE',requested_documents:['cv']};
   const input = () => ({snapshot:h.intake.snapshot(),target:fixtures.offer('operations'),settings,evaluation_date:'2026-01-03',task_request:{task_id:'strategy',required:[]}});
-  const bind = overrides => context.bindStrategy({...input(),...overrides});
+  const bind = overrides => { const request={...input(),...overrides}; if(request.target) applicationSelection={target:{...request.target,sha256:contracts.targetFingerprint(request.target,hash)},application_context_bytes:null,confirmation_observations:[]}; return context.bindStrategy(request); };
   const failureFindings = [];
   const rejected = (r,code) => { assert.notEqual(r.status,'ready'); assert.ok(r.issues.some(x => x.id === `finding:context-${code}`),JSON.stringify(r)); failureFindings.push(...r.issues); assert.equal(r.value,undefined); assert.equal(context.current(),null); };
   rejected(await bind(), 'selection_required');

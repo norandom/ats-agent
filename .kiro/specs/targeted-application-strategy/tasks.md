@@ -144,7 +144,7 @@ The approved [design amendment](application-context-design.md) extends the compl
   - _Boundary: StrategyContext_
   - _Requirements: 1.1, 1.3, 1.5, 1.6, 1.8, 3.1, 3.2, 7.1, 7.4, 8.3, 8.4, 8.5_
 
-- [ ] 8. Bind independently selected application inputs throughout the host session
+- [x] 8. Bind independently selected application inputs throughout the host session
   - Connect private application context and confirmation observations to current profile and target selection. Recheck current selections after asynchronous operations and before assembly; never let an imported draft establish its own confirmation.
   - Keep application records outside career facts. Reusable factual answers still require the existing confirmed profile-update path. Resume requires independent context selection and confirmation, while a canonical-only CV can proceed without letter context.
   - Invalidate affected claims and observations after context, target or confirmation changes. Retain independently established prior source observations for later comparisons; saved handoff bindings alone cannot establish historical trust.

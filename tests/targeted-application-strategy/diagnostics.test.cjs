@@ -11,13 +11,13 @@ const {handoff} = require('./contract-fixture.cjs');
 const sha256 = x => crypto.createHash('sha256').update(x).digest('hex');
 (async () => {
   const h = createHarness(), p = profile('operations',h.blank);
-  const contracts = h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']);
+  const contracts = h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext']);
   const {createStrategyContext} = h.load('application-strategy.md',['createStrategyContext']);
   const {dispatchVersion} = h.load('profile-contract.md',['dispatchVersion']);
   const {evidenceView} = h.load('profile-validation.md',['evidenceView']);
   const {reviewDiagnostics} = h.load('strategy-review.md',['reviewDiagnostics']);
   h.select(p);
-  const context = createStrategyContext({session:'fictional-diagnostics',currentSelection:()=>h.intake.snapshot(),readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),dispatchVersion,evidenceView},contracts);
+  const context = createStrategyContext({currentApplicationSelection:()=>({target:structuredClone(s.target),application_context_bytes:null,confirmation_observations:[]}),session:'fictional-diagnostics',currentSelection:()=>h.intake.snapshot(),readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),dispatchVersion,evidenceView},contracts);
   const s = handoff(p,{...contracts,sha256});
   const bound = await context.bindStrategy({snapshot:h.intake.snapshot(),target:s.target,settings:s.settings,evaluation_date:'2026-01-03',task_request:{task_id:'review',required:[]}});
   assert.equal(bound.status,'ready');
