@@ -25,7 +25,7 @@ New candidate interpretation, profile persistence, scoring formulas, conversatio
 
 ### Out of Boundary
 
-Profile owns canonical facts and approved updates. Strategy owns claim support, new wording review, optional writing methods and diagnostics. Session owns capability discovery, identity, edits, persistence, conflict and recovery. Refinement owns question/answer sequencing and acceptance of changes. Release owns the final skill entrypoint and package.
+Profile owns canonical facts and approved updates. Strategy owns claim support, new wording review, optional writing methods and diagnostics. Session owns capability discovery, identity, edits, persistence, conflict and recovery. Refinement owns question/answer sequencing and acceptance of changes. Documents provides a thin usable skill entrypoint for completed flows; release owns distribution metadata, packaging and release acceptance.
 
 ### Allowed Dependencies
 
@@ -72,6 +72,7 @@ All runtime files below are new, under `skills/targeted-cv/`.
 
 | Path | Responsibility |
 | --- | --- |
+| `SKILL.md` | Thin host entrypoint routing the completed profile, strategy, session and document references; no duplicated coordinator |
 | `references/application-documents.md` | Entry protocol, composition routing and bounded manifest integrity helper |
 | `references/document-presentation.md` | CV tokens, localization and WordCraft formatting recipes |
 | `references/germany-cover-letter.md` | Letter inputs, sourced checklist and Form B recipe |
@@ -207,7 +208,7 @@ Section anchors are host bookkeeping. Exact text/context must resolve uniquely i
 - Composition integration (2.1-2.6, 3.1-3.6): consume actual upstream assembly and semantic-review fixtures. Exercise repeated wording spans, different wordings, qualifier loss at slice boundaries, unsupported juxtaposition, metadata-derived assertions, missing required metadata, pair contradictions, omitted award dates, historical skills and one supported language while the other remains pending. Host semantic examples are independently reviewed; deterministic replay is labeled as such.
 - Presentation/verification controls (4.1-4.6, 5.1-5.6, 7.1-7.5): check rule-source attribution, unit conversion, page-index convention, field identity, all-page coverage, stale saved/render states and unchanged upstream DocumentCheck shape. Do not substitute mocked success for live formatting.
 - Actual desktop acceptance (6.1-6.6, 7.6): create fictional CV/letter pairs in both languages; inspect every page, exact read-back and source checklist, save/reopen editable text, verify real PAGE/NUMPAGES before and after a multi-page edit, preserve an intervening manual change, switch documents visibly and restore the originally selected fictional document. Record unsupported cases as pending.
-- Relocation/privacy: copy the explicit five runtime assets with required upstream allowlists to a fresh external location; run checks through pnpm with no sibling checkout, candidate input or model credentials. Pin current runtime hashes and independently reviewed actual receipts. Run repository/index privacy checks separately. This is not release acceptance.
+- Relocation/privacy: copy the explicit six runtime assets, including the entrypoint, with required upstream allowlists to a fresh external location; run checks through pnpm with no sibling checkout, candidate input or model credentials. Pin current runtime hashes and independently reviewed actual receipts. Run repository/index privacy checks separately. This is not release acceptance.
 
 ## Security Considerations
 
@@ -216,3 +217,5 @@ No candidate inputs are read during specification or tests. Private letter metad
 ## Migration Strategy
 
 Reuse fictional compositor examples as investigation material, not as a runtime dependency or source of personal defaults. No canonical profile migration, legacy retirement or final SKILL.md packaging occurs in this feature. Downstream refinement consumes the validated manifest and existing session identities after its own approved design.
+
+The 27 October delivery review moves the thin checkout entrypoint into task 6 so the approved document workflow can be used before release packaging. It resolves resources relative to the skill, exposes only completed flows, and routes existing owners without new orchestration code. Task 6 exercises its request-to-delivery path; task 7 includes it in relocation. Distribution and unfinished refinement remain outside this feature.

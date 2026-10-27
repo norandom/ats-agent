@@ -87,6 +87,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Requirements: 6.3, 6.6, 7.4, 7.5_
 
 - [ ] 6. Integrate composition, presentation and verification into the live session
+  - Provide a thin `SKILL.md` entrypoint routing completed upstream and document capabilities with relative paths. Exercise the integrated request through it; do not duplicate rules or claim unfinished refinement/distribution features.
   - Connect the host entry protocol to current strategy selection, requested document members, confirmed letter metadata, presentation profiles and existing WordCraft operations. Do not add a Node.js workflow engine.
   - Author in the selected visible desktop session, identify/select document and language switches, preserve unsaved/manual work and use fresh targeted edits. Reconcile changed content mappings before claiming supported delivery.
   - Use the existing session's pending intent, conflict and uncertain-operation recovery. Keep failures scoped to affected documents and report saved editable DOCX locations with honest check states after reopen/read-back.
@@ -106,7 +107,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Requirements: 1.6, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
 - [ ] 7.2 Validate relocation, privacy and feature completeness
-  - Copy the explicit five runtime assets and required upstream/test allowlists outside the checkout, then run the complete checks through pnpm without sibling repositories, real candidate input or model credentials.
+  - Copy the explicit six runtime assets, including `SKILL.md`, and required upstream/test allowlists outside the checkout, then run the complete checks through pnpm without sibling repositories, real candidate input or model credentials.
   - Verify all 42 criteria, current copied hashes, exact test membership, actual receipt provenance, semantic/visual review scope and unchanged upstream contracts. Reject skipped mandatory scenarios and stale evidence.
   - Run repository/index privacy scanning and manual review, including candidate-free specs and reusable assets. Keep release packaging and legacy retirement out of this feature.
   - Completion is a fresh feature-level report with full-suite and actual runtime evidence, coverage/design/integration review and an honest GO or outstanding-case result.
