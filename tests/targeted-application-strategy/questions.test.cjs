@@ -30,6 +30,15 @@ const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   assert.equal(result.value.question_batch.deferred_ids.length,4);
   assert.equal(result.value.questions.length,7);
   assert.deepEqual(result.value.question_batch,plan([...questions].reverse()).value.question_batch);
+  const app=q('intent',1,0,'application:application_intent');
+  const appPending={id:'disposition:intent',binding:structuredClone(bound.value.binding),distinction_key:app.distinction_key,status:'pending',answer:'I intend to apply.',evidence:[],reopen_reason:null};
+  const appPlan=plan([app,...questions],[],{limit:1});
+  assert.equal(appPlan.value.application_input_requests.length,1);
+  assert.equal(appPlan.value.question_batch.selected_ids.length,1);
+  for(const status of ['pending','skipped','not_applicable','answered','confirmed_gap']){
+    const r=plan([app],[{...appPending,status}]);assert.equal(r.value.application_input_requests.length,0);assert.equal(r.value.pending_update_ids.length,0);
+  }
+  assert.equal(plan([app],[{...appPending,evidence:[snapshot.claims[0].evidence[0]]}]).status,'blocked');
   const accounted = r => {
     const batch=r.value.question_batch;
     const all=[...batch.selected_ids,...batch.deferred_ids,...batch.suppressed_ids].map(x => x.id);

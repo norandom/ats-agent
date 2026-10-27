@@ -22,8 +22,8 @@ const span = (text, excerpt) => {const start = Array.from(text.slice(0,text.inde
   s.inferred_needs = []; s.positioning.terminology = [];
   const evidence = structuredClone(s.claims[0].evidence);
   s.claims = [
-    {id:'claim:manifests',proposition:'Reconciled parcel manifests.',evidence,target_references:[{namespace:'criterion',id:'criterion:one'}],limits:['Historical episode; no independent verification.'],realizations:[]},
-    {id:'claim:exceptions',proposition:'Reported routing exceptions.',evidence:structuredClone(evidence),target_references:[{namespace:'criterion',id:'criterion:one'}],limits:['Reporting does not establish resolution authority.'],realizations:[]}
+    {id:'claim:manifests',subject:'candidate',context_evidence:[],proposition:'Reconciled parcel manifests.',evidence,target_references:[{namespace:'criterion',id:'criterion:one'}],limits:['Historical episode; no independent verification.'],realizations:[]},
+    {id:'claim:exceptions',subject:'candidate',context_evidence:[],proposition:'Reported routing exceptions.',evidence:structuredClone(evidence),target_references:[{namespace:'criterion',id:'criterion:one'}],limits:['Reporting does not establish resolution authority.'],realizations:[]}
   ];
   const wording = {en:['Reconciled parcel manifests','reported routing exceptions'],de:['Glich Paketlisten ab','meldete Abweichungen bei der Routenplanung']};
   s.draft = {artifact_id:'fictional-composition',versions:['en','de'].map(language => {

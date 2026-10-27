@@ -11,7 +11,7 @@ const {handoff} = require('./contract-fixture.cjs');
 const sha256 = x => crypto.createHash('sha256').update(x).digest('hex');
 (async () => {
   const h = createHarness(), p = profile('operations',h.blank);
-  const contracts = h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext']);
+  const contracts = h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','claimEligibility','inspectApplicationContext']);
   const {createStrategyContext} = h.load('application-strategy.md',['createStrategyContext']);
   const {dispatchVersion} = h.load('profile-contract.md',['dispatchVersion']);
   const {evidenceView} = h.load('profile-validation.md',['evidenceView']);

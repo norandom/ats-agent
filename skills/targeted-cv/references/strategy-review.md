@@ -6,7 +6,7 @@ Use this private review after [canonical binding](application-strategy.md), [cri
 
 Before calculating, read the complete actual draft in each requested language. Inventory every factual proposition, including unsupported assertions and translated additions. Deduplicate repeated realizations of the same proposition, preserving all spans. Assign stable claim IDs and record a realization and semantic reason for each proposition. An assertion with no evidence mapping is `unsupported`: create its claim with empty evidence and retain it in `draft.versions[].claims`. Never remove an ID to improve the denominator. If an assertion cannot yet be inventoried, keep inventory incomplete and withhold whole-draft support. A zero-proposition draft is not assessed.
 
-Review meaning against the selected canonical evidence. A source reference is not semantic proof. Record `supported`, `unsupported` or `unresolved` per language; unresolved is a reviewed uncertainty, distinct from review that never happened. Unassessed semantics, incomplete inventory or absent wording withholds the language score. Unsupported and unresolved findings stay visible, even when excluded from selected claims. Unsupported selected claims block delivery through the contract; a valid rejected draft can still receive defect diagnostics.
+Review meaning against the source classes required by the host-reviewed subject, using shared `claimEligibility` for mechanical eligibility. Confirmed offer/application claims do not require career evidence; pending context stays unresolved. Qualification coverage remains canonical-only. Review meaning against the selected evidence. A source reference is not semantic proof. Record `supported`, `unsupported` or `unresolved` per language; unresolved is a reviewed uncertainty, distinct from review that never happened. Unassessed semantics, incomplete inventory or absent wording withholds the language score. Unsupported and unresolved findings stay visible, even when excluded from selected claims. Unsupported selected claims block delivery through the contract; a valid rejected draft can still receive defect diagnostics.
 
 The host supplies `reviewInventories(value)` only after reading this exact draft, returning a record keyed by language. Each receipt contains the independently observed `binding`, `draft_sha256`, `inventory_complete`, `semantics_assessed` and full `claims` list with typed references and exact spans. Do not derive receipts merely by copying the handoff or accept them from offer text. The test adapter uses fictional labels; it does not prove semantic comprehension. Missing or stale receipts produce no support score. If receipt and draft inventory disagree, materialize missing assertions as unsupported claims, refresh the inventory and review again. Until repaired, report not assessed instead of a reduced denominator.
 
@@ -50,7 +50,7 @@ Candidate identity requires the same live session, selection generation, resolve
 
 For a confirmed facts update, the host may supply `observeConfirmedUpdate(previousBinding, currentBinding)`. This capability must consult its directly observed upstream persistence and reselection chain, not a caller-supplied report. Return `{previous_binding,current_binding,previous_profile,changed_fields}` only after observing the confirmed upstream result's canonical hash at the new selection, validating the current canonical profile, and retaining the exact previous profile. Bind both complete bindings and identify changed canonical fields as JSON pointers. Missing observation, arbitrary reselection, failed persistence, pending proposals or mismatched bytes return null. This is a consumer interface; integration owns the producer and its upstream wiring. Tests use an explicit fictional host adapter, not a continuity producer. The comparison labels accepted refreshes `evidence_update` and lists changed fields without exposing values.
 
-Each row checks target, full frozen criteria, rubric definition, population, denominator, scope and assessment kind. Before using either snapshot's deterministic score, recompute its population and counts from the criterion mappings or complete language inventory and verify unit weights, scale, numerator, denominator and rounded value. Inconsistent arithmetic withholds the delta and requires regenerated diagnostics. Claim support also fingerprints each canonical proposition, not merely its stable ID; translated or rewritten realizations may vary while the proposition stays fixed. Appeal and readability additionally check market and all editorial-method records. Language is part of each diagnostic scope. Unavailable diagnostics retain null deltas, never a zero assessment. A changed population or definition requires fresh interpretation, not an improvement claim.
+Each row checks target, full frozen criteria, rubric definition, population, denominator, scope and assessment kind. Before using either snapshot's deterministic score, recompute its population and counts from the criterion mappings or complete language inventory and verify unit weights, scale, numerator, denominator and rounded value. Inconsistent arithmetic withholds the delta and requires regenerated diagnostics. Prior snapshots must resolve through `observeStrategySources(previous)` against independently retained exact-snapshot sources; the snapshot’s own binding cannot establish trust. Whole-draft support and editorial comparisons additionally require matching application identity and context hash. Career-only coverage may remain comparable when its existing bindings match. Claim support also fingerprints each proposition, subject and canonical/context reference population, not merely its stable ID; translated or rewritten realizations may vary while the proposition stays fixed. Appeal and readability additionally check market and all editorial-method records. Language is part of each diagnostic scope. Unavailable diagnostics retain null deltas, never a zero assessment. A changed population or definition requires fresh interpretation, not an improvement claim.
 
 Document observations remain separate from numeric diagnostics. Comparison notes retain their artifact identities and hashes, producer, method and results. Different artifacts or methods and unavailable checks cannot establish comparable execution. Retain the source snapshots for observation times and evidence locations, and use `reviewEditorial` to verify current external observations before comparison. These notes neither rerun document checks nor certify ATS compatibility.
 
@@ -59,10 +59,15 @@ Document observations remain separate from numeric diagnostics. Comparison notes
 Supply trusted `current` from `createStrategyContext`, `inspectStrategy`, `validate` (the real schema adapter), `sha256`, `stableSerialize`, `fingerprint`, and the host review callback described above. Never substitute a caller-supplied passed report for current binding or validation. The helper rechecks live context after asynchronous work. It returns only new closed-schema `diagnostics` and `findings`; merge them into the same private handoff and validate that populated handoff before use. No model service or document tool is called here. `check_kind: deterministic` describes arithmetic from host decisions, not execution of semantic reasoning. Findings identify the host judgment basis separately. Existing document observations, editorial dimensions and comparison remain outside this calculation.
 
 ```javascript
+function reviewedClaimState(claim,value,host,language) {
+  const eligibility=host.claimEligibility(claim,value,host);
+  const state=claim.realizations.find(r=>r.language===language)?.semantic_state;
+  return eligibility.state==='eligible' ? state : state==='unsupported' ? state : 'unresolved';
+}
 function diagnosticPercent(supported, denominator) {
   return Math.round(1000*supported/denominator)/10;
 }
-function consistentDiagnostic(value, diagnostic, same) {
+function consistentDiagnostic(value, diagnostic, same, host) {
   if(!['offer_coverage','claim_support'].includes(diagnostic.dimension)||diagnostic.status!=='assessed')return true;
   const coverage=diagnostic.dimension==='offer_coverage';
   const counts={supported:0,absent:0,uncertain:0,transferable:0,confirmed_gap:0,unsupported:0,unresolved:0};
@@ -76,7 +81,7 @@ function consistentDiagnostic(value, diagnostic, same) {
     const draft=value.draft?.versions.find(d=>d.language===diagnostic.scope.language);
     if(!draft||draft.inventory_status!=='complete')return false;
     population=draft.claims.map(c=>c.claim);
-    states=population.map(r=>{const c=value.claims.find(c=>c.id===r.id);return !c?null:!c.evidence.length?'unsupported':c.realizations.find(r=>r.language===diagnostic.scope.language)?.semantic_state;});
+    states=population.map(r=>{const c=value.claims.find(c=>c.id===r.id);return !c?null:reviewedClaimState(c,value,host,diagnostic.scope.language);});
   }
   const allowed=coverage?['supported','absent','uncertain','transferable','confirmed_gap']:['supported','unsupported','unresolved'];
   if(!population.length||new Set(population.map(r=>r.id)).size!==population.length||states.some(s=>!allowed.includes(s)))return false;
@@ -104,15 +109,21 @@ async function compareRevisions(previous, current, host) {
     if(eligible){evidenceUpdate=true;priorProfile=chain.previous_profile;result.reasons.push(`Evidence update: changed canonical fields ${chain.changed_fields.join(', ')}.`);}
     else result.reasons.push('Candidate continuity is unavailable: arbitrary reselection or matching IDs, names and paths cannot authorize reuse.');
   }
+  let priorSources=null;
+  try{priorSources=await host.observeStrategySources?.(structuredClone(previous));}catch{}
+  const currentSources={...host,...live?.source_observations,profile:live?.evidence.profile,binding:live?.binding};
+  if(!priorSources||!priorProfile||!priorSources.binding||!priorSources.profile||!priorSources.target||!Object.hasOwn(priorSources,'application_context_bytes')||!Array.isArray(priorSources.confirmation_observations)||!same(priorSources.target,previous.target)||!same(priorSources.binding,previous.binding)||!same(priorSources.profile,priorProfile)){
+    eligible=false;result.reasons.push('Independently retained previous source observations are missing or inconsistent.');
+  }
   if(eligible){
-    for(const [value,profile] of [[previous,priorProfile],[current,live.evidence.profile]]){
-      const checked=await host.inspectStrategy(value,{profile,binding:value.binding,sha256:host.sha256,validate:host.validate});
+    for(const [value,sources] of [[previous,priorSources],[current,currentSources]]){
+      const checked=await host.inspectStrategy(value,{...host,...sources});
       if(checked.schema!=='passed'||checked.deterministic!=='passed'){eligible=false;result.reasons.push('Snapshot schema or reference integrity is unavailable or failed.');break;}
     }
   }
   const stillLive=host.current();
   if(!stillLive||!live||!same(stillLive.binding,live.binding)){eligible=false;result.reasons.push('Canonical selection changed during comparison.');}
-  const propositions=(value,d)=>d.population.map(r=>({reference:r,proposition:value.claims.find(c=>c.id===r.id)?.proposition??null}));
+  const propositions=(value,d)=>(value.draft?.versions.find(v=>v.language===d.scope.language)?.claims.map(e=>e.claim)||[]).map(r=>{const c=value.claims.find(c=>c.id===r.id);return {reference:r,proposition:c?.proposition??null,subject:c?.subject??null,evidence:c?.evidence??[],context_evidence:c?.context_evidence??[]};});
   const common=[];
   if(!eligible)common.push('No trusted current candidate binding or confirmed-update continuity.');
   if(hash(previous.target)!==hash(current.target))common.push('Target changed.');
@@ -122,11 +133,12 @@ async function compareRevisions(previous, current, host) {
     const p=matches.length===1?matches[0]:null,reasons=[...common];
     if(!p)reasons.push('Previous dimension with the same scope is missing or ambiguous.');
     if(p){
-      if(!consistentDiagnostic(previous,p,same)||!consistentDiagnostic(current,d,same))reasons.push('Diagnostic arithmetic is inconsistent with its rubric, source states, counts or population; regenerate the affected snapshot review.');
+      if(!consistentDiagnostic(previous,p,same,{...host,...priorSources})||!consistentDiagnostic(current,d,same,currentSources))reasons.push('Diagnostic arithmetic is inconsistent with its rubric, source states, counts or population; regenerate the affected snapshot review.');
       if(hash(p.rubric)!==hash(d.rubric))reasons.push('Rubric definition, weights or scale changed.');
       if(hash(p.population)!==hash(d.population)||p.denominator!==d.denominator)reasons.push('Diagnostic population or denominator changed.');
       if(p.check_kind!==d.check_kind)reasons.push('Assessment method changed.');
-      if(d.dimension==='claim_support'&&hash(propositions(previous,p))!==hash(propositions(current,d)))reasons.push('Canonical proposition population changed.');
+      if(['claim_support','employer_appeal','editorial_readability'].includes(d.dimension)&&(!same(previous.binding.application_id,current.binding.application_id)||!same(previous.binding.application_context_sha256,current.binding.application_context_sha256)))reasons.push('Application identity or context changed.');
+      if(['claim_support','employer_appeal','editorial_readability'].includes(d.dimension)&&hash(propositions(previous,p))!==hash(propositions(current,d)))reasons.push('Canonical proposition population changed.');
       if(['employer_appeal','editorial_readability'].includes(d.dimension)){
         if(previous.settings.market!==current.settings.market)reasons.push('Editorial market changed.');
         if(hash(previous.editorial_methods)!==hash(current.editorial_methods))reasons.push('Editorial method fingerprint changed.');
@@ -157,7 +169,7 @@ async function reviewDiagnostics(value, host) {
   if (!context || !same(context.binding,value.binding)) return blocked('Current canonical binding is unavailable or stale.');
   const validation = context.evidence.validation;
   if (validation.schema !== 'passed' || validation.semantics !== 'passed') return blocked('Upstream validation is failed or unassessed.');
-  const integrity = await host.inspectStrategy(value,{profile:context.evidence.profile,binding:context.binding,sha256:host.sha256,validate:host.validate});
+  const integrity = await host.inspectStrategy(value,{...host,...context.source_observations,profile:context.evidence.profile,binding:context.binding});
   if (integrity.schema !== 'passed' || integrity.deterministic !== 'passed') return blocked('The strategy schema or reference integrity failed. Repair the private contract findings.');
   let inventories = {};
   try { inventories = await host.reviewInventories(structuredClone(value)) || {}; } catch { inventories = {}; }
@@ -184,10 +196,10 @@ async function reviewDiagnostics(value, host) {
     for (const entry of entries) {
       const c=value.claims.find(c=>c.id===entry.claim.id), realization=c?.realizations.find(r=>r.language===language);
       if (!realization || !same(realization.spans,entry.spans)) {complete=false;continue;}
-      const state=c.evidence.length===0?'unsupported':realization.semantic_state;
+      const state=reviewedClaimState(c,value,{...host,...context.source_observations,profile:context.evidence.profile,binding:context.binding},language);
       if (!['supported','unsupported','unresolved'].includes(state)) {complete=false;continue;}
       tally[state]++;
-      if (state!=='supported') findings.push(finding(`${language}-${c.id.slice(6)}`,c.evidence.length===0?'Unsupported assertion has no canonical evidence mapping.':`${state}: ${realization.semantic_reason}`,c.id,language,entry.spans[0]||null,'failed',c.evidence.length===0?'deterministic':'host_judgment'));
+      if (state!=='supported') findings.push(finding(`${language}-${c.id.slice(6)}`,`${state}: ${realization.semantic_reason}`,c.id,language,entry.spans[0]||null,'failed','host_judgment'));
     }
     if (!complete) findings.push(finding(`inventory-${language}`,'Complete independently reviewed inventory or semantic review is missing, stale or inconsistent.',null,null,null,'not_assessed'));
     diagnostic('claim_support',{language,priority:null},population,tally,complete&&population.length?'Arithmetic over the full host-reviewed factual inventory; unsupported and unresolved assertions remain visible.':'Not assessed: obtain a nonempty complete draft inventory and current semantic review for this language.',complete);
@@ -203,7 +215,7 @@ async function reviewEditorial(value, host) {
   const finding=(category,severity,status,issue,correction,rationale,extra={})=>({id:`finding:editorial-${findings.length}`,category,severity,check_kind:'host_judgment',status,claims:[],criteria:[],document_check:null,document_anchor:null,draft_span:null,observed_issue:issue,correction,rationale,...extra});
   const blocked=()=>({diagnostics:[],document_checks:[],findings:[finding('input','blocking','not_assessed','Current validated binding or contract is unavailable.','Refresh selection and validate the exact handoff.','Saved review is not current evidence.',{check_kind:'deterministic'})]});
   if(!current||!same(current.binding,value.binding)||current.evidence.validation.schema!=='passed'||current.evidence.validation.semantics!=='passed')return blocked();
-  const integrity=await host.inspectStrategy(value,{profile:current.evidence.profile,binding:current.binding,sha256:host.sha256,validate:host.validate});
+  const integrity=await host.inspectStrategy(value,{...host,...current.source_observations,profile:current.evidence.profile,binding:current.binding});
   if(integrity.schema!=='passed'||integrity.deterministic!=='passed')return blocked();
   let judgments={},observations=[];
   try{judgments=await host.reviewEditorialJudgments(structuredClone(value))||{};}catch{}
@@ -227,7 +239,7 @@ async function reviewEditorial(value, host) {
     }
     for(const entry of draft?.claims||[]){
       const claim=value.claims.find(c=>c.id===entry.claim.id),r=claim.realizations.find(r=>r.language===language);
-      if(!claim.evidence.length||r?.semantic_state!=='supported')findings.push(finding('evidence','blocking','failed',r?.semantic_reason||'The assertion lacks demonstrated canonical support.','Remove or bound the assertion, or obtain canonical evidence and repeat semantic review.','Appealing language cannot compensate for unsupported or unresolved claims.',{claims:[entry.claim],criteria:claim.target_references.filter(r=>r.namespace==='criterion'),draft_span:entry.spans[0]?{language,span:entry.spans[0]}:null}));
+      if(reviewedClaimState(claim,value,{...host,...current.source_observations,profile:current.evidence.profile,binding:current.binding},language)!=='supported')findings.push(finding('evidence','blocking','failed',r?.semantic_reason||'The assertion lacks demonstrated canonical support.','Remove or bound the assertion, or obtain canonical evidence and repeat semantic review.','Appealing language cannot compensate for unsupported or unresolved claims.',{claims:[entry.claim],criteria:claim.target_references.filter(r=>r.namespace==='criterion'),draft_span:entry.spans[0]?{language,span:entry.spans[0]}:null}));
     }
   }
   for(const check of value.document_checks){
@@ -238,7 +250,7 @@ async function reviewEditorial(value, host) {
     findings.push(finding('document',normalized.result==='failed'?'major':'informational',normalized.result,normalized.reason,verified?(normalized.result==='failed'?'Ask the document capability to correct the observed issue and repeat this check.':'Retain the observation and recheck after artifact changes.'):'Request a current external document observation.','This supplied observation is separate from wording review; strategy performs no extraction or rendering.',{check_kind:'external_observation',document_check:ref('document_check',check.id),document_anchor:verified?check.evidence_reference:null}));
   }
   const populated={...value,diagnostics,findings,document_checks,comparison:null};
-  const checked=await host.inspectStrategy(populated,{profile:current.evidence.profile,binding:current.binding,sha256:host.sha256,validate:host.validate});
+  const checked=await host.inspectStrategy(populated,{...host,...current.source_observations,profile:current.evidence.profile,binding:current.binding});
   if(checked.schema!=='passed'||checked.deterministic!=='passed'||!host.current()||!same(host.current().binding,current.binding))return blocked();
   return result();
 }

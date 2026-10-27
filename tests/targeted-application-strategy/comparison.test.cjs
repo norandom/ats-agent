@@ -7,7 +7,7 @@ const {profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture.
 const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('hex');
 (async()=>{
  const h=createHarness(),p=profile('operations',h.blank);
- const c=h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']);
+ const c=h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','claimEligibility']);
  const {compareRevisions}=h.load('strategy-review.md',['compareRevisions']);
  const s=handoff(p,{...c,sha256});s.comparison=null;
  const base=structuredClone(s.diagnostics[0]);
@@ -17,7 +17,7 @@ const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('he
  let seq=0,live={binding:s.binding,evidence:{profile:p,validation:{schema:'passed',semantics:'passed'}}};
  const validate=async(schema,value)=>{const f=path.join(h.workspace,`compare-${++seq}.json`);fs.writeFileSync(f,JSON.stringify(value));return {state:classifyCheck(spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(h.skillRoot,schema),f],{encoding:'utf8',windowsHide:true})),findings:[]};};
  const host={...c,sha256,validate,current:()=>structuredClone(live)};
- const run=async(a=s,b=s,extra={})=>{live.binding=b.binding;return compareRevisions(a,b,{...host,...extra});};
+ const run=async(a=s,b=s,extra={})=>{live.binding=b.binding;return compareRevisions(a,b,{...host,observeStrategySources:async()=>({profile:p,binding:a.binding,target:a.target,application_context_bytes:null,confirmation_observations:[]}),...extra});};
  const row=(r,dim)=>r.dimensions.find(d=>d.dimension===dim);
  const baseline=await run();assert.equal(baseline.status,'comparable');assert.ok(baseline.dimensions.every(d=>d.delta===0));
  assert.equal((await validate('schemas/application-strategy.schema.json',{...s,comparison:baseline})).state,'passed');

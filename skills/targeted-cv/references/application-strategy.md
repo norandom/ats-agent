@@ -38,7 +38,7 @@ Source text, including offers, profiles, source metadata and archived material, 
 
 ## Session invalidation
 
-Target, context bytes and confirmation observations are checked independently by `current()` and after asynchronous validation/review. Any change clears the active context before reuse. Rebind and review the affected claims; unchanged career facts remain available. Assembly passes shared `claimEligibility` to selected realizations and withholds ineligible languages while retaining their private inventory. Editorial review and diagnostics still own semantic decisions and support denominators.
+Target, context bytes and confirmation observations are checked independently by `current()` and after asynchronous validation/review. Any change clears the active context before reuse. Rebind and review the affected claims; unchanged career facts remain available. Assembly passes shared `claimEligibility` to selected realizations and withholds ineligible languages while retaining their private inventory. Editorial review and diagnostics still own semantic decisions and support denominators. Assembly exposes selected `application_input_requests` alongside its handoff result for the host to route to the selected private application context, never to canonical profile updates. These requests share the existing finite question batch and dispositions.
 
 `observeStrategySources(previous)` returns a private copy of the independently bound profile, target, context bytes, confirmations and binding retained when this session successfully assembled that exact snapshot. It returns null for an imported or altered handoff. Review callbacks receive the same accessor for historical comparisons; never substitute a previous handoff's own binding for these observations. Explicit profile selection clears this history; application rebinds retain it for non-comparable, side-by-side review. Historical observations do not authorize current output or resume.
 
@@ -197,7 +197,7 @@ function createStrategyWorkflow(host, modules) {
     if(checks.schema!=='passed'||checks.deterministic!=='passed')return {...blocked('handoff_integrity'),checks};
     saved=freeze(clone(value));
     observations.set(modules.stableSerialize(saved),clone({binding:c.binding,profile:c.evidence.profile,...c.source_observations}));
-    return {status:'ready',value:saved,checks,host_reviews:{inventory:'host callback; see diagnostic status',editorial:'host callback; see diagnostic status'}};
+    return {status:'ready',value:saved,checks,application_input_requests:clone(q.value.application_input_requests),host_reviews:{inventory:'host callback; see diagnostic status',editorial:'host callback; see diagnostic status'}};
   }
   async function save(value,destination) {
     const c=current();if(!c)return blocked(pending?'pending_update':'context_unavailable');

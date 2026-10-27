@@ -153,7 +153,7 @@ The approved [design amendment](application-context-design.md) extends the compl
   - _Boundary: StrategyContext_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 7.1, 7.4, 8.3, 8.4_
 
-- [ ] 9. Integrate contextual claims with editorial review and comparable diagnostics
+- [x] 9. Integrate contextual claims with editorial review and comparable diagnostics
   - Route missing or pending application context to a focused application-specific input request through evidence planning. Verify that the request names the missing distinction, respects existing question limits/dispositions, and does not become a career-profile update or qualification gap.
   - Apply reviewed candidate, offer, application and mixed subject distinctions. Split independent propositions and retain every needed source for wording that relates candidate experience to employer needs.
   - Connect editorial review, support calculation and integrity recomputation to the same eligibility result. Preserve the complete factual inventory, existing formulas, weights and career-only offer-coverage mappings.
