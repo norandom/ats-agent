@@ -1,0 +1,11 @@
+{
+  "name": "targeted-cv-tooling",
+  "private": true,
+  "version": "2.0.0-alpha.1",
+  "description": "Deterministic checks and release tooling for the targeted-cv skill; no application service",
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "release:prepare": "node release/prepare.cjs",
+    "release:check": "node release/check.cjs"
+  }
+}

@@ -1,0 +1,14 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),{spawnSync}=require('node:child_process');
+const out=path.resolve('outputs/composition-tests');fs.mkdirSync(out,{recursive:true});
+const facts=JSON.parse(fs.readFileSync(path.join(__dirname,'facts.json'),'utf8').replace(/^\uFEFF/,''));
+const fp=path.join(out,'facts.json'),ep=path.join(out,'editorial.json');fs.writeFileSync(fp,JSON.stringify(facts));
+const hash=()=>crypto.createHash('sha256').update(fs.readFileSync(fp)).digest('hex');
+const base={facts_sha256:hash(),expected_pages:1,blocks:[{kind:'name',template:'{{candidate.name}}',sources:['candidate']},{kind:'body',en:'Employer: {{job-lead.employer}}',de:'Arbeitgeber: {{job-lead.employer}}',sources:['job-lead']}]};
+const run=(edit,lang='en')=>{fs.writeFileSync(ep,JSON.stringify(edit));return spawnSync(process.execPath,[path.join(__dirname,'compile-composition.cjs'),fp,ep,lang,path.join(out,lang)],{encoding:'utf8'});};
+assert.equal(run(base).status,0);assert.equal(run(base,'de').status,0);
+assert(JSON.parse(fs.readFileSync(path.join(out,'de/expected-text.json'),'utf8'))[1].startsWith('Arbeitgeber:'));
+const next=structuredClone(facts);next.candidate.name='Alex Example';fs.writeFileSync(fp,JSON.stringify(next));assert.notEqual(run(base).status,0);
+const refreshed={...base,facts_sha256:hash()};assert.equal(run(refreshed).status,0);assert.equal(JSON.parse(fs.readFileSync(path.join(out,'en/expected-text.json'),'utf8'))[0],'Alex Example');
+const broken=structuredClone(refreshed);broken.blocks[1].sources=['missing'];assert.notEqual(run(broken).status,0);
+const punctuation=structuredClone(refreshed);punctuation.blocks[1].en='Bad\u2014separator';assert.notEqual(run(punctuation).status,0);
+console.log('PASS bilingual compilation, changed-input rejection, refreshed input binding, invalid references and punctuation guard');

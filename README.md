@@ -1,284 +1,77 @@
-# ATS CV Scoring Agent
+# Targeted CV
 
-The portable candidate-profile feature is validated: [feature result](.kiro/specs/portable-candidate-profile/validation-report.md), [test commands and coverage](tests/portable-candidate-profile/scenarios.md). This supplies the private facts workflow; WordCraft session integration, targeting strategy and the final distributable skill remain separate milestones.
+Turn your career history and a job offer into a focused CV and cover letter. Keep your facts in a private file, explain what you can contribute to the employer, and refine the documents in WordCraft.
 
-Repository privacy applies to all files, including specifications: see [the privacy policy](.kiro/steering/privacy.md). Candidate facts and derived drafts stay in ignored local files. Before staging, run `node tests/privacy/check-repository.cjs private/cv-facts.json` and review the changes for identifying context. Reusable code and fixtures must contain no real candidate data.
+Watch a fictional Men in Black application take shape in WordCraft. Each recording starts from an empty document and captures only the WordCraft window.
 
-> **Migration project initialized:** [Targeted CV skill brief](.kiro/specs/targeted-cv-skill/brief.md) and [HR/source register](.kiro/specs/targeted-cv-skill/research.md). The intended workflow uses a private fact base, a pasted job offer, employer-oriented positioning and WordCraft MCP DOCX generation. The specification is initialized; the Python application below remains the current implementation until migration. Store personal inputs in `private/` and generated applications in `outputs/` (both Git-ignored).
+**Two-page CV**
 
-Portable profile assets: [current 2.0 schema](skills/targeted-cv/schemas/cv-facts.schema.json), [empty intake scaffold](skills/targeted-cv/templates/cv-facts.blank.json), and [unchanged legacy 1.0 validator](skills/targeted-cv/schemas/cv-facts-v1.schema.json). Existing private profiles are not migrated by this relocation. Schema conformance is separate from semantic validity and task readiness.
+![WordCraft authors and formats a two-page CV for fictional lead field agent John Doe](docs/assets/mib-cv-live.gif)
 
-An intelligent agent that analyzes CVs (PDFs) and scores their compatibility with Applicant Tracking Systems (ATS). Built with OpenAI and PyMuPDF.
+**Cover letter**
 
-**Supports both English CVs and German Lebensläufe!**
+![WordCraft authors and formats John Doe's fictional cover letter](docs/assets/mib-cover-letter-live.gif)
 
-## Features
+## Start with your agent and WordCraft
 
-- **Multilingual Support**: Analyzes both English and German CVs with language-specific ATS requirements
-  - Automatic language detection
-  - German CV conventions (Lebenslauf format, sections, date formats)
-  - Bilingual reporting (English or German)
-- **PDF Parsing**: Extracts text content from PDF CVs using PyMuPDF
-- **ATS Compatibility Scoring**: Evaluates CVs across multiple dimensions:
-  - Keywords and relevant skills
-  - Document structure and formatting
-  - Parsing capability (how well ATS systems can read it)
-  - Content quality and completeness
-  - Context match (when job description is provided)
-- **Detailed Analysis**: Shows what information was successfully parsed
-- **Actionable Recommendations**: Provides specific improvement steps
-- **AI-Powered Reasoning**: Uses OpenAI to explain the analysis
+This is an agent skill. Your AI host reads the instructions, works with your private facts and calls WordCraft's tools. You watch and edit the actual document in the desktop app.
 
-## Installation
+Before your first application, you need:
 
-1. Create a virtual environment using uv:
-```bash
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+- An AI host that supports local skills, file access and MCP tools.
+- WordCraft desktop and `wordcraft-cli`, connected to that host through MCP.
+- Node.js, pnpm and uv/uvx for the local deterministic checks. These helpers do not call model APIs.
+
+Install the `targeted-cv` folder from the [latest alpha release](https://github.com/norandom/ats-agent/releases) in your host's skill directory, or load [SKILL.md](skills/targeted-cv/SKILL.md) from this checkout. Keep the folder's references, schemas and templates together.
+
+Then [connect WordCraft once](docs/wordcraft-setup.md). The connection is:
+
+```text
+You and your AI host -> targeted-cv instructions -> WordCraft MCP -> open document
 ```
 
-2. Install dependencies:
-```bash
-uv pip install openai pymupdf python-dotenv langdetect
-```
+The host discovers WordCraft's available tools and uses them to write, read back, render and save your CV or letter. The skill does not start a background Node service. Dagger builds and checks the release; it is not part of your document session.
 
-3. Set up your OpenAI API key:
-```bash
-cp .env.example .env
-# Edit .env and add your OpenAI API key
-```
+For your first run, ask: **“Use targeted-cv. Check my WordCraft connection, then help me prepare my private facts file.”** A successful connection check reads the selected document before authoring begins. The alpha supports document creation and bounded edits; the full conversational refinement loop is still planned. See the [roadmap](.kiro/steering/roadmap.md) for scope.
 
-## Usage
+## 1. Prepare your facts once
 
-### Basic Usage
+Provide your existing CV or start with the [blank facts template](skills/targeted-cv/templates/cv-facts.blank.json). The agent organizes your experience, qualifications, projects and skills into a structured file for you to review. Unknown details stay unknown; you can fill them in later.
 
-Score a CV without job description:
-```bash
-python main.py path/to/cv.pdf
-```
+Keep this file private. It is the source for your applications, so you do not need to repeat your career history for every offer. See [Your facts file](docs/your-facts.md) for what belongs there and how corrections work.
 
-### With Job Description
+## 2. Paste a job offer
 
-Score a CV against a specific job description:
-```bash
-# From a text file
-python main.py cv.pdf --job-description job_posting.txt
+Choose your facts file, paste the offer, and specify German or English. Also name the target country and whether you want a cover letter. Language and country are separate choices: an English application can target a German employer.
 
-# Or provide directly
-python main.py cv.pdf --jd "Software Engineer with 5+ years Python experience"
-```
+For example:
 
-### Save Report to File
+> Use my facts file at private/my-facts.json for the offer below. Prepare an English CV and a cover letter for Germany. Ask me about missing evidence before finalizing the documents.
 
-```bash
-python main.py cv.pdf --output report.txt
-```
+Without an offer, you can name a target role and prepare a general version. Job-specific coverage needs an actual offer.
 
-### JSON Output
+## 3. Strengthen the application together
 
-```bash
-python main.py cv.pdf --json > results.json
-```
+The agent identifies what the employer needs, selects relevant experience and proposes a contribution argument. It asks focused questions about qualifications, responsibility or results that could make the application stronger.
 
-### German CV (Lebenslauf) Analysis
+You can answer, skip a question or confirm that you do not have a qualification. Missing information does not automatically mean missing ability. Reviews distinguish evidence coverage, claim support, employer appeal and readability so you can see what an edit improves.
 
-The agent automatically detects German CVs and applies German-specific ATS requirements:
+## 4. Refine your documents in WordCraft
 
-```bash
-# Auto-detect language (recommended)
-python main.py lebenslauf.pdf
+The agent opens WordCraft in the foreground and authors the CV and cover letter live through WordCraft MCP. You can watch each document take shape, review the wording and layout, and request changes to the same open application. The default CV uses blue accents, no photo and current-page/total-page footers. Degree and certification award dates are omitted by default; relevant expiry or in-progress status remains accurate.
 
-# Explicitly specify German
-python main.py lebenslauf.pdf --language de
+For German-market cover letters, the workflow uses the requested DIN 5008 convention in either language. German and English versions draw on the same facts, with natural wording for each language.
 
-# With German job description
-python main.py lebenslauf.pdf --jd "Senior Softwareentwickler mit Python-Erfahrung"
-```
+## Optional writing skills
 
-**German CV Features:**
-- Recognizes German section names (Berufserfahrung, Ausbildung, Kenntnisse, etc.)
-- Understands German CV conventions and formatting
-- Checks for proper handling of Umlaute (ä, ö, ü, ß)
-- Evaluates against German ATS systems (StepStone, XING, Indeed.de)
-- Generates report in German language
+[COBESY](https://github.com/norandom/Skills/tree/main/cobesy), from the [Skills collection](https://github.com/norandom/Skills), helps organize the contribution argument and expertise section. [Humanizer](https://github.com/blader/humanizer) helps remove generic AI phrasing while preserving your meaning.
 
-## Output
+The workflow uses them when available. If either is missing, it offers a choice: help install it, let you install it yourself, or continue with the built-in writing guidance. It does not require you to install an entire marketplace. See [Writing skills and setup](docs/writing-skills.md).
 
-The tool provides:
+## Your information stays separate
 
-1. **Overall ATS Score** (0-100)
-2. **Category Scores**:
-   - Keywords
-   - Structure
-   - Parsing Capability
-   - Content Quality
-   - Context Match (if job description provided)
-3. **Parsing Summary**: What was successfully extracted
-4. **Extracted Information**: Name, email, phone, skills, experience, etc.
-5. **Strengths**: What the CV does well
-6. **Weaknesses**: Areas that need improvement
-7. **Improvement Steps**: Specific actionable recommendations
-8. **Detailed Reasoning**: AI's analysis of ATS compatibility
+Your facts describe your career. Each application separately holds its offer, selected evidence, drafts and review notes. An edit to one CV does not silently change your reusable facts.
 
-## Example
+In this checkout, keep facts and offers in ignored `private/`, personal reference documents in ignored `examples/`, and generated documents in ignored `outputs/`. Git ignore prevents ordinary tracking; it does not make connected services local or stop deliberate sharing. Only provide candidate content to the host and document tools you have chosen to use.
 
-```bash
-python main.py sample_cv.pdf --jd "Senior Python Developer"
-```
-
-Output:
-```
-================================================================================
-ATS CV COMPATIBILITY REPORT
-================================================================================
-
-OVERALL ATS SCORE: 78/100
-
-CATEGORY SCORES:
-----------------------------------------
-  Keywords                :  85/100 [█████████████████░░░]
-  Structure               :  75/100 [███████████████░░░░░]
-  Parsing Capability      :  80/100 [████████████████░░░░]
-  Content Quality         :  82/100 [████████████████░░░░]
-  Context Match           :  68/100 [█████████████░░░░░░░]
-
-PARSING SUMMARY:
-----------------------------------------
-  Pages: 2
-  Words: 847
-  Sections Found: experience, education, skills, projects
-  Contact Info: ✓
-
-EXTRACTED INFORMATION:
-----------------------------------------
-  Name: John Doe
-  Email: john.doe@email.com
-  Phone: +1-555-0123
-  Experience: 6 years
-  Skills: Python, Django, REST APIs, Docker, PostgreSQL, AWS
-
-STRENGTHS:
-----------------------------------------
-  ✓ Clear section headings using standard terminology
-  ✓ Quantifiable achievements with metrics
-  ✓ Relevant technical skills clearly listed
-  ✓ Contact information easily extractable
-
-WEAKNESSES:
-----------------------------------------
-  ✗ Uses some decorative formatting that may confuse ATS
-  ✗ Missing some keywords from job description
-  ✗ Could benefit from more specific skill endorsements
-
-IMPROVEMENT RECOMMENDATIONS:
-----------------------------------------
-  1. Add keywords like "microservices" and "CI/CD" from job description
-  2. Use simpler formatting - avoid text boxes and graphics
-  3. Include a skills matrix or dedicated technical skills section
-  4. Add more quantifiable metrics to achievements
-  5. Ensure consistent date formatting throughout
-
-DETAILED ANALYSIS:
-----------------------------------------
-The CV is well-structured with clear sections that ATS systems can parse...
-[Full reasoning from AI]
-================================================================================
-```
-
-### German Report Example
-
-For German CVs, the report is generated in German:
-
-```
-================================================================================
-ATS LEBENSLAUF-KOMPATIBILITÄTSBERICHT
-================================================================================
-
-GESAMT-ATS-BEWERTUNG: 82/100
-
-Erkannte Sprache: Deutsch
-
-KATEGORIE-BEWERTUNGEN:
-----------------------------------------
-  Schlüsselwörter          :  88/100 [█████████████████░░░]
-  Struktur                 :  85/100 [█████████████████░░░]
-  Parsing-Fähigkeit        :  78/100 [███████████████░░░░░]
-  Inhaltsqualität          :  80/100 [████████████████░░░░]
-  Kontext-Übereinstimmung  :  79/100 [███████████████░░░░░]
-
-PARSING-ZUSAMMENFASSUNG:
-----------------------------------------
-  Seiten: 2
-  Wörter: 923
-  Gefundene Abschnitte: personal_info, experience, education, skills, languages
-  Kontaktinformationen: ✓
-
-EXTRAHIERTE INFORMATIONEN:
-----------------------------------------
-  Name: Max Mustermann
-  E-Mail: max.mustermann@email.de
-  Telefon: +49-123-456789
-  Berufserfahrung: 7 Jahre
-  Kenntnisse: Python, Java, Projektmanagement, Scrum, SAP
-
-STÄRKEN:
-----------------------------------------
-  ✓ Klare deutsche Überschriften für alle Abschnitte
-  ✓ Vollständiger Werdegang ohne Lücken
-  ✓ Detaillierte Angaben zu Ausbildung mit Abschlussnoten
-  ✓ Sprachkenntnisse mit CEFR-Niveau angegeben
-
-VERBESSERUNGSEMPFEHLUNGEN:
-----------------------------------------
-  1. Verwenden Sie Standardschriftarten für bessere ATS-Kompatibilität
-  2. Fügen Sie mehr branchenspezifische Keywords hinzu
-  3. Ergänzen Sie quantifizierbare Erfolge bei Berufserfahrung
-  ...
-
-================================================================================
-```
-
-## Project Structure
-
-```
-ats-cv-agent/
-├── cv_parser.py              # PDF parsing, language detection, and structure analysis
-├── german_cv_knowledge.py    # German CV conventions and ATS requirements
-├── ats_agent.py              # Main ATS scoring agent with multilingual support
-├── main.py                   # CLI interface
-├── example.py                # Programmatic usage examples
-├── requirements.txt          # Python dependencies
-├── .env.example              # Environment variables template
-├── .gitignore                # Git ignore rules
-└── README.md                 # This file
-```
-
-## How It Works
-
-1. **PDF Parsing**: Uses PyMuPDF to extract text from the CV PDF
-2. **Language Detection**: Automatically detects CV language (English, German, etc.)
-3. **Structure Analysis**: Analyzes the CV for language-appropriate sections and formatting
-4. **AI Analysis**: Sends the CV content to OpenAI (GPT-4) with language-specific prompts
-5. **Scoring**: Evaluates across multiple dimensions relevant to regional ATS systems
-6. **Recommendations**: Generates actionable improvement suggestions in the appropriate language
-
-## Requirements
-
-- Python 3.10+
-- OpenAI API key
-- Dependencies: openai, pymupdf, python-dotenv, langdetect
-
-## Notes
-
-- The agent uses GPT-4 for analysis (configurable in `ats_agent.py`)
-- Supports multi-page PDFs
-- Automatically detects language and adjusts analysis criteria
-- German CVs analyzed with German ATS conventions (StepStone, XING, Indeed.de)
-- Properly handles special characters (Umlaute: ä, ö, ü, ß)
-- Reports generated in the detected language (English or German)
-- Extracts both text content and document metadata
-- Designed to reflect what actual ATS systems can parse
-
-## License
-
-MIT
+Read [the application workflow](docs/application-workflow.md), [the research behind it](docs/recruiting-signals-2026.md), or [the requirements](.kiro/specs/targeted-application-strategy/requirements.md). The [fictional demo](tests/fantasy-cv/README.md) shows the document direction without using a real candidate's data.

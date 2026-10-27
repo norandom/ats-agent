@@ -1,0 +1,71 @@
+{
+  "fixture_kind": "fictional_test_offer",
+  "title": "Lead Field Agent",
+  "employer": "Men in Black",
+  "location": "New York / off-world deployment",
+  "language": "en",
+  "target_country": "US",
+  "positioning": "The best of the best: protect civilian life, earn trust across species and resolve threats without public exposure.",
+  "requirements": [
+    {
+      "id": "r1",
+      "text": "Lead extraterrestrial incident response and threat assessment.",
+      "importance": "required",
+      "evidence": [
+        "lead-1",
+        "lead-3",
+        "skill-1"
+      ]
+    },
+    {
+      "id": "r2",
+      "text": "Use first-contact negotiation and de-escalation to protect civilians.",
+      "importance": "required",
+      "evidence": [
+        "lead-2",
+        "agent-1"
+      ]
+    },
+    {
+      "id": "r3",
+      "text": "Maintain operational secrecy and evidence integrity.",
+      "importance": "required",
+      "evidence": [
+        "lead-1",
+        "agent-3",
+        "skill-3"
+      ]
+    },
+    {
+      "id": "r4",
+      "text": "Train field agents and lead a team in complex operations.",
+      "importance": "required",
+      "evidence": [
+        "lead-3",
+        "lead-4"
+      ]
+    },
+    {
+      "id": "r5",
+      "text": "Use alien detection and containment technology.",
+      "importance": "required",
+      "evidence": [
+        "skill-2"
+      ]
+    },
+    {
+      "id": "r6",
+      "text": "Formal incident-command certification.",
+      "importance": "preferred",
+      "evidence": [],
+      "question_id": "q-command"
+    },
+    {
+      "id": "r7",
+      "text": "Availability for extended off-world deployment.",
+      "importance": "required",
+      "evidence": [],
+      "question_id": "q-travel"
+    }
+  ]
+}

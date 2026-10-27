@@ -114,3 +114,7 @@ Optimize three distinct qualities: relevance to employer needs, credibility of t
 The candidate fact file is a reusable evidence resource. The application is a selective argument for contribution. A private claim map connects them without leaking its administrative apparatus into the final CV.
 
 Later validation should include synthetic cases for truthful synonyms, unsupported skill requests, uncertain dates, German/English translation, conflicting sources, prompt-like text inside job offers, weak positioning despite accurate facts, and DOCX extraction/layout problems. Human review of employer appeal must accompany factual review; mechanical coverage alone is insufficient.
+
+## Additional recruiting research
+
+The English [2026 recruiting-signals synthesis](../../../docs/recruiting-signals-2026.md) adds primary-source checks for SHRM, LinkedIn, Gallup/Lumina, Bitkom, Stepstone, WEF and resume-screening research, alongside explicitly qualified Huntr telemetry. It records discrepancies in the supplied research and separates design hypotheses from findings. Use it as input to strategy design; it does not change approved requirements or candidate data.

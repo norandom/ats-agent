@@ -1,0 +1,44 @@
+name: Alpha release
+on:
+  push:
+    tags: ['v*-alpha.*']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: alpha-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10.18.3'
+      - name: Check tag and prepare explicit context
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            test "$GITHUB_REF_NAME" = "v$(tr -d '\r\n' < VERSION)"
+          fi
+          pnpm exec node release/prepare.cjs outputs/release-context
+      - name: Validate and package with Dagger
+        uses: dagger/dagger-for-github@v8.4.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: dist --source=outputs/release-context export --path=outputs/release-dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alpha-bundles
+          path: outputs/release-dist/*
+          if-no-files-found: error
+      - name: Publish alpha
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" outputs/release-dist/* --verify-tag --prerelease --title "Targeted CV $GITHUB_REF_NAME" --notes-file release/notes.md
