@@ -2,6 +2,8 @@
 
 ## Overview
 
+The approved [strategy application-context amendment](../targeted-application-strategy/application-context-design.md) governs the 1.1 evidence binding and letter-metadata linkage consumed here. Its consumer integration is implemented by strategy task 10; this feature retains ownership of live document acceptance and final validation.
+
 The host composes an application from the current private facts and reviewed strategy, then authors its CV and requested letter in WordCraft. Four skill references describe preparation, presentation and verification. A private manifest connects the reviewed wording to editable document sections and observed checks. There is no separate workflow application.
 
 ### Goals
@@ -61,7 +63,7 @@ These are host activities and reference boundaries, not processes or services. D
 | Area | Choice | Role |
 | --- | --- | --- |
 | Workflow | Markdown references | Host follows the skill in the current session |
-| Private state | Closed JSON schema, version 1.0 | Document mapping and evidence identity |
+| Private state | Closed JSON schema, version 1.1; archived 1.0 validation | Document mapping and evidence identity |
 | Documents | Existing desktop WordCraft MCP; observed 0.10.0 | Author, inspect, render, save and reopen |
 | Helpers/tests | Node.js through pnpm | Deterministic validation and fictional acceptance |
 | Schema validation | Existing check-jsonschema 0.38.2 through uvx | Reuse installed upstream validation convention |
@@ -78,6 +80,7 @@ All runtime files below are new, under `skills/targeted-cv/`.
 | `references/germany-cover-letter.md` | Letter inputs, sourced checklist and Form B recipe |
 | `references/document-verification.md` | Read-back, rendering, revision checks and upstream check adapter |
 | `schemas/application-documents.schema.json` | Closed private manifest contract |
+| `schemas/application-documents-v1.schema.json` | Historical 1.0 contract, pinned to the archived strategy binding |
 
 Test-only assets under `tests/wordcraft-application-documents/`: `fixtures.json` holds unrelated fictional inputs; `contracts.test.cjs` checks the manifest; `composition.test.cjs` checks strategy seams; `presentation.test.cjs` checks tokens and source-checklist structure; `verification.test.cjs` checks evidence invalidation and output mapping; `live-acceptance.cjs` exercises the installed MCP and records private evidence; `acceptance-manifest.json` maps all criteria; `full-acceptance.cjs` checks relocated allowlisted assets; `scenarios.md` distinguishes executed and pending cases. Reuse the existing test-only MCP client rather than implement another one. Additional test modules may split these responsibilities without expanding runtime scope.
 
@@ -171,7 +174,7 @@ After save/reopen, hash current DOCX bytes locally. Bind checks to the same sess
 
 ## Data Models
 
-One private `DocumentManifest` uses closed schema version `1.0`, with all fields required and explicit nulls where unobserved. It references upstream identities rather than duplicating their contracts.
+One private `DocumentManifest` uses closed schema version `1.1`, with all fields required and explicit nulls where unobserved. It references upstream identities rather than duplicating their contracts. Letter metadata carries the ordered confirmed-context references defined by the approved strategy amendment; historical 1.0 manifests do not inherit current ready or delivered status.
 
 | Field | Shape and invariant |
 | --- | --- |
@@ -208,7 +211,7 @@ Section anchors are host bookkeeping. Exact text/context must resolve uniquely i
 - Composition integration (2.1-2.6, 3.1-3.6): consume actual upstream assembly and semantic-review fixtures. Exercise repeated wording spans, different wordings, qualifier loss at slice boundaries, unsupported juxtaposition, metadata-derived assertions, missing required metadata, pair contradictions, omitted award dates, historical skills and one supported language while the other remains pending. Host semantic examples are independently reviewed; deterministic replay is labeled as such.
 - Presentation/verification controls (4.1-4.6, 5.1-5.6, 7.1-7.5): check rule-source attribution, unit conversion, page-index convention, field identity, all-page coverage, stale saved/render states and unchanged upstream DocumentCheck shape. Do not substitute mocked success for live formatting.
 - Actual desktop acceptance (6.1-6.6, 7.6): create fictional CV/letter pairs in both languages; inspect every page, exact read-back and source checklist, save/reopen editable text, verify real PAGE/NUMPAGES before and after a multi-page edit, preserve an intervening manual change, switch documents visibly and restore the originally selected fictional document. Record unsupported cases as pending.
-- Relocation/privacy: copy the explicit six runtime assets, including the entrypoint, with required upstream allowlists to a fresh external location; run checks through pnpm with no sibling checkout, candidate input or model credentials. Pin current runtime hashes and independently reviewed actual receipts. Run repository/index privacy checks separately. This is not release acceptance.
+- Relocation/privacy: copy the six current runtime assets, including the entrypoint, plus the historical document schema and required upstream allowlists to a fresh external location; run checks through pnpm with no sibling checkout, candidate input or model credentials. Pin current runtime hashes and independently reviewed actual receipts. Run repository/index privacy checks separately. This is not release acceptance.
 
 ## Security Considerations
 
