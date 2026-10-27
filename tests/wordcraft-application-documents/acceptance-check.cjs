@@ -57,4 +57,3 @@ function verify(receipt,reviewFile){
 }
 module.exports={verify,inspectUpstreamReceipt};
 if(require.main===module){try{const result=verify(...process.argv.slice(2));console.log(JSON.stringify(result));if(result.status!=='passed')process.exitCode=1;}catch(e){console.error(e.message);process.exitCode=1;}}
-

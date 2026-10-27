@@ -68,6 +68,3 @@ function fixture(){
  return {profile:p,metadata,offer,intent,documents:docs};
 }
 module.exports={fixture};
-
-
-
