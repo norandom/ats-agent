@@ -1,10 +1,10 @@
 # Prepare an application
 
-Start with your [private facts file](your-facts.md) and a job offer. This guide describes the intended application flow: choose the strongest relevant evidence, clarify what is missing, then review the resulting documents in WordCraft.
+Start with your [private facts file](your-facts.md) and a job offer. Use the [targeted-cv entrypoint](../skills/targeted-cv/SKILL.md) from this checkout to choose relevant evidence, clarify what is missing, and create editable documents in WordCraft. Standalone installation packages and the automated conversational refinement loop are still separate work; you can request bounded edits through the existing document session.
 
 ## Choose the offer, language and country
 
-Tell the agent which facts file to use and paste the offer. Choose German or English, name the target country, and say whether you want a CV, a cover letter or both. You can request both languages from the same facts.
+Tell the agent which facts file to use and paste the offer. Choose German or English, name the target country, and say whether you want a CV, a cover letter or both. You can request both languages from the same facts. Select a private destination for each document. A CV-only request creates no letter.
 
 If you do not have an offer, name a target role. You can still develop a general contribution argument, but a job-specific coverage score would have no basis.
 
@@ -36,7 +36,7 @@ Read the draft for its overall argument as well as individual claims. It should 
 
 These are review aids, not hiring probabilities. Unknown information is shown as unknown. A missing tool result is not a zero score for you. Repeating a keyword does not strengthen its supporting evidence.
 
-## Refine the documents in WordCraft
+## Create and edit the documents in WordCraft
 
 The agent opens or brings WordCraft to the foreground before authoring. It creates the CV and requested cover letter live through WordCraft MCP in the visible desktop session. When working on several documents or languages, it identifies and displays the document it is currently editing.
 
@@ -50,7 +50,9 @@ Watch the draft take shape, then request changes to the opening, expertise secti
 
 The CV baseline uses blue accents, no photo, readable spacing and automatic current-page/total-page footers. Use the space your relevant experience needs. Completed degree and certification award dates are omitted by default; relevant expiry and in-progress status remain accurate.
 
-For German-market cover letters, use the requested DIN 5008 convention in either language and check the resulting layout. German and English versions may differ in phrasing, but must preserve the same meaning and evidence.
+For German-market cover letters, the agent applies the sourced DIN 5008 project checklist in either language and reports which layout checks passed. That is not a full-standard conformity claim. Missing required addresses or other letter inputs leave the letter pending while a supported CV can proceed. The same applies when one language needs further support review: it does not stop another independently supported version.
+
+You receive the saved editable DOCX location after read-back and reopen checks, together with passed, failed and unassessed results. A document with unresolved mandatory checks remains a draft. An edit makes earlier affected checks stale until the revised file is inspected again. German and English versions may differ in phrasing, but must preserve the same meaning and evidence.
 
 ## Keep each application separate
 

@@ -86,7 +86,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Boundary: Verification_
   - _Requirements: 6.3, 6.6, 7.4, 7.5_
 
-- [ ] 6. Integrate composition, presentation and verification into the live session
+- [x] 6. Integrate composition, presentation and verification into the live session
   - Provide a thin `SKILL.md` entrypoint routing completed upstream and document capabilities with relative paths. Exercise the integrated request through it; do not duplicate rules or claim unfinished refinement/distribution features.
   - Connect the host entry protocol to current strategy selection, requested document members, confirmed letter metadata, presentation profiles and existing WordCraft operations. Do not add a Node.js workflow engine.
   - Author in the selected visible desktop session, identify/select document and language switches, preserve unsaved/manual work and use fresh targeted edits. Reconcile changed content mappings before claiming supported delivery.
