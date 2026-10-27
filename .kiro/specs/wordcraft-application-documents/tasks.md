@@ -68,7 +68,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 1.2, 2, 3.2_
   - _Requirements: 3.1, 3.5, 3.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-- [ ] 5. Establish document checks and their consumer handoff
+- [x] 5. Establish document checks and their consumer handoff
 - [x] 5.1 Verify observed text, structure and all-page layout
   - Implement the verification protocol for exact read-back and separate semantic review, reading-order associations, field/part inspection, every rendered page and the applicable sourced letter checklist.
   - Measure resulting layout rather than trust command arguments; retain render scale, page coverage, producer, method and evidence. Body-only extraction cannot establish footer fields, and screenshots cannot establish reading order.
@@ -78,7 +78,7 @@ Tasks are sequential: shared references, test fixtures and the selected desktop 
   - _Depends: 2, 4.1, 4.2_
   - _Requirements: 4.2, 4.3, 4.6, 5.4, 5.5, 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 5.2 Return current artifact evidence without redefining scores
+- [x] 5.2 Return current artifact evidence without redefining scores
   - Map independently observed saved-artifact checks into the existing strategy document-check contract, retaining actual bytes/hash, observation time, method, evidence location and reason.
   - Keep editorial judgments, executed checks and unresolved issues distinct. Unsaved or unavailable artifacts cannot acquire invented hashes or passing results.
   - Exercise the consumer observation path using current actual evidence, not a copy of incoming manifest flags; return editable section mappings to refinement without treating logical anchors as native selection authority.

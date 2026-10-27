@@ -17,6 +17,26 @@ Run this block unchanged. `entry` is a validated manifest member. `observation` 
 `reviewedText` is the exact assembled reviewed section text. `bodyText` and `structure` are MCP read-back. Reviews carry `status` and `reason`: `semanticReview` is separate; `readingOrder` also has inspected `associations`. `renders` contains one record per actual page with `page`, `evidence_reference`, `accessible`, `status` and observed `footerText`. `fields` contains inspected objects with `part` and `instr`. `letterRules` is the complete applicable sourced checklist with observed `measured` values and `measurement_method`. Unknown applicability must remain pending. Evidence remains private.
 
 ```javascript
+function toStrategyDocumentChecks(currentArtifact, verifiedObservations) {
+  const a=currentArtifact, text=x=>typeof x==='string'&&x.trim().length>0;
+  const hash=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
+  if(!a||a.saved!==true||a.current!==true||!text(a.id)||!text(a.saved_path)||!hash(a.saved_sha256)||!hash(a.snapshot_sha256))return [];
+  const out=[],ids=new Set();
+  for(const c of verifiedObservations||[]){
+    // The closed upstream schema cannot represent absent provenance. Keep such issues in the manifest.
+    if(!text(c.producer)||!text(c.method)||!text(c.kind)||!text(c.reason)||!Number.isFinite(Date.parse(c.observed_at)))continue;
+    const id=`document_check:${a.id}-${c.kind}`;
+    if(!/^document_check:[A-Za-z0-9][A-Za-z0-9._-]*$/.test(id)||ids.has(id))throw Error('Ambiguous document check identity');
+    ids.add(id);
+    const matched=c.artifact_sha256===a.saved_sha256&&c.snapshot_sha256===a.snapshot_sha256&&
+      text(c.evidence_reference)&&a.accessibleEvidence?.includes(c.evidence_reference);
+    const result=matched&&['passed','failed','not_assessed'].includes(c.status)?c.status:'not_assessed';
+    out.push({id,producer:c.producer,method:c.method,artifact_id:a.id,artifact_sha256:a.saved_sha256,
+      observed_at:c.observed_at,check:c.kind,result,evidence_reference:matched?c.evidence_reference:null,
+      reason:matched?c.reason:'Current revision or accessible evidence unavailable; repeat this check.'});
+  }
+  return out;
+}
 function verifyObservedDocument(entry, o, stableSerialize) {
   if (!o || typeof stableSerialize !== 'function') throw Error('Independent observations and upstream stableSerialize required');
   const identityKeys = ['document_id','connection_id','snapshot_id','snapshot_sha256','saved_path','saved_sha256'];
@@ -63,3 +83,13 @@ function verifyObservedDocument(entry, o, stableSerialize) {
 ```
 
 This gate checks completeness and consistency of supplied evidence. The host still owns actual observation, association review, visual judgment and truthful source applicability. Pass its check records to the existing manifest validator as independent observations; do not bypass current strategy, selection or manifest integrity checks. Consumer mapping is a separate handoff using the unchanged strategy contract.
+
+## Return evidence to strategy and refinement
+
+Call `toStrategyDocumentChecks(currentArtifact, verifiedObservations)` with the gate's check records, not incoming manifest flags. The transient `currentArtifact` carries `id`, `saved_path`, `saved_sha256`, `snapshot_sha256`, `saved`, `current` and `accessibleEvidence` (evidence locations the host has opened and checked). Obtain these from the selected saved artifact and the current session. Recheck bytes and session continuity after inspection. Set `current` only after validating identity, check scope, producer, method, observation time and evidence against the actual result. An archived receipt, matching bytes alone or replay-local IDs cannot establish this. Reconnect through the session's binding protocol; preserve unsaved or manual changes before any same-file reopen.
+
+The adapter returns only the existing closed `DocumentCheck` shape. It preserves assessed failures and unavailable results, invalidates mismatched revisions and emits no checks for an unsaved or unavailable artifact. Missing producer, method or observation time cannot be invented to satisfy the upstream schema: retain those issues and their reasons in the manifest. An empty output means no usable observations. Check names and artifact IDs must form unique upstream IDs. Scope, pages, snapshot identity and evidence associations stay in the private manifest and linked evidence, since the upstream check shape has no fields for them.
+
+For [strategy review](strategy-review.md), the host implements `observeDocumentArtifacts()` by independently inspecting current selected artifacts and returning `{binding, artifact_id, artifact_sha256, checks}` per artifact. Map this fresh observation through the adapter. Do not construct it from `value.document_checks`, or refresh timestamps on archived checks. Pass the proposed checks and this independent callback to the unchanged `reviewEditorial`; merge its normalized results and validate the complete strategy with the existing schema. The consumer retains `not_assessed` but may replace its reason with its own missing-observation explanation, so keep the original detailed reason in the document manifest. Editorial judgments and semantic support remain separate host reviews. Failed checks and unresolved issues remain visible; no document score is calculated.
+
+Return refinement the saved editable DOCX location, honest check states, issues, and the manifest's `draft.sections` and `anchors` with their current session baseline and private claim associations. These mappings are host bookkeeping, not native selection authority. Resolve exact text/context uniquely against fresh WordCraft text and structure before an edit. Rebase manual changes through the session; ambiguous or stale mappings stay pending. Report delivery only after saved/reopened read-back, and retain an editable draft when a mandatory content or layout check fails.
