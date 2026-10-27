@@ -6,15 +6,15 @@ const {createHarness}=require('../targeted-application-strategy/foundation.cjs')
 async function prepareIntegration(){
  const f=await setup(),h=createHarness(),s=structuredClone(f.base.strategy),p=f.base.profile;
  const modules=Object.assign({},...[
-  ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']],
+  ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']],
   ['profile-contract.md',['dispatchVersion']],['profile-validation.md',['evidenceView']],
   ['profile-updates.md',['createProfileUpdates']],['strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']],
   ['strategy-editorial.md',['inspectComposition','applyEditorialMethods']],
-  ['strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions']]
+  ['strategy-review.md',['reviewedClaimState','reviewDiagnostics','reviewEditorial','compareRevisions']]
  ].map(([file,names])=>load(file,names)));
  const selected=h.select(p),factsPath=selected.snapshot.selection.resolved_path;
  const host={session:'fictional-entry-integration',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
-  validateProfile:(value,task)=>h.validate(value,{taskRequest:task}),validate:f.validate,
+  validateProfile:(value,task)=>h.validate(value,{taskRequest:task}),validate:f.validate,currentApplicationSelection:()=>({target:s.target,application_context_bytes:null,confirmation_observations:[]}),
   // Deterministic control callback; actual host meaning review is recorded separately.
   reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),
   reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};
@@ -38,7 +38,7 @@ async function prepareIntegration(){
   ['employer',employment.employer,employment.id,'/employment/0/employer'],
   ['dates','2022 - December 2025',employment.id,'/employment/0']]){
   const ref={namespace:'claim',id:'claim:'+id};
-  s.claims.push({id:ref.id,proposition:wording,evidence:[{record_id,pointer,source_ids:['source-operations'],original_state:'supported',observation_limit:'Wholly fictional selected input.'}],target_references:[],limits:[],realizations:[{language:'en',wording,spans:[span(wording)],semantic_state:'supported',semantic_reason:'Exact selected fictional field or faithful date localization; host review remains separately recorded.'}]});
+  s.claims.push({subject:'candidate',context_evidence:[],id:ref.id,proposition:wording,evidence:[{record_id,pointer,source_ids:['source-operations'],original_state:'supported',observation_limit:'Wholly fictional selected input.'}],target_references:[],limits:[],realizations:[{language:'en',wording,spans:[span(wording)],semantic_state:'supported',semantic_reason:'Exact selected fictional field or faithful date localization; host review remains separately recorded.'}]});
   s.positioning.selected_claims.push({claim:ref,languages:['en']});s.positioning.selections.push({claim:ref,decision:'include',rationale:'CV identity and employment context.'});claims.push({claim:ref,spans:[span(wording)]});
  }
  s.draft.versions=[{language:'en',text,sha256:sha256(text),inventory_status:'complete',claims}];s.findings=[];s.document_checks=[];s.comparison=null;
@@ -46,7 +46,7 @@ async function prepareIntegration(){
  const strategy=assembled.value,manifest=structuredClone(f.manifest);manifest.documents=[manifest.documents[0]];
  const doc=manifest.documents[0];doc.draft={language:'en',sha256:sha256(text),sections:[{id:'cv-evidence',kind:'evidence',range:{start:0,end:Array.from(text).length,excerpt:text},claims:claims.map(c=>c.claim)}]};
  manifest.binding=structuredClone(strategy.binding);manifest.origin_strategy_sha256=manifest.strategy_sha256=modules.fingerprint(strategy,sha256);
- const trusted={...f.trusted,strategy,binding:strategy.binding,strategy_sha256:manifest.strategy_sha256,origin_strategy_sha256:manifest.origin_strategy_sha256};
+ const trusted={...f.trusted,current:workflow.current,strategy,binding:strategy.binding,strategy_sha256:manifest.strategy_sha256,origin_strategy_sha256:manifest.origin_strategy_sha256};
  return {...f,manifest,trusted,strategy,workflow,modules,host,paragraphs,text,factsPath,factsHash:sha256(fs.readFileSync(factsPath))};
 }
 module.exports={prepareIntegration};

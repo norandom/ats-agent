@@ -40,7 +40,7 @@ test('claim inventory and supported language are upstream authority',async()=>{
   await reject((m,t)=>{t.strategy.positioning.selected_claims[0].languages=['en'];t.strategy_sha256=t.fingerprint(t.strategy,t.sha256);m.strategy_sha256=t.strategy_sha256;},'unsupported_claim');
 });
 test('pending letter and unsupported language do not block another draft member',async()=>{
-  const {m,t}=fresh(); const letter=m.documents[1]; letter.letter_inputs.recipient={value:null,confirmed:false,provenance:[]};letter.letter_inputs.missing_required=['recipient'];letter.state='pending';letter.issues=['Recipient confirmation needed'];letter.draft=null;
+  const {m,t}=fresh(); const letter=m.documents[1]; letter.letter_inputs.recipient={value:null,confirmed:false,provenance:[],context_refs:[]};letter.letter_inputs.missing_required=['recipient'];letter.state='pending';letter.issues=['Recipient confirmation needed'];letter.draft=null;
   assert.deepEqual(await inspect(m,t),[]);
   letter.state='authored'; assert.ok((await inspect(m,t)).some(f=>f.code==='missing_inputs'));
   letter.state='pending';
@@ -87,14 +87,18 @@ test('revision and anchors reject stale or forged observations',async()=>{
 });
 test('CV-only selection is accepted and technical anchors cannot enter emitted text',async()=>{
   const {m,t}=fresh();t.strategy.settings.requested_documents=['cv'];t.strategy.binding.settings_sha256=t.fingerprint(t.strategy.settings,t.sha256);t.binding=structuredClone(t.strategy.binding);m.binding=structuredClone(t.binding);t.strategy_sha256=t.fingerprint(t.strategy,t.sha256);m.strategy_sha256=t.strategy_sha256;m.documents=m.documents.filter(d=>d.kind==='cv');
+  const bound=await foundation.reselect(t.strategy.settings);assert.equal(bound.status,'ready');
+  t.binding=bound.value.binding;t.strategy.binding=t.binding;t.strategy.dispositions.forEach(d=>d.binding=structuredClone(t.binding));m.binding=t.binding;t.strategy_sha256=t.fingerprint(t.strategy,t.sha256);m.strategy_sha256=t.strategy_sha256;
   assert.deepEqual(await inspect(m,t),[]);
   const d=observedMember(m,t);d.draft.sections[0].id=d.draft.sections[0].range.excerpt;d.anchors[0].section_id=d.draft.sections[0].id;
   assert.ok((await inspect(m,t)).some(f=>f.code==='anchor_leak'));
+  await foundation.reselect();
 });
 test('astral characters use code-point offsets rather than UTF-16 positions',async()=>{
   const {m,t}=fresh(),version=t.strategy.draft.versions[0];version.text='📦 '+version.text;version.sha256=sha256(version.text);
   for (const span of version.claims[0].spans) {span.start+=2;span.end+=2;}
   t.strategy.claims[0].realizations[0].spans=structuredClone(version.claims[0].spans);
+  t.strategy.findings[0].draft_span.span=structuredClone(version.claims[0].spans[0]);
   for (const d of m.documents.filter(d=>d.language===version.language)) {d.draft.sha256=version.sha256;d.draft.sections[0].range.start+=2;d.draft.sections[0].range.end+=2;}
   t.strategy_sha256=t.fingerprint(t.strategy,t.sha256);m.strategy_sha256=t.strategy_sha256;
   assert.deepEqual(await inspect(m,t),[]);
@@ -112,7 +116,7 @@ test('validated needs_revision scopes blocking findings to affected wording and 
   finding.severity='blocking';finding.status='failed';
   finding.draft_span={language:'de',span:structuredClone(t.strategy.draft.versions.find(v=>v.language==='de').claims[0].spans[0])};
   async function checkCurrent() {
-    const upstream=await inspectStrategy(t.strategy,{profile:foundation.base.profile,binding:t.binding,sha256:t.sha256,validate:t.validate});
+    const upstream=await inspectStrategy(t.strategy,{...foundation.sources,profile:foundation.base.profile,binding:t.binding,sha256:t.sha256,validate:t.validate});
     assert.equal(upstream.schema,'passed');assert.equal(upstream.deterministic,'passed',JSON.stringify(upstream.findings));
     t.strategy_sha256=t.fingerprint(t.strategy,t.sha256);m.strategy_sha256=t.strategy_sha256;
     return inspect(m,t);

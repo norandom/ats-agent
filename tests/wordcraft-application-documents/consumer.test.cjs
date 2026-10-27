@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const {setup,load,sha256}=require('./manifest-fixture.cjs');
-const {stableSerialize,fingerprint,inspectStrategy}=load('strategy-contract.md',['stableSerialize','fingerprint','inspectStrategy']);
+const {stableSerialize,fingerprint,inspectStrategy,claimEligibility}=load('strategy-contract.md',['stableSerialize','fingerprint','inspectStrategy','claimEligibility']);
 const {reviewEditorial}=load('strategy-review.md',['reviewEditorial']);
 const {toStrategyDocumentChecks}=load('document-verification.md',['toStrategyDocumentChecks']);
 function fixture(){
@@ -26,7 +26,7 @@ test('unchanged strategy consumer verifies independent checks and refuses forged
  s.findings=[];s.comparison=null;
  s.document_checks=toStrategyDocumentChecks(artifact,checks);assert.equal(s.document_checks.length,2);
  const observation={binding:structuredClone(s.binding),artifact_id:artifact.id,artifact_sha256:artifact.saved_sha256,checks:structuredClone(s.document_checks)};
- const host={stableSerialize,fingerprint,inspectStrategy,sha256,validate,current:()=>({binding:s.binding,evidence:{profile:base.profile,validation:{schema:'passed',semantics:'passed'}}}),reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[observation]};
+ const host={stableSerialize,fingerprint,inspectStrategy,claimEligibility,sha256,validate,current:()=>({binding:s.binding,source_observations:{target:s.target,application_context_bytes:null,confirmation_observations:[]},evidence:{profile:base.profile,validation:{schema:'passed',semantics:'passed'}}}),reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[observation]};
  const accepted=await reviewEditorial(s,host);assert.equal(accepted.document_checks[0].result,'passed');assert.equal(accepted.document_checks[1].result,'not_assessed');
  assert.ok(accepted.diagnostics.every(d=>d.value===null));assert.ok(accepted.findings.some(f=>f.category==='document'));
  assert.equal((await validate('schemas/application-strategy.schema.json',{...s,...accepted})).state,'passed');

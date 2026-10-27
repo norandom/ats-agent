@@ -36,9 +36,17 @@ Use one composite upstream draft per language for the requested documents. Map e
 
 Before authoring, the host reads each complete assembled document against the evidence and target. Check whether adjacent supported passages imply unsupported causality, authority, scale or current proficiency. Check that chronology, qualifications and contacts stay attached to the right entries, and that the selected evidence makes the contribution understandable. Matching references alone cannot pass this review. Route rewording or uncertain meaning back to strategy; retain unsupported proposals only in private pending work. Keep the private section associations for later targeted edits, and reconcile actual observed document text with this composition for omissions, additions, broken characters and altered meaning. Record mechanical comparisons separately from host semantic judgment. WordCraft authoring and observed document checks are subsequent work, not established by a valid draft mapping.
 
+## Context metadata and compatibility
+
+New manifests and strategy handoffs must both be version 1.1. Validate historical manifests only with application-documents-v1.schema.json and its pinned strategy 1.0 binding. Unknown versions are rejected. Rebuild old applications from freshly selected inputs and reviewed claims; never insert defaults into old ready artifacts.
+
+Every letter field carries ordered context_refs to whole /value records in the current strategy application context. Recipient combines optional recipient_name, optional recipient_organization and required recipient_address records in output order, joining their lines with newlines. Date uses one application_date record, rendering ISO dates as “3 January 2026” in English or “3. Januar 2026” in German. Salutation uses one confirmed salutation record in the chosen language, without implicit translation. Enclosures uses one enclosure record and preserves its array order, including an explicitly confirmed empty array. Missing references or confirmation belong in missing_required and leave only the letter pending. A confirmed boolean or arbitrary provenance cannot authorize metadata. All factual metadata wording in emitted ranges also remains in the upstream reviewed claim inventory. Strategy owns source and claim eligibility; documents only checks metadata linkage and formatting.
+
+Supply current() from the live strategy workflow and the actual upstream inspectStrategy helper. Its source_observations bind independent current bytes and confirmations; never reconstruct them from the manifest. Context or confirmation changes require rebuilding and reviewing affected composition, even if text is identical, and cannot use check-only refresh.
+
 ## Manifest integrity
 
-Keep manifest instances, exact excerpts and observations at an explicitly authorized private destination. The [closed 1.0 schema](../schemas/application-documents.schema.json) requires every field; null records an unknown or not-yet-observed value. Preserve the original strategy hash for audit. The current hash identifies the exact validated strategy snapshot. Do not update either from a manifest's own assertions.
+Keep manifest instances, exact excerpts and observations at an explicitly authorized private destination. The [closed 1.1 schema](../schemas/application-documents.schema.json) requires every field; null records an unknown or not-yet-observed value. Preserve the original strategy hash for audit. The current hash identifies the exact validated strategy snapshot. Do not update either from a manifest's own assertions.
 
 At creation, the origin equals the trusted current snapshot hash. For an existing manifest, supply `trusted.origin_strategy_sha256` from the independently retained origin record. `inspectDocumentManifest` does not authorize a strategy rebind.
 
@@ -62,7 +70,7 @@ async function proposeCheckOnlyRefresh(manifest, previousStrategy, trusted = {})
     const context=t.current();
     if (!context || context.evidence?.validation?.schema!=='passed' || context.evidence?.validation?.semantics!=='passed' || !equal(context.binding,t.binding)) return reject('Current validated canonical context is unavailable or changed.');
     for (const strategy of [previousStrategy,t.strategy]) {
-      const report=await t.inspectStrategy(strategy,{profile:context.evidence.profile,binding:context.binding,sha256:t.sha256,validate:t.validate});
+      const report=await t.inspectStrategy(strategy,{...context.source_observations,profile:context.evidence.profile,binding:context.binding,sha256:t.sha256,validate:t.validate});
       if (report.schema!=='passed'||report.deterministic!=='passed') return reject('A strategy snapshot is invalid or stale against current inputs.');
     }
     if (t.fingerprint(previousStrategy,t.sha256)!==manifest.strategy_sha256 || t.fingerprint(t.strategy,t.sha256)!==t.strategy_sha256) return reject('Snapshot hashes differ from the retained snapshots.');
@@ -78,7 +86,7 @@ async function proposeCheckOnlyRefresh(manifest, previousStrategy, trusted = {})
     proposal.strategy_sha256=t.strategy_sha256;
     if ((await inspectDocumentManifest(proposal,t)).length) return reject('The proposed manifest fails integrity validation.');
     const now=t.current();
-    if (!now||!equal(now.binding,context.binding)||now.evidence?.validation?.schema!=='passed'||now.evidence?.validation?.semantics!=='passed') return reject('Canonical context changed during validation.');
+    if (!now||!equal(now.binding,context.binding)||!equal(now.source_observations,context.source_observations)||now.evidence?.validation?.schema!=='passed'||now.evidence?.validation?.semantics!=='passed') return reject('Canonical context changed during validation.');
     return {decision:'refresh',reason:'Only document checks changed and supplied current observations match.',proposal,transition:{origin_strategy_sha256:manifest.origin_strategy_sha256,previous_strategy_sha256:manifest.strategy_sha256,strategy_sha256:t.strategy_sha256}};
   } catch { return reject('Refresh validation could not be completed.'); }
 }
@@ -86,6 +94,7 @@ async function proposeCheckOnlyRefresh(manifest, previousStrategy, trusted = {})
 async function inspectDocumentManifest(manifest, trusted = {}) {
   const findings = [];
   const add = (code,path,message,action='Refresh the affected private mapping from current trusted inputs.') => findings.push({code,path,message,action});
+  if (manifest?.schema_version!=='1.1' || trusted.strategy?.schema_version!=='1.1') { add('unsupported_version','/schema_version','Rebuild from current selected sources under version 1.1; historical ready status is not reusable.'); return findings; }
   let schema;
   try { schema = await trusted.validate('schemas/application-documents.schema.json',manifest); } catch { /* unavailable */ }
   if (!schema || !['passed','failed'].includes(schema.state)) {
@@ -94,7 +103,7 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
   if (schema.state === 'failed') { add('schema_invalid','/','The manifest does not satisfy the closed schema.','Inspect private validator diagnostics.'); return findings; }
   const t = trusted, s = t.strategy;
   if (!s || !t.binding || !t.strategy_sha256 || !t.session || !Array.isArray(t.privateDestinations) || !Array.isArray(t.savedArtifacts) || !Array.isArray(t.observations) ||
-      !['sha256','stableSerialize','fingerprint'].every(k=>typeof t[k]==='function')) {
+      !['sha256','stableSerialize','fingerprint','inspectStrategy','current'].every(k=>typeof t[k]==='function')) {
     add('context_unavailable','/','Independent current context is incomplete.','Establish current upstream selection and session observations independently.'); return findings;
   }
   const equal = (a,b) => t.stableSerialize(a) === t.stableSerialize(b);
@@ -105,6 +114,12 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
     if (!equal(manifest.binding,t.binding) || !equal(s.binding,t.binding)) add('binding_mismatch','/binding','Binding differs from independently selected current context.');
   } catch { add('context_unavailable','/','Current context cannot be serialized or fingerprinted.'); return findings; }
   if (findings.length) return findings;
+  const context=t.current();
+  if (!context || context.evidence?.validation?.schema!=='passed' || context.evidence?.validation?.semantics!=='passed' || !equal(context.binding,t.binding)) { add('context_unavailable','/','Current upstream selection is unavailable.'); return findings; }
+  const upstream=await t.inspectStrategy(s,{...context.source_observations,profile:context.evidence.profile,binding:context.binding,sha256:t.sha256,validate:t.validate});
+  if (upstream.schema!=='passed'||upstream.deterministic!=='passed') add('upstream_invalid','/','Strategy failed current upstream integrity validation.');
+  const stillCurrent=()=>{const now=t.current();return now&&equal(now.binding,context.binding)&&equal(now.source_observations,context.source_observations);};
+  if (!stillCurrent()) { add('context_unavailable','/','Source selection changed during validation.');return findings; }
   const ids=new Set(), pairs=new Set(), destinations=new Set(), ranges=new Map();
   for (const [i,d] of manifest.documents.entries()) {
     const p='/documents/'+i, pair=d.kind+':'+d.language;
@@ -129,7 +144,28 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
       const input=d.letter_inputs;
       if (!input) add('letter_inputs',p+'/letter_inputs','Letter inputs must explicitly record unknown values.');
       else {
-        const missing=['recipient','date','salutation','enclosures'].filter(k=>input[k].value===null||!input[k].confirmed||!input[k].provenance.length);
+        const missing=[];
+        const kinds={recipient:['recipient_name','recipient_organization','recipient_address'],date:['application_date'],salutation:['salutation'],enclosures:['enclosure']};
+        for (const key of Object.keys(kinds)) {
+          const field=input[key], refs=field.context_refs, records=[];
+          if (!refs.length || field.value===null || !field.confirmed || !field.provenance.length) {missing.push(key);continue;}
+          let valid=true;
+          for (const ref of refs) {
+            const record=s.application_context?.records.find(r=>r.id===ref.record_id);
+            if (!record || ref.application_id!==s.binding.application_id || ref.context_sha256!==s.binding.application_context_sha256 || ref.pointer!=='/value' || !kinds[key].includes(record.kind)) {valid=false;continue;}
+            records.push(record);
+          }
+          if (!valid || (key!=='recipient'&&records.length!==1) || (key==='recipient'&&(!records.some(r=>r.kind==='recipient_address')||new Set(records.map(r=>r.kind)).size!==records.length))) {add('context_metadata',p+'/letter_inputs/'+key,'Metadata references have the wrong source kind, identity or cardinality.');continue;}
+          if (records.some(r=>r.confirmation===null)) {missing.push(key);continue;}
+          let expected;
+          if (key==='recipient') expected=records.flatMap(r=>Array.isArray(r.value)?r.value:[r.value]).join('\n');
+          else if (key==='date') {
+            const [year,month,day]=records[0].value.split('-').map(Number);
+            const months=d.language==='de'?['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']:['January','February','March','April','May','June','July','August','September','October','November','December'];
+            expected=day+(d.language==='de'?'. ':' ')+months[month-1]+' '+year;
+          } else expected=records[0].value;
+          if (!equal(field.value,expected)) add('context_metadata',p+'/letter_inputs/'+key,'Metadata value differs from the ordered confirmed context values and declared language formatting.');
+        }
         if (missing.some(k=>!input.missing_required.includes(k))) add('missing_inputs',p+'/letter_inputs','Unconfirmed letter inputs are missing from the unresolved list.');
         if ((missing.length||input.missing_required.length)&&d.state!=='pending') add('missing_inputs',p+'/state','Required letter inputs remain unresolved.');
       }
@@ -197,6 +233,7 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
     if (d.state==='delivered'&&(!saved?.reopened||!saved.editable||!d.presentation.settings_sha256||d.issues.length||anchorIds.size!==sections.size||d.anchors.some(a=>a.status!=='mapped')||d.checks.some(c=>c.mandatory&&c.status!=='passed')||!executed)) add('delivery_unverified',p+'/state','Delivery requires current saved/reopened editable content and passing mandatory checks.');
   }
   for (const language of s.settings.languages) for (const kind of s.settings.requested_documents) if (!pairs.has(kind+':'+language)) add('missing_document','/documents','Requested member must be retained, including pending work.');
+  if (!stillCurrent()) add('context_unavailable','/','Current input selection changed before consumption.');
   return findings;
 }
 ```

@@ -14,7 +14,7 @@ const span = (text,start=0) => ({start,end:start+Array.from(text).length,excerpt
 let fixture;
 const fresh = async () => structuredClone((fixture ||= await setup()).manifest);
 async function checkUpstream(strategy) {
-  const report = await inspectComposition(strategy,{profile:fixture.base.profile,binding:fixture.trusted.binding,sha256,validate:fixture.validate,inspectStrategy});
+  const report = await inspectComposition(strategy,{...fixture.sources,profile:fixture.base.profile,binding:fixture.trusted.binding,sha256,validate:fixture.validate,inspectStrategy});
   assert.equal(report.schema,'passed',JSON.stringify(report));
   assert.equal(report.deterministic,'passed',JSON.stringify(report));
   assert.equal(report.host_meaning,'not_assessed');
@@ -43,7 +43,7 @@ test('different wording requires a separate reviewed claim; a reused realization
   const second = span(wording,first.end+2);
   version.claims[0].spans[1] = second;
   strategy.claims[0].realizations.find(r=>r.language==='en').spans[1] = second;
-  const rejected = await inspectComposition(strategy,{profile:fixture.base.profile,binding:fixture.trusted.binding,sha256,validate:fixture.validate,inspectStrategy});
+  const rejected = await inspectComposition(strategy,{...fixture.sources,profile:fixture.base.profile,binding:fixture.trusted.binding,sha256,validate:fixture.validate,inspectStrategy});
   assert.equal(rejected.deterministic,'failed');
   const separate = structuredClone(strategy.claims[0]);
   separate.id = 'claim:letter';
@@ -97,15 +97,15 @@ test('private review material remains outside emitted ranges, even with a scoped
 test('actual upstream assembly and review receipts feed the document mapping',async()=>{
   const manifest = await fresh(), strategy = structuredClone(fixture.trusted.strategy), h = createHarness();
   const modules = Object.assign({},...[
-    ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']],
+    ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']],
     ['profile-contract.md',['dispatchVersion']],['profile-validation.md',['evidenceView']],
     ['profile-updates.md',['createProfileUpdates']],['strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']],
     ['strategy-editorial.md',['inspectComposition','applyEditorialMethods']],
-    ['strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions']]
+    ['strategy-review.md',['reviewedClaimState','reviewDiagnostics','reviewEditorial','compareRevisions']]
   ].map(([file,names])=>load(file,names)));
   const selected=h.select(fixture.base.profile);
   const host={session:'fictional-composition',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
-    validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),validate:fixture.validate,
+    validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),validate:fixture.validate,currentApplicationSelection:()=>structuredClone(fixture.sources),
     reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),
     reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};
   const {createStrategyWorkflow}=load('application-strategy.md',['createStrategyWorkflow']);
@@ -118,7 +118,7 @@ test('actual upstream assembly and review receipts feed the document mapping',as
   assert.equal(assembled.status,'ready',JSON.stringify(assembled));
   assert.equal(assembled.checks.host_meaning,'not_assessed');
   manifest.binding=structuredClone(assembled.value.binding);
-  const trusted=rebind(manifest,assembled.value);trusted.binding=manifest.binding;
+  const trusted=rebind(manifest,assembled.value);trusted.binding=manifest.binding;trusted.current=workflow.current;
   assert.deepEqual(await inspectDocumentManifest(manifest,trusted),[]);
 });
 test('fictional semantic review cards are available for independent host assessment',()=>{

@@ -164,7 +164,7 @@ The approved [design amendment](application-context-design.md) extends the compl
   - _Depends: 7, 8_
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.4, 5.1, 6.1, 6.2, 6.3, 6.4, 6.8, 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 10. Integrate confirmed context into the document consumer
+- [x] 10. Integrate confirmed context into the document consumer
   - Introduce document manifest 1.1 and archive 1.0 with its historical strategy-binding reference pinned. Reject unknown/current-incompatible versions and rebuild current manifests from reviewed strategy inputs without inheriting old delivery status.
   - Link recipient, date, salutation and enclosure metadata to ordered upstream confirmed context references. Verify exact values and declared language formatting, including confirmed no enclosures. Caller-supplied confirmation flags or arbitrary provenance strings are insufficient.
   - Keep missing references and pending confirmation local to the affected letter. Preserve supported CV output, existing document identity/manual-edit handling and the unchanged WordCraft session interface.

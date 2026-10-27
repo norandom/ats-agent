@@ -13,15 +13,15 @@ function rebind(manifest,strategy) { const t=trustedFor(strategy); manifest.stra
 async function assemble(strategy) {
   const h=createHarness();
   const modules=Object.assign({},...[
-    ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy']],
+    ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']],
     ['profile-contract.md',['dispatchVersion']],['profile-validation.md',['evidenceView']],
     ['profile-updates.md',['createProfileUpdates']],['strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']],
     ['strategy-editorial.md',['inspectComposition','applyEditorialMethods']],
-    ['strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions']]
+    ['strategy-review.md',['reviewedClaimState','reviewDiagnostics','reviewEditorial','compareRevisions']]
   ].map(([file,names])=>load(file,names)));
   const selected=h.select(fixture.base.profile);
   const host={session:'fictional-languages',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
-    validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),validate:fixture.validate,
+    validateProfile:(p,t)=>h.validate(p,{taskRequest:t}),validate:fixture.validate,currentApplicationSelection:()=>structuredClone(fixture.sources),
     reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),
     reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};
   const {createStrategyWorkflow}=load('application-strategy.md',['createStrategyWorkflow']);
@@ -38,7 +38,7 @@ test('real upstream assembly keeps English usable when German support and letter
   const {manifest,strategy}=await fresh();
   strategy.claims[0].realizations.find(r=>r.language==='de').semantic_state='unsupported';
   strategy.positioning.selected_claims[0].languages=['en'];
-  const {result}=await assemble(strategy);
+  const {result,workflow}=await assemble(strategy);
   assert.equal(result.status,'ready',JSON.stringify(result));
   const value=result.value;
   assert.equal(value.draft.versions.length,2);
@@ -47,11 +47,11 @@ test('real upstream assembly keeps English usable when German support and letter
   for(const d of manifest.documents) {
     if(d.language==='de') { d.state='pending';d.draft=null;d.issues=['German wording requires upstream support review.']; }
     if(d.kind==='cover_letter'&&d.language==='en') {
-      d.letter_inputs.recipient={value:null,confirmed:false,provenance:[]};d.letter_inputs.missing_required=['recipient'];
+      d.letter_inputs.recipient={value:null,confirmed:false,provenance:[],context_refs:[]};d.letter_inputs.missing_required=['recipient'];
       d.state='pending';d.issues=['Confirm recipient address.'];
     }
   }
-  const t=rebind(manifest,value); t.binding=value.binding;
+  const t=rebind(manifest,value); t.binding=value.binding;t.current=workflow.current;
   assert.deepEqual(await inspectDocumentManifest(manifest,t),[]);
   assert.equal(manifest.documents.find(d=>d.kind==='cv'&&d.language==='en').state,'draft');
   const letter=manifest.documents.find(d=>d.kind==='cover_letter'&&d.language==='en'); letter.state='draft';
@@ -114,13 +114,16 @@ test('CV-only settings retain exactly one composite version per requested langua
   strategy.settings.requested_documents=['cv'];
   strategy.binding.settings_sha256=fixture.trusted.fingerprint(strategy.settings,sha256);
   strategy.dispositions.forEach(d=>{d.binding=structuredClone(strategy.binding);});
-  const report=await inspectStrategy(strategy,{profile:fixture.base.profile,binding:strategy.binding,sha256,validate:fixture.validate});
+  const report=await inspectStrategy(strategy,{...fixture.sources,profile:fixture.base.profile,binding:strategy.binding,sha256,validate:fixture.validate});
   assert.equal(report.schema,'passed');assert.equal(report.deterministic,'passed');
   manifest.binding=structuredClone(strategy.binding);
   manifest.documents=manifest.documents.filter(d=>d.kind==='cv');
   const t=rebind(manifest,strategy);t.binding=strategy.binding;
+  const bound=await fixture.reselect(strategy.settings);assert.equal(bound.status,'ready');
+  strategy.binding=bound.value.binding;strategy.dispositions.forEach(d=>d.binding=structuredClone(strategy.binding));t.binding=strategy.binding;manifest.binding=strategy.binding;t.strategy_sha256=fixture.trusted.fingerprint(strategy,sha256);manifest.strategy_sha256=manifest.origin_strategy_sha256=t.origin_strategy_sha256=t.strategy_sha256;
   assert.deepEqual(await inspectDocumentManifest(manifest,t),[]);
   assert.equal(manifest.documents.length,2);
   const duplicate=structuredClone(strategy);duplicate.draft.versions.push(structuredClone(duplicate.draft.versions[0]));
-  assert.equal((await inspectStrategy(duplicate,{profile:fixture.base.profile,binding:strategy.binding,sha256,validate:fixture.validate})).deterministic,'failed');
+  assert.equal((await inspectStrategy(duplicate,{...fixture.sources,profile:fixture.base.profile,binding:strategy.binding,sha256,validate:fixture.validate})).deterministic,'failed');
+  await fixture.reselect();
 });
