@@ -7,7 +7,7 @@ function handoff(profile, { sha256, fingerprint, targetFingerprint }) {
   const target = { kind: 'offer', text: '📦 Reconcile manifests.', sha256: '' };
   target.sha256 = targetFingerprint(target, sha256);
   const settings = { languages: ['en', 'de'], market: 'DE', requested_documents: ['cv'], question_limit: 3 };
-  const binding = { schema_version: '1.0', host_session: 'fictional-session', generation: 1, resolved_path: '/fictional/private/facts.json', canonical_sha256: sha256(JSON.stringify(profile)), profile_version: '2.0', validation_profile_sha256: sha256(JSON.stringify(profile)), target_sha256: target.sha256, settings_sha256: fingerprint(settings, sha256), evaluation_date: '2026-01-03' };
+  const binding = { schema_version: '1.1', application_id: null, application_context_sha256: null, host_session: 'fictional-session', generation: 1, resolved_path: '/fictional/private/facts.json', canonical_sha256: sha256(JSON.stringify(profile)), profile_version: '2.0', validation_profile_sha256: sha256(JSON.stringify(profile)), target_sha256: target.sha256, settings_sha256: fingerprint(settings, sha256), evaluation_date: '2026-01-03' };
   const criteria = [{ id: 'criterion:one', kind: 'responsibility', priority: 'required', wording: 'Reconcile manifests', concept: 'manifest reconciliation', spans: [span(target.text)], grouping_rationale: 'One explicit responsibility.' }];
   const realizations = [
     { language: 'en', wording: 'Reconciled parcel manifests.', spans: [span('Reconciled parcel manifests.')], semantic_state: 'supported', semantic_reason: 'Fixture label only.' },
@@ -15,11 +15,11 @@ function handoff(profile, { sha256, fingerprint, targetFingerprint }) {
   ];
   const rubric = { version: 'strategy-review/1.0', definition: 'Demonstrated required criterion coverage.', scale: { minimum: 0, maximum: 100, unit: 'percent' }, weights: [{ reference: r('criterion'), weight: 1 }], unknown_treatment: 'Non-supported states remain in the denominator.' };
   return {
-    schema_version: '1.0', binding, state: 'bounded', target, settings, criteria,
+    schema_version: '1.1', binding, application_context: null, state: 'bounded', target, settings, criteria,
     inferred_needs: [{ id: 'inferred_need:one', status: 'inferred', wording: 'Reliable handover may matter.', rationale: 'Hypothesis from manifest work.', spans: [span(target.text)] }],
     mappings: [{ criterion: r('criterion'), state: 'supported', evidence: [structuredClone(evidence)], rationale: 'Fictional record addresses manifest work.', limits: ['No independent verification.'] }],
     positioning: { audience: 'Dispatch hiring team', intended_decision: 'Discuss relevant experience', contribution_thesis: 'Careful manifest handling supports dispatch.', selected_claims: [{ claim: r('claim'), languages: ['en', 'de'] }], selections: [{ claim: r('claim'), decision: 'include', rationale: 'Relevant episode.' }], expertise_groups: [{ name: 'Manifest accuracy', claims: [r('claim')], rationale: 'Relevant work capability.' }], terminology: [{ id: 'terminology:one', original_term: 'parcel manifests', proposed_term: 'Paketlisten', relation: 'translation', evidence: [structuredClone(evidence)], guidance: [r('guidance')], rationale: 'Fixture translation.', limits: ['Host meaning remains unassessed.'] }], criterion_set_sha256: fingerprint(criteria, sha256) },
-    claims: [{ id: 'claim:one', proposition: 'Reconciled parcel manifests.', evidence: [structuredClone(evidence)], target_references: [r('criterion'), r('inferred_need')], limits: ['Historical episode.'], realizations }],
+    claims: [{ id: 'claim:one', subject: 'candidate', context_evidence: [], proposition: 'Reconciled parcel manifests.', evidence: [structuredClone(evidence)], target_references: [r('criterion'), r('inferred_need')], limits: ['Historical episode.'], realizations }],
     draft: { artifact_id: 'fictional-draft', versions: realizations.map(v => ({ language: v.language, text: v.wording, sha256: sha256(v.wording), inventory_status: 'complete', claims: [{ claim: r('claim'), spans: [span(v.wording)] }] })) },
     questions: [{ id: 'question:one', distinction_key: 'manifest-recent-use', affected: [r('criterion'), r('claim')], text: 'When did you last reconcile manifests?', rationale: 'Clarify recency.', expected_effect: 'Bound current wording.', missing_distinction: 'Date of last use.', priority: 3, offer_order: 0, disposition: 'skipped', reopen_reason: null }],
     question_batch: { limit: 3, selected_ids: [], deferred_ids: [], suppressed_ids: [r('question')] },

@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:targeted-cv:application-strategy:1.0",
-  "title": "Private application strategy 1.0",
+  "$id": "urn:targeted-cv:application-strategy:1.1",
+  "title": "Private application strategy 1.1",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "const": "1.1"
     },
     "binding": {
       "$ref": "#/$defs/Binding"
@@ -114,6 +114,16 @@
           "type": "null"
         }
       ]
+    },
+    "application_context": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApplicationContext"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -136,7 +146,8 @@
     "diagnostics",
     "document_checks",
     "findings",
-    "comparison"
+    "comparison",
+    "application_context"
   ],
   "additionalProperties": false,
   "$defs": {
@@ -389,7 +400,7 @@
       "type": "object",
       "properties": {
         "schema_version": {
-          "const": "1.0"
+          "const": "1.1"
         },
         "host_session": {
           "type": "string",
@@ -425,6 +436,29 @@
         "evaluation_date": {
           "type": "string",
           "format": "date"
+        },
+        "application_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "application_context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -437,7 +471,9 @@
         "validation_profile_sha256",
         "target_sha256",
         "settings_sha256",
-        "evaluation_date"
+        "evaluation_date",
+        "application_id",
+        "application_context_sha256"
       ],
       "additionalProperties": false
     },
@@ -878,6 +914,20 @@
             "$ref": "#/$defs/Realization"
           },
           "minItems": 1
+        },
+        "subject": {
+          "enum": [
+            "candidate",
+            "offer",
+            "application",
+            "mixed"
+          ]
+        },
+        "context_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextEvidenceRef"
+          }
         }
       },
       "required": [
@@ -886,7 +936,9 @@
         "evidence",
         "target_references",
         "limits",
-        "realizations"
+        "realizations",
+        "subject",
+        "context_evidence"
       ],
       "additionalProperties": false
     },
@@ -2159,6 +2211,349 @@
         "previous_snapshot_sha256",
         "dimensions",
         "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "ContextEvidenceRef": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "offer"
+            },
+            "target_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "excerpt": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "kind",
+            "target_sha256",
+            "start",
+            "end",
+            "excerpt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "application"
+            },
+            "application_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "context_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "record_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "pointer": {
+              "type": "string",
+              "pattern": "^/value(?:/(?:0|[1-9][0-9]*))?$"
+            }
+          },
+          "required": [
+            "kind",
+            "application_id",
+            "context_sha256",
+            "record_id",
+            "pointer"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ContextProvenance": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "user_input",
+            "selected_offer",
+            "host_proposal"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "offer_span": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "excerpt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "excerpt"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "reference",
+        "observed_at",
+        "offer_span"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "selected_offer"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "offer_span": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "end": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  }
+                },
+                "required": [
+                  "start",
+                  "end",
+                  "excerpt"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "offer_span": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ContextConfirmation": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "record_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "interaction_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "confirmed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "application_id",
+        "record_sha256",
+        "interaction_ref",
+        "confirmed_at"
+      ],
+      "additionalProperties": false
+    },
+    "ApplicationRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "kind": {
+          "enum": [
+            "recipient_name",
+            "recipient_organization",
+            "recipient_address",
+            "application_date",
+            "salutation",
+            "application_intent",
+            "enclosure"
+          ]
+        },
+        "value": {},
+        "provenance": {
+          "$ref": "#/$defs/ContextProvenance"
+        },
+        "confirmation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContextConfirmation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "value",
+        "provenance",
+        "confirmation"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "recipient_address",
+                  "enclosure"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "recipient_address"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "application_date"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "format": "date",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ApplicationContext": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "target_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationRecord"
+          }
+        }
+      },
+      "required": [
+        "application_id",
+        "target_sha256",
+        "records"
       ],
       "additionalProperties": false
     }

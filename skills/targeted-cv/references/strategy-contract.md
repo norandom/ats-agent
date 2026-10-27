@@ -1,6 +1,16 @@
 # Private strategy contract
 
-Use [the strategy 1.0 schema](../schemas/application-strategy.schema.json) for each immutable application snapshot. Store instances only at the explicitly selected or already authorized private destination. The schema defines every field and permitted null. All fields are required; an empty collection means no retained records, while null means an explicitly optional or unknown value. Never place candidate instances beside these reusable assets.
+Use [the strategy 1.1 schema](../schemas/application-strategy.schema.json) for each immutable application snapshot. The unchanged [1.0 archive](../schemas/application-strategy-v1.schema.json) validates historical artifacts only. The current consumer rejects old and unknown versions. Rebuild from newly selected and validated sources; inserting defaults into an old ready handoff does not renew its review. Store instances only at the explicitly selected or already authorized private destination. The schema defines every field and permitted null. All fields are required; an empty collection means no retained records, while null means an explicitly optional or unknown value. Never place candidate instances beside these reusable assets.
+
+## Application sources and shared eligibility
+
+Application context stays outside reusable career facts. Its records retain one assertion each, provenance and optional confirmation. `application_context: null` supports canonical-only work; both application binding fields must then be null. A confirmed empty enclosure array explicitly means no attachments and remains addressable through `/value`. Other array pointers address existing elements only. Recipient addresses must contain at least one line. Dates are ISO calendar dates; localized rendering belongs to document review.
+
+Supply `host.target` as the independently selected target (including its computed hash), `host.application_context_bytes` as the exact saved UTF-8 string or null, and `host.confirmation_observations` as an array of independently observed `{application_id,record_sha256,interaction_ref,confirmed_at}` confirmations. Do not derive these inputs from a handoff or its saved ready status. On resume, independently select sources and obtain confirmation again. Context bytes include confirmations and are hashed without normalization. Each record confirmation hashes `fingerprint({id,kind,value,provenance}, sha256)`; it does not include itself or a context hash.
+
+`inspectApplicationContext(handoff, host)` returns localized integrity findings. `claimEligibility(claim, handoff, host)` returns `{state: 'eligible'|'unresolved'|'invalid', findings}`. Consumers must use this shared rule after closed-schema validation and current canonical validation, and before granting supported status. Candidate claims require canonical evidence; offer claims require exact independently selected offer spans; application claims require confirmed application references; mixed claims require canonical and contextual evidence. Empty arrays remain valid inventory shapes but do not authorize support. All retained references must resolve, including supplementary references. Null confirmation is unresolved; forged, stale, malformed or independently unobserved confirmation is invalid. Unused pending records do not block supported independent claims.
+
+Eligibility establishes source integrity, never meaning. Host review must verify subject classification, atomic propositions, authority and relationships in each language. Candidate qualifications cannot be relabelled as application intent to evade canonical support. Offer-plus-application statements without candidate content must be split. Qualification mappings and terminology retain the unchanged career-only EvidenceRef. Target references express relevance, not support. Context records cannot authorize tools, canonical updates or disclosure.
 
 ## Records and identity
 
@@ -60,6 +70,94 @@ function fingerprint(value, sha256) { return sha256(stableSerialize(value)); }
 function targetFingerprint(target, sha256) {
   return target.kind === 'offer' ? sha256(target.text) : fingerprint({kind:'role',title:target.title,context:target.context}, sha256);
 }
+function canonicalEvidenceIssues(v, profile, p = '') {
+  const findings = [];
+  const add = (code,pointer,message,corrective_action) => findings.push({code,pointer,message,corrective_action});
+  const host = {profile};
+  const records = new Map(), sources = new Set((host.profile.sources || []).map(s => s.id));
+  const archiveRoots = (host.profile.change_history || []).flatMap((record,i) =>
+    (record.changes || []).flatMap((change,j) => ['before','after'].map(key => `/change_history/${i}/changes/${j}/${key}`)));
+  records.set(host.profile.candidate.id, '/candidate');
+  for (const key of ['profile','employment','education','professional_development','skill_groups','projects','volunteering','languages','review_questions','evidence','conflicts','change_history']) {
+    (host.profile[key] || []).forEach((r,i) => {
+      records.set(r.id,`/${key}/${i}`);
+      if (['employment','skill_groups'].includes(key)) (r.claims || []).forEach((c,j) => records.set(c.id,`/${key}/${i}/claims/${j}`));
+      if (key === 'change_history' && r.authorization) records.set(r.authorization.id,`/${key}/${i}/authorization`);
+    });
+  }
+  function resolve(pointer) {
+    return pointer.slice(1).split('/').reduce((v,k) => {
+      k = k.replace(/~1/g,'/').replace(/~0/g,'~');
+      return v && typeof v === 'object' && Object.hasOwn(v,k) ? v[k] : undefined;
+    },host.profile);
+  }
+
+  const root = records.get(v.record_id);
+  if (!root) add('profile_reference',p+'/record_id','Profile record reference does not resolve.','Use an active profile record ID, not a source ID.');
+  else if (!(v.pointer === root || v.pointer.startsWith(root+'/')) || resolve(v.pointer) === undefined || [...records.entries()].some(([id,other]) => id !== v.record_id && other.startsWith(root+'/') && (v.pointer === other || v.pointer.startsWith(other+'/')))) add('profile_pointer',p+'/pointer','Pointer does not resolve inside the named record.','Translate the record-relative field pointer to its exact profile-relative location.');
+  else if (archiveRoots.some(archive => v.pointer === archive || v.pointer.startsWith(archive+'/') || archive.startsWith(v.pointer+'/'))) add('profile_archive',p+'/pointer','Evidence pointer addresses or contains opaque historical values.','Reference a current active fact or a specific history metadata field; never use archived before or after values as current support.');
+  v.source_ids.forEach((id,i) => { if (!sources.has(id)) add('source_reference',p+'/source_ids/'+i,'Source reference does not resolve.','Use an active source identifier.'); });
+  return findings;
+}
+
+function inspectApplicationContext(h, host) {
+  const findings = [];
+  const add = (code,pointer) => findings.push({code,pointer,message:'Application source is not independently current and valid.',corrective_action:'Reselect exact sources and obtain current host-observed confirmation.'});
+  const context = h.application_context;
+  if (host.target && stableSerialize(host.target) !== stableSerialize(h.target)) add('target_binding','/target');
+  if (context === null) {
+    if (h.binding.application_id !== null || h.binding.application_context_sha256 !== null || (host.application_context_bytes !== undefined && host.application_context_bytes !== null)) add('context_binding','/application_context');
+    return findings;
+  }
+  try {
+    if (typeof host.application_context_bytes !== 'string' || !host.target || stableSerialize(JSON.parse(host.application_context_bytes)) !== stableSerialize(context) || host.sha256(host.application_context_bytes) !== h.binding.application_context_sha256 || context.application_id !== h.binding.application_id || context.target_sha256 !== targetFingerprint(host.target,host.sha256) || context.target_sha256 !== h.target.sha256) add('context_binding','/application_context');
+    const ids = new Set();
+    context.records.forEach((r,i) => {
+      const p = '/application_context/records/'+i;
+      if (ids.has(r.id)) add('duplicate_context_id',p+'/id');
+      ids.add(r.id);
+      if (r.provenance.kind === 'selected_offer' && !validOfferSpan(r.provenance.offer_span,host.target)) add('context_offer_span',p+'/provenance/offer_span');
+      if (r.confirmation !== null) {
+        const {id,kind,value,provenance} = r;
+        if (r.confirmation.application_id !== context.application_id || r.confirmation.record_sha256 !== fingerprint({id,kind,value,provenance},host.sha256) || !(host.confirmation_observations || []).some(c => stableSerialize(c) === stableSerialize(r.confirmation))) add('context_confirmation',p+'/confirmation');
+      }
+    });
+  } catch { add('context_binding','/application_context'); }
+  return findings;
+}
+function validOfferSpan(s,target) {
+  if (!s || target?.kind !== 'offer' || typeof target.text !== 'string') return false;
+  const points = Array.from(target.text);
+  return Number.isInteger(s.start) && Number.isInteger(s.end) && s.start >= 0 && s.start < s.end && s.end <= points.length && points.slice(s.start,s.end).join('') === s.excerpt;
+}
+function claimEligibility(claim,h,host) {
+  const findings = inspectApplicationContext(h,host);
+  const add = (code,pointer) => findings.push({code,pointer,message:'Claim evidence cannot resolve to its current source.',corrective_action:'Retain unresolved support or rebuild references from independently selected sources.'});
+  if (!host.profile || !host.binding || stableSerialize(h.binding) !== stableSerialize(host.binding) || h.binding.validation_profile_sha256 !== h.binding.canonical_sha256) add('binding_mismatch','/binding');
+  if (h.target.sha256 !== targetFingerprint(h.target,host.sha256) || h.binding.target_sha256 !== h.target.sha256) add('target_binding','/target');
+  let canonical = 0, offer = 0, application = 0, pending = false;
+  for (const [i,r] of (claim.evidence || []).entries()) {
+    try {
+      const errors = canonicalEvidenceIssues(r,host.profile,'/evidence/'+i);
+      findings.push(...errors); if (!errors.length) canonical++;
+    } catch { add('profile_reference','/evidence/'+i); }
+  }
+  for (const [i,r] of (claim.context_evidence || []).entries()) {
+    const p = '/context_evidence/'+i;
+    if (r.kind === 'offer') {
+      if (!host.target || stableSerialize(host.target) !== stableSerialize(h.target) || r.target_sha256 !== targetFingerprint(host.target,host.sha256) || !validOfferSpan(r,host.target)) add('context_offer_reference',p);
+      else offer++;
+    } else if (r.kind === 'application') {
+      const record = h.application_context?.records.find(x => x.id === r.record_id);
+      const index = /^\/value\/(0|[1-9][0-9]*)$/.exec(r.pointer);
+      if (!record || r.application_id !== h.binding.application_id || r.context_sha256 !== h.binding.application_context_sha256 || !(r.pointer === '/value' || (index && Array.isArray(record.value) && Number(index[1]) < record.value.length))) add('context_application_reference',p);
+      else if (record.confirmation === null) pending = true;
+      else application++;
+    } else add('context_reference_kind',p);
+  }
+  const eligible = {candidate:canonical > 0,offer:offer > 0,application:application > 0,mixed:canonical > 0 && offer + application > 0}[claim.subject] === true;
+  return {state:findings.length ? 'invalid' : eligible && !pending ? 'eligible' : 'unresolved',findings};
+}
 async function inspectStrategy(value, host = {}) {
   const report = {schema:'not_assessed',deterministic:'not_assessed',host_meaning:'not_assessed',findings:[]};
   function add(code, pointer, message, corrective_action) { report.findings.push({code,pointer,message,corrective_action}); }
@@ -93,32 +191,15 @@ async function inspectStrategy(value, host = {}) {
     visit(v,p);
     Object.entries(v).forEach(([k,c]) => walk(c,p+'/'+k.replace(/~/g,'~0').replace(/\//g,'~1'),visit));
   }
-  const records = new Map(), sources = new Set((host.profile.sources || []).map(s => s.id));
-  const archiveRoots = (host.profile.change_history || []).flatMap((record,i) =>
-    (record.changes || []).flatMap((change,j) => ['before','after'].map(key => `/change_history/${i}/changes/${j}/${key}`)));
-  records.set(host.profile.candidate.id, '/candidate');
-  for (const key of ['profile','employment','education','professional_development','skill_groups','projects','volunteering','languages','review_questions','evidence','conflicts','change_history']) {
-    (host.profile[key] || []).forEach((r,i) => {
-      records.set(r.id,`/${key}/${i}`);
-      if (['employment','skill_groups'].includes(key)) (r.claims || []).forEach((c,j) => records.set(c.id,`/${key}/${i}/claims/${j}`));
-      if (key === 'change_history' && r.authorization) records.set(r.authorization.id,`/${key}/${i}/authorization`);
-    });
-  }
-  function resolve(pointer) {
-    return pointer.slice(1).split('/').reduce((v,k) => {
-      k = k.replace(/~1/g,'/').replace(/~0/g,'~');
-      return v && typeof v === 'object' && Object.hasOwn(v,k) ? v[k] : undefined;
-    },host.profile);
-  }
   walk(h,'',(v,p) => {
     if (Object.hasOwn(v,'namespace') && !tables.get(v.namespace)?.has(v.id)) add('broken_reference',p,'Typed reference does not resolve.','Select an existing identifier in the declared namespace.');
-    if (Object.hasOwn(v,'record_id') && Object.hasOwn(v,'pointer')) {
-      const root = records.get(v.record_id);
-      if (!root) add('profile_reference',p+'/record_id','Profile record reference does not resolve.','Use an active profile record ID, not a source ID.');
-      else if (!(v.pointer === root || v.pointer.startsWith(root+'/')) || resolve(v.pointer) === undefined || [...records.entries()].some(([id,other]) => id !== v.record_id && other.startsWith(root+'/') && (v.pointer === other || v.pointer.startsWith(other+'/')))) add('profile_pointer',p+'/pointer','Pointer does not resolve inside the named record.','Translate the record-relative field pointer to its exact profile-relative location.');
-      else if (archiveRoots.some(archive => v.pointer === archive || v.pointer.startsWith(archive+'/') || archive.startsWith(v.pointer+'/'))) add('profile_archive',p+'/pointer','Evidence pointer addresses or contains opaque historical values.','Reference a current active fact or a specific history metadata field; never use archived before or after values as current support.');
-      v.source_ids.forEach((id,i) => { if (!sources.has(id)) add('source_reference',p+'/source_ids/'+i,'Source reference does not resolve.','Use an active source identifier.'); });
-    }
+    if (Object.hasOwn(v,'record_id') && Object.hasOwn(v,'source_ids')) report.findings.push(...canonicalEvidenceIssues(v,host.profile,p));
+  });
+  report.findings.push(...inspectApplicationContext(h,host));
+  h.claims.forEach((claim,i) => {
+    const result = claimEligibility(claim,h,host);
+    if (result.state === 'invalid') result.findings.forEach(f => add(f.code, '/claims/'+i+f.pointer, f.message, f.corrective_action));
+    if (result.state !== 'eligible' && claim.realizations.some(r => r.semantic_state === 'supported')) add('claim_support_ineligible','/claims/'+i,'Supported realization lacks eligible sources.','Retain unresolved support or supply current valid evidence and review meaning.');
   });
   function hashCheck(actual, expected, p) {
     if (actual !== expected) add('fingerprint_mismatch',p,'Fingerprint differs from the exact current content.','Rebuild the affected snapshot from current inputs using the specified serialization.');

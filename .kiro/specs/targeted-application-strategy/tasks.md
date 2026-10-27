@@ -135,7 +135,7 @@ The sequence is deliberately serial: adjacent tasks share the contract, fixtures
 
 The approved [design amendment](application-context-design.md) extends the completed 1.0 work above. Tasks 7 through 11 are sequential because they share the contract, reference blocks and fixtures. Existing pnpm, uvx validation and upstream adapters from task 1 are reused; no new service or dependency setup is required. Each task includes its focused checks and task-local review. Original completion records remain historical evidence, not acceptance of the correction.
 
-- [ ] 7. Extend the versioned source contract and shared support eligibility
+- [x] 7. Extend the versioned source contract and shared support eligibility
   - Preserve the original strategy schema for historical validation and introduce the approved 1.1 context, binding, subject and contextual-reference shapes. Reject unknown versions and require fresh reconstruction rather than upgrading ready states by inserting defaults.
   - Keep career evidence unchanged and exclusive to qualification mappings. Resolve offer spans and application-value pointers against independently supplied sources, with one shared eligibility rule for subsequent consumers.
   - Preserve unsupported claims with empty arrays and distinguish well-formed pending confirmation from malformed, forged, stale or wrong-application evidence. Support confirmed empty enclosures and the existing deterministic hash convention.
