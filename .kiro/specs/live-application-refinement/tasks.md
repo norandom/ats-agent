@@ -95,7 +95,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 3.5, 3.10, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.5, 5.6_
 
 - [ ] 6. Connect the conversational refinement flow
-- [ ] 6.1 Route questions, answers and user choices through the skill
+- [x] 6.1 Route questions, answers and user choices through the skill
   - Extend the entry flow to orient from current sources and reports, select finite useful question batches and accept free-text answers or unsolicited corrections.
   - Classify independently meaningful statements, seek only material clarifications, and let the applicant choose the scope for exact facts or identified groups. Accept qualitative results and distinguish later capabilities from earlier work.
   - Connect profile/context/editorial handoffs to supported composition, the private record and live revision. Continue unaffected documents while a fact or letter input is pending.

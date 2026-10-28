@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const {fixture}=require('../wordcraft-application-documents/acceptance-fixture.cjs'),{load,sha256}=require('../wordcraft-application-documents/manifest-fixture.cjs');
 const {createHarness,classifyCheck}=require('../targeted-application-strategy/foundation.cjs');
 const {handoff}=require('../targeted-application-strategy/contract-fixture-current.cjs');
-async function prepareAcceptance(output,provided=null,selectedPath=null){
+async function prepareAcceptance(output,provided=null,selectedPath=null,interaction=null){
  const f=provided||fixture(),h=createHarness(),modules=Object.assign({},...[
   ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']],
   ['profile-contract.md',['dispatchVersion']],['profile-validation.md',['evidenceView']],['profile-updates.md',['createProfileUpdates']],
@@ -25,6 +25,7 @@ async function prepareAcceptance(output,provided=null,selectedPath=null){
  const selectedApp={application_id:sources.application_id,target_sha256:sources.target.sha256}; if(selectedPath)h.intake.select({workspace_root:h.workspace,facts_path:selectedPath,application_selection:selectedApp});else h.select(f.profile);let serial=0;
  const validate=async(schema,value)=>{const file=path.join(h.workspace,'acceptance-'+(++serial)+'.json');fs.writeFileSync(file,JSON.stringify(value));return {state:classifyCheck(spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(h.skillRoot,schema),file],{encoding:'utf8',windowsHide:true,timeout:120000})),findings:[]};};
  const host={session:'fictional-acceptance',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validate,validateProfile:p=>h.validate(p,{applicationSelection:selectedApp}),currentApplicationSelection:()=>structuredClone(sources),reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};
+ if(interaction)Object.assign(host,{observeDispositionHistory:interaction.history,reassessDisposition:interaction.reassess,observeDispositionPersistence:interaction.persistence});
  const workflow=load('application-strategy.md',['createStrategyWorkflow']).createStrategyWorkflow(host,modules);
  const bound=await workflow.bind({target:s.target,settings:s.settings,evaluation_date:'2026-10-27'});assert.equal(bound.status,'ready',JSON.stringify(bound));s.binding=bound.value.binding;
  s.criteria=[];s.inferred_needs=[];s.mappings=[];s.questions=[];s.dispositions=[];s.question_batch={limit:s.settings.question_limit,selected_ids:[],deferred_ids:[],suppressed_ids:[]};s.claims=[];s.findings=[];s.diagnostics=[];s.document_checks=[];s.comparison=null;
@@ -67,7 +68,9 @@ async function prepareAcceptance(output,provided=null,selectedPath=null){
   }
   const hash=sha256(text);s.draft.versions.push({language,text,sha256:hash,inventory_status:'complete',claims:inventory});for(const d of documents.filter(d=>d.language===language))d.draft.sha256=hash;
  }
+ if(interaction){s.dispositions=await workflow.restoreDispositions();s.questions=structuredClone(interaction.questions());}
  const assembled=await workflow.assemble(s);assert.equal(assembled.status,'ready',JSON.stringify(assembled));
+ if(interaction){const next=modules.createQuestionPlanner({current:workflow.current},modules).questions({binding:assembled.value.binding,questions:interaction.questions(),dispositions:assembled.value.dispositions});assert.equal(next.status,'ready',JSON.stringify(next));await interaction.observe({restored:s.dispositions,strategy:assembled.value,next_plan:next.value});}
  const strategy=assembled.value,hash=modules.fingerprint(strategy,sha256),manifest={schema_version:'1.2',predecessor_manifest_sha256:null,origin_strategy_sha256:hash,strategy_sha256:hash,binding:strategy.binding,documents};
  const trusted={...modules,sha256,validate,current:workflow.current,strategy,strategy_sha256:hash,origin_strategy_sha256:hash,binding:strategy.binding,privateDestinations:documents.map(d=>d.destination),session:{connection:{id:'fictional-unopened'},bindings:[],snapshots:[]},savedArtifacts:[],observations:[]};
  assert.deepEqual(await load('application-documents.md',['inspectDocumentManifest']).inspectDocumentManifest(manifest,trusted),[]);

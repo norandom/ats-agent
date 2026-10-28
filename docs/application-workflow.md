@@ -1,6 +1,6 @@
 # Prepare an application
 
-Start with your [private facts file](your-facts.md) and a job offer. Use the [targeted-cv entrypoint](../skills/targeted-cv/SKILL.md) from this checkout to choose relevant evidence, clarify what is missing, and create editable documents in WordCraft. Standalone installation packages and the automated conversational refinement loop are still separate work; you can request bounded edits through the existing document session.
+Start with your [private facts file](your-facts.md) and a job offer. Use the [targeted-cv entrypoint](../skills/targeted-cv/SKILL.md) to choose relevant evidence, answer focused questions and refine editable documents in WordCraft. The [refinement protocol](../skills/targeted-cv/references/application-refinement.md) connects your choices to the existing profile and document capabilities. Full installed-workflow acceptance has a separate validation gate.
 
 ## Choose the offer, language and country
 
@@ -20,7 +20,11 @@ Check whether that direction represents you. For a leadership role, responsibili
 
 The agent asks a small batch of questions and explains what each answer could improve. A question might clarify whether you advised on a decision or approved it, whether a qualification remains current, or what changed after a project.
 
-Answer what you can. You can skip a question, say it does not apply or confirm a gap. The agent retains these distinctions and should not ask again without a material reason. A useful new fact can be proposed for your reusable profile; a wording preference belongs only to the application.
+Answer in free text and in any order, or supply a correction without waiting for a question. You can skip a question, decline a detail, say it does not apply or confirm a gap. The agent retains these distinctions and asks again only when a material conflict, freshness issue or changed target requirement warrants it. A concrete qualitative outcome is useful; you do not need to invent a number.
+
+For each new career fact or identified group, choose application-only use or use in this application plus an update to your reusable profile. The agent shows the exact facts and destinations. An unchanged choice remains sufficient; approval of wording alone does not authorize a reusable update. Without a choice, the fact stays pending while supported content can proceed. Confirmed persistence and evidence review precede factual wording in the document.
+
+Corrections retain their source and earlier conflicting account. Later capabilities stay separate from earlier work; the agent asks for timing or decision authority only when it changes the proposed claim. Application details and style preferences follow their own routes and do not become career facts.
 
 ## Review the draft and diagnostics
 

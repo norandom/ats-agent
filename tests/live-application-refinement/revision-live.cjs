@@ -8,9 +8,10 @@ const vm=require('node:vm'),sessionHost=vm.createContext({});
 for(const block of fs.readFileSync(path.resolve(__dirname,'../../skills/targeted-cv/references/wordcraft-operations.md'),'utf8').matchAll(/```javascript\r?\n([\s\S]*?)```/g))vm.runInContext(block[1],sessionHost);
 const {inspectDocumentOperation}=sessionHost;
 const mm=n=>n*72/25.4;
-async function run(cli,endpoint,destination,original){
+async function run(cli,endpoint,destination,original,host={}){
  const output=privateDestination(destination);fs.mkdirSync(output);fs.mkdirSync(path.join(output,'baseline'));fs.mkdirSync(path.join(output,'revised'));
- const profileRun=await require('./revision-profile.cjs').prepare(output),upstream=profileRun.baseline,f=upstream.fixture,receipt=path.join(output,'receipt.json');
+ const profileRun=await require('./revision-profile.cjs').prepare(output,host),upstream=profileRun.baseline,f=upstream.fixture,receipt=path.join(output,'receipt.json');
+ if(host.afterProfile)await host.afterProfile(profileRun);
  fs.writeFileSync(path.join(output,'input.json'),JSON.stringify(f,null,2));
  const r={kind:'actual-application-only-revision',startedAt:new Date().toISOString(),connectionId:randomUUID(),calls:[],intents:[],stages:[],runtimeHashes:{},original:null,units:{geometry:'points',pointsPerMm:72/25.4,renderPixelsPerPoint:1.5},review:'not_assessed'};
  r.profileWrite=profileRun.profileWrite;r.reusable={path:profileRun.source,sha256:sha256(profileRun.before)};r.application={path:profileRun.dest,sha256:sha256(fs.readFileSync(profileRun.dest))};r.upstream={};
