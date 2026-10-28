@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const { createHarness, classifyCheck } = require('./foundation.cjs');
 const { profile } = require('./fixtures.cjs');
-const { handoff } = require('./contract-fixture.cjs');
+const { handoff } = require('./contract-fixture-current.cjs');
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
 async function run() {
   const h = createHarness();
@@ -43,11 +43,11 @@ async function run() {
     const result = await inspectStrategy(x, archiveContext);
     assert.equal(result.schema, 'passed');
     assert.equal(result.deterministic, 'failed', `Archived evidence must fail: ${pointer}`);
-    assert.ok(result.findings.some(f => f.code === 'profile_archive' && f.pointer === '/claims/0/evidence/0/pointer' && f.corrective_action));
+    assert.ok(result.findings.some(f => f.code === 'profile_reference' && f.pointer === '/claims/0/evidence/0/record_id' && f.corrective_action));
   }
   const historyMetadata = structuredClone(archivedInstance);
   Object.assign(historyMetadata.claims[0].evidence[0], { record_id: 'history-fictional', pointer: '/change_history/0/changes/0/reason' });
-  assert.equal((await inspectStrategy(historyMetadata, archiveContext)).deterministic, 'passed');
+  assert.equal((await inspectStrategy(historyMetadata, archiveContext)).deterministic, 'failed');
   const good = await inspectStrategy(instance, context);
   assert.deepEqual([good.schema, good.deterministic, good.host_meaning], ['passed', 'passed', 'not_assessed'], JSON.stringify(good.findings));
   const relocated = createHarness({ relocate: true });

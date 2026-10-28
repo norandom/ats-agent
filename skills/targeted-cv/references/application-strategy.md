@@ -19,12 +19,12 @@ Create `createStrategyWorkflow(host, modules)` once per live session. `modules` 
 
 ## Bind the selected inputs
 
-Supply synchronous `host.currentApplicationSelection()` from the live host selection, returning `{target, application_context_bytes, confirmation_observations}`. Target includes its computed hash; context bytes are the exact selected saved UTF-8 string or null; observations are the independently obtained confirmation objects defined in [strategy-contract.md](strategy-contract.md). Explicitly select this application input separately from career facts. The adapter must read current selection on every call, including current bytes and revoked or replaced confirmations, rather than return a frozen copy from the original bind. Do not populate it from an incoming handoff. A null context and empty observations permit a canonical-only CV or role-only strategy. Pending records permit independent work but cannot authorize selected contextual wording.
+Supply synchronous `host.currentApplicationSelection()` from the live host selection, returning `{application_id, target, application_context_bytes, confirmation_observations}`. Target includes its computed hash; context bytes are the exact selected saved UTF-8 string or null; observations are the independently obtained confirmation objects defined in [strategy-contract.md](strategy-contract.md). Explicitly select this application input separately from career facts. The adapter must read current selection on every call, including current bytes and revoked or replaced confirmations, rather than return a frozen copy from the original bind. Do not populate it from an incoming handoff. A null context and empty observations permit a canonical-only CV or role-only strategy. Pending records permit independent work but cannot authorize selected contextual wording.
 
-Binding checks source identity and confirmations; the complete closed handoff schema is checked before assembly traverses claims. Every bind creates a 1.1 binding with application ID and exact context-byte hash, or two nulls. On resume, reselect all sources and reconfirm context through the host; an old ready state supplies neither authority nor confirmation. Application details never pass through career-profile persistence. Only reusable factual corrections use the existing confirmed update path.
+Binding checks source identity and confirmations; the complete closed handoff schema is checked before assembly traverses claims. Every bind creates a 1.2 binding with a nonempty opaque application ID independently selected by the host, including role-only work. A missing context has only a null context-byte hash. On resume, reselect all sources and reconfirm context through the host; an old ready state supplies neither authority nor confirmation. Application details never pass through career-profile persistence. Career answers use the selected profile: `fact_update` for reusable 2.0 or `application_fact_update` for scoped 2.1. The coordinator rejects a mismatched update scope; application details use their separate context route. Pending fact-use choices authorize neither write nor support. First forks and selective reusable promotion use the profile owner, followed by explicit scoped selection and a full strategy rebuild.
 
 1. Use [candidate selection](candidate-profile.md) to select the explicit private input. Every selection attempt, even a failed attempt or reselection of the same path, discards candidate reasoning, claims, questions, diagnostics and authorization context. Do not search old applications or infer a candidate. Take a fresh snapshot from the live intake session.
-2. Execute the block below with trusted host adapters and the unchanged fingerprint functions from [strategy-contract.md](strategy-contract.md). `currentSelection` must call the same intake session's live `snapshot()`, never a captured snapshot. Supply a host-generated session token, strict UTF-8 decoding, original-byte SHA-256 and read access only to the selected resolved path. `dispatchVersion`, `evidenceView` and full `validateProfile` come from the shipped profile references. The validation adapter executes the pinned external schema validator and complete upstream semantic pass on the exact parsed argument, passing the declared `TaskInputRequest` unchanged. Neither source-provided validation nor source-provided hashes establish trust.
+2. Execute the block below with trusted host adapters and the unchanged fingerprint functions from [strategy-contract.md](strategy-contract.md). `currentSelection` must call the same intake session's live `snapshot()`, never a captured snapshot. Supply a host-generated session token, strict UTF-8 decoding, original-byte SHA-256 and read access only to the selected resolved path. `dispatchVersion`, `evidenceView` and full `validateProfile` come from the shipped profile references. For scoped 2.1, pass the independently observed third argument into upstream `host.applicationSelection`; never derive it from the profile. The validation adapter executes the pinned external schema validator and complete upstream semantic pass on the exact parsed argument, passing the declared `TaskInputRequest` unchanged. Neither source-provided validation nor source-provided hashes establish trust.
 3. Supply `{snapshot, evidence?, target, settings, evaluation_date, task_request?}`. The optional EvidenceView is checked for profile/selection substitution; its validation report is ignored and replaced by newly executed validation. Pending proposals are rejected even when the canonical file has not changed. Recognized legacy input routes to [upstream compatibility](profile-contract.md); unknown versions block. This context never migrates or writes facts.
 4. Resolve missing selection through profile intake and missing target through an offer or explicit role declaration. Settings contain only languages, market, requested documents and the question limit. The limit defaults to 3 and accepts integers 1 through 5. The original target text is retained exactly; a role-only context cannot supply job-specific coverage. Candidate facts never become settings.
 
@@ -46,7 +46,7 @@ Call `current()` before consuming active context; a changed live selection or pe
 
 ## Execute canonical binding
 
-The host supplies synchronous `readBytes`, `decodeUtf8`, `sha256`, `currentSelection`, `dispatchVersion`, `evidenceView` and asynchronous `validateProfile(profile, taskRequest)`. Load `stableSerialize`, `fingerprint` and `targetFingerprint` from the strategy contract as `contracts`; do not copy or replace their serialization rules. `session` is a nonblank trusted host-session token. All reads and reports remain private. Failure `issues` are complete `StrategyFinding` records, with stable identity `finding:context-<condition>`, a correction and a profile TaskInputRequest when applicable. References remain empty or null because no strategy claims or documents have been established. Findings contain no candidate excerpts.
+The host supplies synchronous `readBytes`, `decodeUtf8`, `sha256`, `currentSelection`, `dispatchVersion`, `evidenceView` and asynchronous `validateProfile(profile, taskRequest, applicationSelection)`. Load `stableSerialize`, `fingerprint` and `targetFingerprint` from the strategy contract as `contracts`; do not copy or replace their serialization rules. `session` is a nonblank trusted host-session token. All reads and reports remain private. Failure `issues` are complete `StrategyFinding` records, with stable identity `finding:context-<condition>`, a correction and a profile TaskInputRequest when applicable. References remain empty or null because no strategy claims or documents have been established. Findings contain no candidate excerpts.
 
 ```javascript
 function createStrategyWorkflow(host, modules) {
@@ -56,7 +56,8 @@ function createStrategyWorkflow(host, modules) {
   const observations = new Map();
   const methodSession = {};
   const context = createStrategyContext({...host,currentSelection:()=>host.intake.snapshot(),dispatchVersion:modules.dispatchVersion,evidenceView:modules.evidenceView},modules);
-  const updates = modules.createProfileUpdates({...host,currentSelection:()=>host.intake.snapshot(),validate:p=>host.validateProfile(p,null)});
+  const profileApplication = () => { const live=host.currentApplicationSelection();return {application_id:live.application_id,target_sha256:live.target.sha256}; };
+  const updates = modules.createProfileUpdates({...host,currentSelection:()=>host.intake.snapshot(),currentApplicationSelection:profileApplication,validate:p=>host.validateProfile(p,null,profileApplication())});
   function blocked(code) {
     const conditions={
       pending_update:['input','A factual update is pending confirmed persistence and fresh selection.','Complete or resolve the upstream update, then bind freshly selected canonical evidence.'],
@@ -99,34 +100,38 @@ function createStrategyWorkflow(host, modules) {
     const result=await context.bindStrategy({...input,snapshot:host.intake.snapshot()});
     if(chain) {
       const c=context.current(),b=c?.binding;
-      if(!b || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256) chain=null;
+      if(!b || b.application_id!==chain.previous_binding.application_id || b.target_sha256!==chain.previous_binding.target_sha256 || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256) chain=null;
       else chain.current_binding=clone(b);
     }
     return result;
   }
+  function sameApplication(c) {
+    try { const live=host.currentApplicationSelection();return same(c.source_observations,{application_id:live.application_id,target:live.target,application_context_bytes:live.application_context_bytes,confirmation_observations:live.confirmation_observations}); } catch { return false; }
+  }
   async function prepareUpdate(request) {
     const before=current();if(!before)return blocked(pending?'pending_update':'context_unavailable');
-    if(!Array.isArray(request?.changes))return blocked('update_request_invalid');
+    if(!Array.isArray(request?.changes) || request.scope !== (before.binding.profile_version === '2.1' ? 'application_fact_update' : 'fact_update'))return blocked('update_request_invalid');
     chain=null;
     const snapshot=host.intake.snapshot();
     const attempt={before,previous:saved && same(saved.binding,before.binding)?saved:null,decision:null,changed_fields:request.changes.map(c=>c.pointer)};
     pending=attempt;
     const decision=await updates.prepare(snapshot,request);
-    if(pending!==attempt)return blocked('selection_changed');
+    if(pending!==attempt || !context.current() || !sameApplication(before)){pending=null;chain=null;saved=null;return blocked('selection_changed');}
     pending.decision=decision;
     return decision;
   }
   async function persistUpdate(decision) {
     if(!pending || pending.decision!==decision)return blocked('update_decision_required');
     const old=pending;
+    if(!context.current() || !sameApplication(old.before)){pending=null;chain=null;saved=null;return blocked('selection_changed');}
     const result=await updates.persist(decision);
     const live=host.intake.snapshot();
-    if(pending!==old || live.generation!==old.before.binding.generation || live.selection?.resolved_path!==old.before.binding.resolved_path) { chain=null;return result; }
+    if(pending!==old || !sameApplication(old.before) || live.generation!==old.before.binding.generation || live.selection?.resolved_path!==old.before.binding.resolved_path) { pending=null;chain=null;saved=null;return result; }
     chain=null;saved=null;
     if(result.status!=='confirmed'){pending=null;host.intake.select({});return result;}
     // The producer observes the actual upstream return, then performs exactly one fresh selection.
     const path=old.before.binding.resolved_path;
-    host.intake.select({workspace_root:selectionRequest?.workspace_root,facts_path:path});
+    host.intake.select({workspace_root:selectionRequest?.workspace_root,facts_path:path,...(old.before.binding.profile_version==='2.1'?{application_selection:{application_id:old.before.binding.application_id,target_sha256:old.before.binding.target_sha256}}:{})});
     pending=null;
     const s=host.intake.snapshot();
     if(s.selection?.resolved_path===path && s.selection.profile_sha256===result.resulting_sha256 && s.generation===old.before.binding.generation+1 && s.pending_proposal===null)
@@ -224,8 +229,12 @@ function createStrategyContext(host, contracts) {
   function clear() { active = null; selectedSnapshot = null; selectedApplication = null; }
   function applicationSelection() {
     const live = host.currentApplicationSelection();
-    if (!live || !live.target || !(live.application_context_bytes === null || typeof live.application_context_bytes === 'string') || !Array.isArray(live.confirmation_observations)) throw Error('application selection unavailable');
-    return clone({target:live.target,application_context_bytes:live.application_context_bytes,confirmation_observations:live.confirmation_observations});
+    if (!live || typeof live.application_id !== 'string' || !live.application_id.trim() || !live.target || !(live.application_context_bytes === null || typeof live.application_context_bytes === 'string') || !Array.isArray(live.confirmation_observations)) throw Error('application selection unavailable');
+    return clone({application_id:live.application_id,target:live.target,application_context_bytes:live.application_context_bytes,confirmation_observations:live.confirmation_observations});
+  }
+  function scopeMatches(profile, selection) {
+    return profile.schema_version === '2.0' || (profile.schema_version === '2.1' &&
+      profile.application_scope?.application_id === selection.application_id && profile.application_scope?.target_sha256 === selection.target.sha256);
   }
   function sameSelection(snapshot) {
     const live = host.currentSelection();
@@ -234,7 +243,7 @@ function createStrategyContext(host, contracts) {
   }
   function current() {
     try {
-      if (!active || !sameSelection(selectedSnapshot) || !equal(applicationSelection(),selectedApplication) ||
+      if (!active || !sameSelection(selectedSnapshot) || !equal(applicationSelection(),selectedApplication) || !scopeMatches(selectedSnapshot.profile,applicationSelection()) ||
           host.sha256(host.readBytes(selectedSnapshot.selection.resolved_path)) !== active.binding.canonical_sha256) clear();
     } catch { clear(); }
     return active ? clone(active) : null;
@@ -315,24 +324,24 @@ function createStrategyContext(host, contracts) {
       applicationContext = selectedSources.application_context_bytes === null ? null : JSON.parse(selectedSources.application_context_bytes);
       applicationHash = selectedSources.application_context_bytes === null ? null : host.sha256(selectedSources.application_context_bytes);
       if (selectedSources.application_context_bytes !== null && applicationContext === null) throw Error('context must be object');
-      const check = {target:selectedSources.target,application_context:applicationContext,binding:{application_id:applicationContext?.application_id ?? null,application_context_sha256:applicationHash}};
-      if (contracts.inspectApplicationContext(check,{...selectedSources,sha256:host.sha256}).length) throw Error('invalid context');
+      const check = {target:selectedSources.target,application_context:applicationContext,binding:{application_id:selectedSources.application_id,application_context_sha256:applicationHash}};
+      if (!scopeMatches(profile,selectedSources) || contracts.inspectApplicationContext(check,{...selectedSources,sha256:host.sha256}).length) throw Error('invalid context');
     } catch { return stop('application_selection','Independently reselect the target and private application context and obtain current confirmation.','needs_input'); }
     let validation;
-    try { validation = await host.validateProfile(profile,input.task_request ?? null); }
+    try { validation = await host.validateProfile(profile,input.task_request ?? null,{application_id:selectedSources.application_id,target_sha256:targetHash}); }
     catch { validation = {schema:'not_assessed',semantics:'not_assessed',readiness:'not_assessed',findings:[]}; }
     try {
       if (ticket !== attempt || !sameSelection(snapshot)) return stop('selection_changed','Discard stale validation and reselect before continuing.');
-      if (!equal(applicationSelection(),selectedSources)) return stop('application_selection','Application sources changed during validation; reselect and bind again.');
+      if (!equal(applicationSelection(),selectedSources) || !scopeMatches(profile,applicationSelection())) return stop('application_selection','Application sources changed during validation; reselect and bind again.');
       if (host.sha256(host.readBytes(snapshot.selection.resolved_path)) !== canonicalHash) return stop('canonical_changed','Reselect and validate the changed canonical bytes.');
       if (!equal(profile,snapshot.profile)) return stop('proposal_mismatch','Validation must not transform the selected canonical profile.');
     } catch { return stop('selection_changed','Restore readable canonical input and reselect before continuing.'); }
     if (validation?.schema !== 'passed' || validation?.semantics !== 'passed')
       return stop('validation_required','Repair or execute upstream validation; allow repair clarification only, with no confirmed claim support or diagnostic scores.','blocked',input.task_request ?? {task_id:'strategy-profile-validation',required:[]},validation);
-    const binding = {schema_version:'1.1',host_session:host.session,generation:snapshot.generation,resolved_path:snapshot.selection.resolved_path,
+    const binding = {schema_version:'1.2',host_session:host.session,generation:snapshot.generation,resolved_path:snapshot.selection.resolved_path,
       canonical_sha256:canonicalHash,profile_version:profile.schema_version,validation_profile_sha256:canonicalHash,
       target_sha256:targetHash,settings_sha256:settingsHash,evaluation_date:input.evaluation_date,
-      application_id:applicationContext?.application_id ?? null,application_context_sha256:applicationHash};
+      application_id:selectedSources.application_id,application_context_sha256:applicationHash};
     active = {binding,application_context:applicationContext,source_observations:clone(selectedSources),evidence:host.evidenceView(clone(snapshot.selection),profile,validation),target:{...target,sha256:targetHash},settings,
       state:validation.readiness === 'ready' ? 'context_validated' : 'bounded',mode:target.kind === 'offer' ? 'offer' : 'role_only',
       job_specific_coverage:target.kind === 'offer',present_day_freshness:'not_assessed',invalidation:'all_prior_conclusions'};

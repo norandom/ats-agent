@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const {createHarness,classifyCheck}=require('./foundation.cjs');
-const {profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture.cjs');
+const {profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture-current.cjs');
 const adapter=require('./persistence-adapter.cjs');
 const hash=b=>require('node:crypto').createHash('sha256').update(b).digest('hex');
 (async()=>{
@@ -22,7 +22,7 @@ const hash=b=>require('node:crypto').createHash('sha256').update(b).digest('hex'
  authorizePrivateOutput:async destination=>allowWrite&&destination===path.join(h.workspace,'saved.json')?{resolved_path:destination,private_location:true,authorized:true}:null,
  writePrivate:async(destination,bytes)=>fs.writeFileSync(destination,bytes,{flag:'wx'})};
  const w=createStrategyWorkflow(host,modules);
- const bind=async input=>{applicationSelection={target:{...input.target,sha256:modules.targetFingerprint(input.target,hash)},application_context_bytes:null,confirmation_observations:[]};return w.bind(input);};
+ const bind=async input=>{applicationSelection={application_id:'fictional-application',target:{...input.target,sha256:modules.targetFingerprint(input.target,hash)},application_context_bytes:null,confirmation_observations:[]};return w.bind(input);};
  const rejected=[];
  const reject=(result,code)=>{assert.equal(result.status,'blocked');assert.ok(Array.isArray(result.issues)&&result.issues.length,'Coordinator rejection must return StrategyFinding issues');assert.ok(Object.hasOwn(result,'request'),'Coordinator rejection must declare request');if(code)assert.equal(result.issues[0].id,`finding:workflow-${code}`);rejected.push(...result.issues);return result;};
  reject(await w.assemble(null),'context_unavailable');

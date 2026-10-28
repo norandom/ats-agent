@@ -6,14 +6,14 @@ const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const { createHarness, classifyCheck } = require('./foundation.cjs');
 const { profile } = require('./fixtures.cjs');
-const { handoff } = require('./contract-fixture.cjs');
+const { handoff } = require('./contract-fixture-current.cjs');
 const sha256 = v => crypto.createHash('sha256').update(v).digest('hex');
 async function run() {
   const h = createHarness();
   const api = h.load('strategy-contract.md', ['fingerprint','targetFingerprint','inspectStrategy']);
   const p = profile('operations', h.blank);
   const x = handoff(p, {sha256,...api});
-  assert.equal(x.schema_version, '1.1');
+  assert.equal(x.schema_version, '1.2');
   const { claimEligibility } = h.load('strategy-contract.md', ['claimEligibility']);
   let sequence = 0;
   const validate = async (schema, value) => {
@@ -26,7 +26,7 @@ async function run() {
   record.confirmation = confirmation;
   x.application_context = {application_id:confirmation.application_id,target_sha256:x.target.sha256,records:[record]};
   const bind = value => {
-    value.binding.application_id = value.application_context?.application_id ?? null;
+    value.binding.application_id = value.application_context?.application_id ?? 'fictional-application';
     value.binding.application_context_sha256 = value.application_context ? sha256(JSON.stringify(value.application_context)) : null;
     value.dispositions.forEach(d => {d.binding=structuredClone(value.binding);});
     return {profile:p,binding:structuredClone(value.binding),target:structuredClone(value.target),application_context_bytes:value.application_context ? JSON.stringify(value.application_context) : null,confirmation_observations:[structuredClone(confirmation)],sha256,validate};

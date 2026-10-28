@@ -1,10 +1,10 @@
 # Private strategy contract
 
-Use [the strategy 1.1 schema](../schemas/application-strategy.schema.json) for each immutable application snapshot. The unchanged [1.0 archive](../schemas/application-strategy-v1.schema.json) validates historical artifacts only. The current consumer rejects old and unknown versions. Rebuild from newly selected and validated sources; inserting defaults into an old ready handoff does not renew its review. Store instances only at the explicitly selected or already authorized private destination. The schema defines every field and permitted null. All fields are required; an empty collection means no retained records, while null means an explicitly optional or unknown value. Never place candidate instances beside these reusable assets.
+Use [the strategy 1.2 schema](../schemas/application-strategy.schema.json) for each immutable application snapshot. The unchanged [1.1 archive](../schemas/application-strategy-v1.1.schema.json) and [1.0 archive](../schemas/application-strategy-v1.schema.json) validate historical artifacts only. The current consumer rejects old and unknown versions. Rebuild from newly selected and validated sources; inserting defaults into an old ready handoff does not renew its review. Store instances only at the explicitly selected or already authorized private destination. The schema defines every field and permitted null. All fields are required; an empty collection means no retained records, while null means an explicitly optional or unknown value. Never place candidate instances beside these reusable assets.
 
 ## Application sources and shared eligibility
 
-Application context stays outside reusable career facts. Its records retain one assertion each, provenance and optional confirmation. `application_context: null` supports canonical-only work; both application binding fields must then be null. A confirmed empty enclosure array explicitly means no attachments and remains addressable through `/value`. Other array pointers address existing elements only. Recipient addresses must contain at least one line. Dates are ISO calendar dates; localized rendering belongs to document review.
+Application context stays outside reusable career facts. Its records retain one assertion each, provenance and optional confirmation. `application_context: null` supports canonical-only work; the context hash is null and the independently selected application ID remains non-null. A confirmed empty enclosure array explicitly means no attachments and remains addressable through `/value`. Other array pointers address existing elements only. Recipient addresses must contain at least one line. Dates are ISO calendar dates; localized rendering belongs to document review.
 
 Supply `host.target` as the independently selected target (including its computed hash), `host.application_context_bytes` as the exact saved UTF-8 string or null, and `host.confirmation_observations` as an array of independently observed `{application_id,record_sha256,interaction_ref,confirmed_at}` confirmations. Do not derive these inputs from a handoff or its saved ready status. On resume, independently select sources and obtain confirmation again. Context bytes include confirmations and are hashed without normalization. Each record confirmation hashes `fingerprint({id,kind,value,provenance}, sha256)`; it does not include itself or a context hash.
 
@@ -18,7 +18,7 @@ The envelope separates target, settings, binding, evidence mappings, positioning
 
 IDs use `namespace:local-id`. Each namespace is unique within the snapshot; local IDs may repeat across namespaces. Cross-references use `{namespace,id}`, including question-batch lists. Profile references remain the upstream `record_id`, profile-relative `pointer` and `source_ids`; record and source namespaces are distinct. A pointer must resolve inside the named active record, not an archive, another record or source. Preserve original evidence state and observation limits. References prove locations, never entailment.
 
-Historical `changes[*].before` and `changes[*].after` values are opaque archives. Reject evidence pointers to those values, their descendants and enclosing containers that include them. A specific history metadata field such as `reason` remains addressable; it does not turn archived content into current evidence.
+Historical `changes[*].before` and `changes[*].after` values are opaque archives. Reject evidence pointers to those values, their descendants and enclosing containers that include them. Scope, origin, history and saved authorization metadata are not career support, including a specific history `reason`. Evidence resolves only inside current active career records.
 
 Diagnostics retain rubric definition, scale, unit weights, population, hashes, counts, numeric values or explicit nulls, status and reason. Findings preserve category, severity, check kind/status, typed references, optional document anchor or draft span, issue, correction and rationale. Document checks retain external producer, method, artifact identity/hash and evidence location. Comparison describes private side-by-side results; comparison eligibility and diagnostic arithmetic belong to the review protocol, not this structural checker.
 
@@ -78,7 +78,7 @@ function canonicalEvidenceIssues(v, profile, p = '') {
   const archiveRoots = (host.profile.change_history || []).flatMap((record,i) =>
     (record.changes || []).flatMap((change,j) => ['before','after'].map(key => `/change_history/${i}/changes/${j}/${key}`)));
   records.set(host.profile.candidate.id, '/candidate');
-  for (const key of ['profile','employment','education','professional_development','skill_groups','projects','volunteering','languages','review_questions','evidence','conflicts','change_history']) {
+  for (const key of ['profile','employment','education','professional_development','skill_groups','projects','volunteering','languages']) {
     (host.profile[key] || []).forEach((r,i) => {
       records.set(r.id,`/${key}/${i}`);
       if (['employment','skill_groups'].includes(key)) (r.claims || []).forEach((c,j) => records.set(c.id,`/${key}/${i}/claims/${j}`));
@@ -106,11 +106,11 @@ function inspectApplicationContext(h, host) {
   const context = h.application_context;
   if (host.target && stableSerialize(host.target) !== stableSerialize(h.target)) add('target_binding','/target');
   if (context === null) {
-    if (h.binding.application_id !== null || h.binding.application_context_sha256 !== null || (host.application_context_bytes !== undefined && host.application_context_bytes !== null)) add('context_binding','/application_context');
+    if (typeof h.binding.application_id !== 'string' || !h.binding.application_id.trim() || (host.application_id !== undefined && host.application_id !== h.binding.application_id) || h.binding.application_context_sha256 !== null || (host.application_context_bytes !== undefined && host.application_context_bytes !== null)) add('context_binding','/application_context');
     return findings;
   }
   try {
-    if (typeof host.application_context_bytes !== 'string' || !host.target || stableSerialize(JSON.parse(host.application_context_bytes)) !== stableSerialize(context) || host.sha256(host.application_context_bytes) !== h.binding.application_context_sha256 || context.application_id !== h.binding.application_id || context.target_sha256 !== targetFingerprint(host.target,host.sha256) || context.target_sha256 !== h.target.sha256) add('context_binding','/application_context');
+    if (typeof h.binding.application_id !== 'string' || !h.binding.application_id.trim() || (host.application_id !== undefined && host.application_id !== h.binding.application_id) || typeof host.application_context_bytes !== 'string' || !host.target || stableSerialize(JSON.parse(host.application_context_bytes)) !== stableSerialize(context) || host.sha256(host.application_context_bytes) !== h.binding.application_context_sha256 || context.application_id !== h.binding.application_id || context.target_sha256 !== targetFingerprint(host.target,host.sha256) || context.target_sha256 !== h.target.sha256) add('context_binding','/application_context');
     const ids = new Set();
     context.records.forEach((r,i) => {
       const p = '/application_context/records/'+i;
@@ -133,7 +133,7 @@ function validOfferSpan(s,target) {
 function claimEligibility(claim,h,host) {
   const findings = inspectApplicationContext(h,host);
   const add = (code,pointer) => findings.push({code,pointer,message:'Claim evidence cannot resolve to its current source.',corrective_action:'Retain unresolved support or rebuild references from independently selected sources.'});
-  if (!host.profile || !host.binding || stableSerialize(h.binding) !== stableSerialize(host.binding) || h.binding.validation_profile_sha256 !== h.binding.canonical_sha256) add('binding_mismatch','/binding');
+  if (!host.profile || !host.binding || h.binding.schema_version !== '1.2' || !['2.0','2.1'].includes(host.profile.schema_version) || h.binding.profile_version !== host.profile.schema_version || (host.profile.schema_version === '2.1' && (host.profile.application_scope?.application_id !== h.binding.application_id || host.profile.application_scope?.target_sha256 !== h.binding.target_sha256)) || stableSerialize(h.binding) !== stableSerialize(host.binding) || h.binding.validation_profile_sha256 !== h.binding.canonical_sha256) add('binding_mismatch','/binding');
   if (h.target.sha256 !== targetFingerprint(h.target,host.sha256) || h.binding.target_sha256 !== h.target.sha256) add('target_binding','/target');
   let canonical = 0, offer = 0, application = 0, pending = false;
   for (const [i,r] of (claim.evidence || []).entries()) {
@@ -176,6 +176,10 @@ async function inspectStrategy(value, host = {}) {
     add('context_unavailable','/binding','Trusted profile, binding or hashing is unavailable.','Establish current context independently before checking integrity.'); return report;
   }
   const h = value, sha256 = host.sha256;
+  if (!host.profile || !host.binding || h.binding.schema_version !== '1.2' || !['2.0','2.1'].includes(host.profile.schema_version) || h.binding.profile_version !== host.profile.schema_version || (host.profile.schema_version === '2.1' && (host.profile.application_scope?.application_id !== h.binding.application_id || host.profile.application_scope?.target_sha256 !== h.binding.target_sha256))) {
+    add('profile_scope','/binding','The selected career profile does not match the current application binding.','Revalidate the selected reusable or matching scoped profile before support or diagnostics.');
+    report.deterministic='failed';return report;
+  }
   const tables = new Map();
   const collections = {criterion:h.criteria,inferred_need:h.inferred_needs,claim:h.claims,question:h.questions,disposition:h.dispositions,guidance:h.guidance,editorial_method:h.editorial_methods,diagnostic:h.diagnostics,document_check:h.document_checks,finding:h.findings,terminology:h.positioning.terminology};
   const paths = {criterion:'criteria',inferred_need:'inferred_needs',claim:'claims',question:'questions',disposition:'dispositions',guidance:'guidance',editorial_method:'editorial_methods',diagnostic:'diagnostics',document_check:'document_checks',finding:'findings',terminology:'positioning/terminology'};

@@ -21,7 +21,7 @@
       "$ref": "#/$defs/hash"
     },
     "binding": {
-      "$ref": "application-strategy.schema.json#/$defs/Binding"
+      "$ref": "application-strategy-v1.1.schema.json#/$defs/Binding"
     },
     "documents": {
       "type": "array",

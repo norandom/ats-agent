@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const {spawnSync} = require('node:child_process');
 const {createHarness,classifyCheck} = require('./foundation.cjs');
 const {profile} = require('./fixtures.cjs');
-const {handoff} = require('./contract-fixture.cjs');
+const {handoff} = require('./contract-fixture-current.cjs');
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 (async () => {
   const h = createHarness(), p = profile('operations',h.blank);
@@ -14,7 +14,7 @@ const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   const {createStrategyContext} = h.load('application-strategy.md',['createStrategyContext']);
   const {evidenceView} = h.load('profile-validation.md',['evidenceView']);
   const {dispatchVersion} = h.load('profile-contract.md',['dispatchVersion']);
-  const context = createStrategyContext({currentApplicationSelection:()=>({target:structuredClone(snapshot.target),application_context_bytes:null,confirmation_observations:[]}),session:'fictional-questions',currentSelection:() => h.intake.snapshot(),readBytes:fs.readFileSync,decodeUtf8:b => new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validateProfile:x => h.validate(x),evidenceView,dispatchVersion},contracts);
+  const context = createStrategyContext({currentApplicationSelection:()=>({application_id:'fictional-application',target:structuredClone(snapshot.target),application_context_bytes:null,confirmation_observations:[]}),session:'fictional-questions',currentSelection:() => h.intake.snapshot(),readBytes:fs.readFileSync,decodeUtf8:b => new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validateProfile:x => h.validate(x),evidenceView,dispatchVersion},contracts);
   const snapshot = handoff(p,contracts); h.select(p);
   const bind = () => context.bindStrategy({snapshot:h.intake.snapshot(),target:snapshot.target,settings:snapshot.settings,evaluation_date:'2026-01-03'});
   const bound = await bind(); assert.equal(bound.status,'ready');

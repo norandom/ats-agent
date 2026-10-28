@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const {spawnSync} = require('node:child_process');
 const {createHarness,classifyCheck} = require('./foundation.cjs');
 const {profile} = require('./fixtures.cjs');
-const {handoff} = require('./contract-fixture.cjs');
+const {handoff} = require('./contract-fixture-current.cjs');
 const {cases} = require('./offer-cases.cjs');
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 (async () => {

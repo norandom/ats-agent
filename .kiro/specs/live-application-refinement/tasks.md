@@ -39,7 +39,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 3.3, 3.4, 3.5, 3.6, 3.7, 3.9, 3.11, 3.12, 3.13, 7.4_
 
 - [ ] 3. Bind strategy to the selected application evidence
-- [ ] 3.1 Integrate scoped profiles into current strategy bindings
+- [x] 3.1 Integrate scoped profiles into current strategy bindings
   - Preserve historical strategy validation and introduce the current binding with an application identity even for role-only CV work.
   - Accept validated reusable or application-scoped career sources, enforce scope during binding and subsequent current-state checks, and keep application metadata on its separate source route.
   - Route career answers to the selected profile scope and rebuild claims after confirmed persistence. A new source binding invalidates old wording/support rather than inheriting ready flags.

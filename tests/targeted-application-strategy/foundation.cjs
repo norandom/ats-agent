@@ -9,7 +9,7 @@ const { spawnSync } = require('node:child_process');
 const { classifyCheck } = require('../portable-candidate-profile/foundation.cjs');
 const root = path.resolve(__dirname, '../..');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-const assetNames = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-v1.schema.json', 'templates/cv-facts.blank.json', 'references/strategy-contract.md', 'schemas/application-strategy.schema.json', 'schemas/application-strategy-v1.schema.json'];
+const assetNames = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-application.schema.json', 'schemas/cv-facts-v1.schema.json', 'templates/cv-facts.blank.json', 'references/strategy-contract.md', 'schemas/application-strategy.schema.json', 'schemas/application-strategy-v1.schema.json', 'schemas/application-strategy-v1.1.schema.json'];
 const validatorArgs = ['--from', 'check-jsonschema==0.38.2', 'check-jsonschema'];
 function extractBlock(text, names) {
   const blocks = [...text.matchAll(/^```javascript\r?\n([\s\S]*?)^```\s*$/gm)];
@@ -54,14 +54,14 @@ function createHarness({ relocate = false } = {}) {
   const intake = createProfileIntake({ resolvePath: path.resolve, realpath: fs.realpathSync, readBytes: fs.readFileSync, decodeUtf8: bytes => new TextDecoder('utf-8', { fatal: true }).decode(bytes), sha256: hash });
   const evidence = { tools, assets, reasoning: 'not_assessed', adapters: 'Node filesystem, hashing and external schema command; no simulated schema success', checks: [] };
   let sequence = 0;
-  async function validate(profile, { executable = 'uvx', taskRequest = null, semanticIntegrity } = {}) {
+  async function validate(profile, { executable = 'uvx', taskRequest = null, applicationSelection = null, semanticIntegrity } = {}) {
     // Serialize the exact argument passed by the upstream validator, never a stale fixture.
     const report = await validateProfile(profile, { validate: async (schema, exactProfile) => {
       const file = path.join(workspace, `validation-${++sequence}.json`);
       fs.writeFileSync(file, JSON.stringify(exactProfile), { flag: 'wx' });
       const result = command(executable, [...validatorArgs, '--schemafile', path.join(skillRoot, schema), file]);
       return { state: classifyCheck(result), findings: [] };
-    }, ...(semanticIntegrity ? { semanticIntegrity } : {}) }, taskRequest);
+    }, applicationSelection, ...(semanticIntegrity ? { semanticIntegrity } : {}) }, taskRequest);
     evidence.checks.push({ method: 'executed_upstream_validation', profile_sha256: hash(JSON.stringify(profile)), schema: report.schema, semantics: report.semantics, readiness: report.readiness });
     return report;
   }

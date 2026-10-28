@@ -21,7 +21,7 @@ const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   const context = createStrategyContext(host, contracts);
   const settings = {languages:['en'],market:'DE',requested_documents:['cv']};
   const input = () => ({snapshot:h.intake.snapshot(),target:fixtures.offer('operations'),settings,evaluation_date:'2026-01-03',task_request:{task_id:'strategy',required:[]}});
-  const bind = overrides => { const request={...input(),...overrides}; if(request.target) applicationSelection={target:{...request.target,sha256:contracts.targetFingerprint(request.target,hash)},application_context_bytes:null,confirmation_observations:[]}; return context.bindStrategy(request); };
+  const bind = overrides => { const request={...input(),...overrides}; if(request.target) applicationSelection={application_id:'fictional-application',target:{...request.target,sha256:contracts.targetFingerprint(request.target,hash)},application_context_bytes:null,confirmation_observations:[]}; return context.bindStrategy(request); };
   const failureFindings = [];
   const rejected = (r,code) => { assert.notEqual(r.status,'ready'); assert.ok(r.issues.some(x => x.id === `finding:context-${code}`),JSON.stringify(r)); failureFindings.push(...r.issues); assert.equal(r.value,undefined); assert.equal(context.current(),null); };
   rejected(await bind(), 'selection_required');

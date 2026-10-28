@@ -7,7 +7,7 @@ const crypto = require('node:crypto');
 const {spawnSync} = require('node:child_process');
 const {createHarness,classifyCheck} = require('./foundation.cjs');
 const {profile} = require('./fixtures.cjs');
-const {handoff} = require('./contract-fixture.cjs');
+const {handoff} = require('./contract-fixture-current.cjs');
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 const ref = id => ({namespace:'claim',id});
 const span = (text, excerpt) => {const start = Array.from(text.slice(0,text.indexOf(excerpt))).length;return {start,end:start+Array.from(excerpt).length,excerpt};};

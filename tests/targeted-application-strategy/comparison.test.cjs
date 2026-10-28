@@ -3,7 +3,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const {createHarness,classifyCheck}=require('./foundation.cjs');
-const {profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture.cjs');
+const {profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture-current.cjs');
 const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('hex');
 (async()=>{
  const h=createHarness(),p=profile('operations',h.blank);

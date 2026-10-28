@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
-const {createHarness,classifyCheck}=require('./foundation.cjs'),{profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture.cjs');
+const {createHarness,classifyCheck}=require('./foundation.cjs'),{profile}=require('./fixtures.cjs'),{handoff}=require('./contract-fixture-current.cjs');
 const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('hex');
 (async()=>{
  const h=createHarness(),p=profile('operations',h.blank);
@@ -11,7 +11,7 @@ const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('he
  record.confirmation={application_id:'fictional-review',record_sha256:c.fingerprint(record,sha256),interaction_ref:'fictional-confirmation',confirmed_at:'2026-01-03T10:01:00Z'};
  const payload={...record};delete payload.confirmation;record.confirmation.record_sha256=c.fingerprint(payload,sha256);
  x.application_context={application_id:'fictional-review',target_sha256:x.target.sha256,records:[record]};
- let sources={target:x.target,application_context_bytes:JSON.stringify(x.application_context),confirmation_observations:[record.confirmation]};
+ let sources={application_id:'fictional-review',target:x.target,application_context_bytes:JSON.stringify(x.application_context),confirmation_observations:[record.confirmation]};
  const {createStrategyContext}=h.load('application-strategy.md',['createStrategyContext']);
  const context=createStrategyContext({session:'fictional-review',currentSelection:()=>h.intake.snapshot(),currentApplicationSelection:()=>structuredClone(sources),readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,...h.load('profile-contract.md',['dispatchVersion']),...h.load('profile-validation.md',['evidenceView']),validateProfile:profile=>h.validate(profile)},c);
  const bound=await context.bindStrategy({snapshot:h.intake.snapshot(),target:x.target,settings:x.settings,evaluation_date:'2026-01-03'});assert.equal(bound.status,'ready');x.binding=bound.value.binding;
@@ -48,7 +48,7 @@ const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('he
  const more=applyCase(structuredClone(x),semanticCases[1]);more.claims[0].context_evidence.push(structuredClone(x.claims[0].context_evidence[0]));const changedRefs=await workflow.assemble(more,{previous:prior});assert.equal(changedRefs.value.comparison.dimensions.find(d=>d.dimension==='claim_support').delta,null);assert.equal(changedRefs.value.comparison.dimensions.find(d=>d.dimension==='offer_coverage').delta,0);
  // Confirmed context changes permit career coverage, but invalidate whole-draft comparisons.
  sources.application_context_bytes+=' ';await workflow.bind({target:x.target,settings:x.settings,evaluation_date:'2026-01-03'});const changed=applyCase(structuredClone(x),semanticCases[1]);changed.binding=workflow.current().binding;const changedContext=await workflow.assemble(changed,{previous:prior});assert.equal(changedContext.status,'ready',JSON.stringify(changedContext));assert.equal(changedContext.value.comparison.dimensions.find(d=>d.dimension==='claim_support').delta,null);assert.equal(changedContext.value.comparison.dimensions.find(d=>d.dimension==='offer_coverage').delta,0);
- const pendingContext=structuredClone(x.application_context);pendingContext.records[0].confirmation=null;sources={target:x.target,application_context_bytes:JSON.stringify(pendingContext),confirmation_observations:[]};await workflow.bind({target:x.target,settings:x.settings,evaluation_date:'2026-01-03'});
+ const pendingContext=structuredClone(x.application_context);pendingContext.records[0].confirmation=null;sources={application_id:'fictional-review',target:x.target,application_context_bytes:JSON.stringify(pendingContext),confirmation_observations:[]};await workflow.bind({target:x.target,settings:x.settings,evaluation_date:'2026-01-03'});
  const pending=structuredClone(x);pending.binding=workflow.current().binding;pending.application_context=pendingContext;pending.claims[0].context_evidence[0].context_sha256=pending.binding.application_context_sha256;pending.claims[0].realizations.forEach(r=>{r.semantic_state='unresolved';r.semantic_reason='Intent awaits user confirmation.';});
  const career=structuredClone(handoff(p,{...c,sha256}).claims[0]);career.id='claim:career';pending.claims.push(career);pending.positioning.selected_claims=[{claim:{namespace:'claim',id:career.id},languages:['en','de']}];pending.positioning.selections.push({claim:{namespace:'claim',id:career.id},decision:'include',rationale:'Independent supported career content remains usable.'});
  for(const d of pending.draft.versions){const r=career.realizations.find(r=>r.language===d.language),start=Array.from(d.text).length+1;d.text+=' '+r.wording;d.sha256=sha256(d.text);r.spans=[{start,end:start+Array.from(r.wording).length,excerpt:r.wording}];d.claims.push({claim:{namespace:'claim',id:career.id},spans:r.spans});}
