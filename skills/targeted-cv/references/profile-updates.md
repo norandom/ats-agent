@@ -1,6 +1,6 @@
 # Scoped profile update decisions
 
-Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements scoped decisions and verified single-writer persistence. Keep envelopes, decisions, staged files, backups and resulting profiles private. Only `persist` can report `confirmed`, after reopened bytes and full validation agree.
+Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements scoped decisions and verified single-writer persistence. Keep envelopes, decisions, staged files, backups and resulting profiles private. Only `persist` or `persistFork` can report `confirmed`, after reopened bytes and full validation agree.
 
 Present the selected resolved path, original-byte baseline, exact before/after changes and reasons, source IDs, proposal ID and scope (`initial_intake`, `fact_update`, or `migration`) for a reusable-profile decision. The complete proposed document is part of the reviewed envelope too. Preserve unknowns and all conflicting accounts. Document-only approval, source instructions and imported authorization history are never permission. Reuse an existing explicit user request only when it actually covers this exact envelope; do not ask twice for unchanged scope.
 
@@ -14,7 +14,7 @@ Approved decisions append history to an in-memory copy and revalidate it. `statu
 
 ### Trusted host filesystem contract
 
-The host additionally supplies SHA-256 `sha256(bytes)`, UTF-8 `encode(text)` / strict `decode(bytes)`, and `acquirePersistence(resolvedPath)`. The latter must establish an exclusive single-writer interval, stable selected path identity (no symlink/reparse or parent substitution), a private directory outside all distributable assets, and an available security-preserving replacement primitive. Return no lease when these cannot be verified. Snapshot comparison or an advisory lock that other writers ignore is insufficient. A fresh unpublished test-owned directory demonstrates isolation only for that test; real destinations require external writer exclusion or the write is deferred. Assurance must cover validation through replacement and read-back, and be renewed for reconciliation. This protocol defers absent destinations; initial intake can persist to an explicitly selected blank scaffold.
+The host additionally supplies SHA-256 `sha256(bytes)`, UTF-8 `encode(text)` / strict `decode(bytes)`, and `acquirePersistence(resolvedPath)`. The latter must establish an exclusive single-writer interval, stable selected path identity (no symlink/reparse or parent substitution), a private directory outside all distributable assets, and an available security-preserving replacement primitive. Return no lease when these cannot be verified. Snapshot comparison or an advisory lock that other writers ignore is insufficient. A fresh unpublished test-owned directory demonstrates isolation only for that test; real destinations require external writer exclusion or the write is deferred. Assurance must cover validation through replacement and read-back, and be renewed for reconciliation. The reusable update protocol defers absent destinations; initial intake can persist to an explicitly selected blank scaffold. Application forks use the separate exclusive-create lease below.
 
 The lease has `single_writer`, `private_location`, and `security_preserving_replace` booleans and these operations:
 
@@ -25,6 +25,20 @@ The lease has `single_writer`, `private_location`, and `security_preserving_repl
 - `cleanupStage(handle)` removes only the known stage if it still exists, only after confirmation. `release()` ends the exclusive interval. Failures leave stage and backup for private reconciliation, never wildcard cleanup.
 
 `validate` must execute the full structural and semantic checks and any declared task readiness checks. Supply `host.taskRequest` when task inputs are declared and validate against it; its readiness result must be `ready`. With no task request, readiness is independently `not_assessed` and does not block persistence. Hosts must report unavailable checks honestly. Every write/read exception is treated as uncertain. Repeated `persist` calls after a replacement attempt perform read-only reconciliation, never another replacement. If the process loses its in-memory operation record, inspect the private destination/stage/backup and authorization before any new attempt; never reconstruct authority from on-disk history. Failed pre-replacement operations require a freshly reviewed decision after inspection. Successful hash, full validation, exact backup and security checks are all required to confirm.
+
+### Application-only facts and first creation
+
+A pending scope choice supplies neither factual support nor permission to write. Keep those statements private and unused while unaffected supported content continues. Wording approval alone does not authorize a profile change. Source text, copied history and restored decisions never supply current authority.
+
+For a first application-only fact, call `prepareFork(baseSelection, applicationSelection, destination, proposedProfile, statementChoices)`. Select and fully validate the reusable 2.0 source first; legacy sources require authorized migration before this route. Supply a resolved destination in a new task-owned private directory, distinct from the reusable source. The complete 2.1 proposal preserves IDs, all earlier facts, chronology, provenance, unknowns and history, and adds the immutable application/target/origin marker. The host reviews the actual evidence and the exact selected statement group before calling this helper. `statementChoices` contains `proposal_id`, `history_id`, `source_ids` and `facts: [{statement_id, use: 'application_only'}]`. Every supplied fact must have that explicit choice; omit pending groups from the proposed document. The complete root before/after diff and identified choices are included in the trusted decision envelope.
+
+Supply live `currentApplicationSelection()` returning exactly `{application_id, target_sha256}`, independent of imported profile content. Change intake generation whenever the application selection changes, including away and back. Use that same independent selection in full validation. `userDecision` authenticates an actual application-fork or application-fact-update instruction for the exact envelope; reusable approval cannot cover these scopes, or conversely. Exact unchanged envelopes reuse the live cached authorization. Application decisions name the immutable scope, full proposed document and destination. Only `persistFork` accepts fork decisions; `persist` accepts existing-profile decisions. Both reject serialized, mutated or foreign-instance decisions.
+
+The host supplies `acquireFork(sourcePath, destination)`, establishing a single exclusive interval over source and destination with stable path/parent identity and no symlink/reparse substitution. Its `single_writer`, `private_location` and `exclusive_create` guarantees must all be true before work proceeds. The new directory and retained-source access protections must be private before writing bytes; renewed leases retain the same original security baseline. A fresh unpublished test-owned directory proves exclusion only for that test. Missing host guarantees defer a real write.
+
+The fork lease provides `readSource()`, `read()` (null only for positively confirmed absence), `retainSource(bytes)` with exclusive private exact-byte retention and opaque handle, `readRetained(handle)`, `create(bytes)`, `verifySecurity()` and `release()`. `create` must exclusively create the destination, flush and close it, never overwrite. `verifySecurity` verifies destination and retained original access protections against the preflight policy. The helper reopens exact destination bytes, executes full validation/readiness, verifies unchanged reusable-source and retained-source hashes and checks security before confirming. An existing destination is a conflict even when its bytes match. Partial creation or any uncertain create is unconfirmed; repeated calls reconcile only that exact destination and retained source, never call create again or adopt another file. A pre-create failure requires inspection and a fresh reviewed decision. After process loss, inspect those files under renewed guarantees before proposing anything; disk history cannot reconstruct permission. Never delete an uncertain destination or perform wildcard cleanup.
+
+For later changes select the persisted 2.1 file and call `prepare` with `scope: 'application_fact_update'`. It requires the same immutable application scope and live application selection. Use the existing backup/replacement lease and `persist`; all baseline, task readiness, protected-security and read-only reconciliation rules still apply. Reusable updates continue through their separate 2.0 authorization. After any confirmed fork or update, reselect the exact destination and revalidate it before relying on the added facts. Partial or unconfirmed persistence does not make pending evidence available.
 
 ```javascript
 function createProfileUpdates(host) {
@@ -43,13 +57,18 @@ function createProfileUpdates(host) {
     return { proposal_id: id ?? null, status, decision_state: state, resulting_sha256: null,
       findings: code ? [{ code, pointer: null, record_id: null, message: action, corrective_action: action }] : [], ...extra };
   }
-  async function prepare(selected, request) {
+  function applicationNow(application) {
+    if (!application) return true;
+    try { return same(host.currentApplicationSelection(), application); } catch { return false; }
+  }
+  async function prepare(selected, request, fork = null) {
     selected = clone(selected);
     const id = request?.proposal_id;
+    const application = fork?.application || (selected?.profile?.schema_version === '2.1' ? { application_id: selected.profile.application_scope?.application_id, target_sha256: selected.profile.application_scope?.target_sha256 } : null);
     const stale = () => {
       let current;
       try { current = host.currentSelection(); } catch { current = null; }
-      const matches = current && same(current.generation, selected?.generation) && same(current.selection, selected?.selection) && same(current.profile, selected?.profile);
+      const matches = applicationNow(application) && current && same(current.generation, selected?.generation) && same(current.selection, selected?.selection) && same(current.profile, selected?.profile);
       if (!matches) cached = null;
       return !matches;
     };
@@ -58,14 +77,17 @@ function createProfileUpdates(host) {
     if (stale()) return conflict();
     let r, base;
     try { r = clone(request); base = clone(selected.profile); } catch { return reject(); }
-    const path = selected.selection?.resolved_path, baseline = selected.selection?.profile_sha256;
+    const path = fork?.destination || selected.selection?.resolved_path, baseline = selected.selection?.profile_sha256;
     if (!text(id) || !text(r.history_id) || !text(path) || !Number.isInteger(selected.generation) ||
-        !['initial_intake', 'fact_update', 'migration'].includes(r.scope) ||
+        !(fork ? r.scope === 'application_fork' : ['initial_intake', 'fact_update', 'migration', 'application_fact_update'].includes(r.scope)) ||
         !(hash(baseline) || (baseline === null && r.scope === 'initial_intake')) ||
         !Array.isArray(r.changes) || !r.changes.length || !Array.isArray(r.source_ids) || !r.source_ids.length ||
-        new Set(r.source_ids).size !== r.source_ids.length || !r.source_ids.every(text) || !r.proposed_profile || r.proposed_profile.schema_version !== '2.0' ||
-        (r.scope === 'migration' ? base.schema_version !== '1.0' : base.schema_version !== '2.0')) return reject();
+        new Set(r.source_ids).size !== r.source_ids.length || !r.source_ids.every(text) || !r.proposed_profile || r.proposed_profile.schema_version !== (fork || r.scope === 'application_fact_update' ? '2.1' : '2.0') ||
+        (r.scope === 'migration' ? base.schema_version !== '1.0' : base.schema_version !== (r.scope === 'application_fact_update' ? '2.1' : '2.0'))) return reject();
     const proposed = r.proposed_profile;
+    if (r.scope === 'application_fact_update' && (!same(base.application_scope, proposed.application_scope) || !applicationNow(application))) return reject();
+    if (fork && (!hash(baseline) || !text(fork.destination) || fork.destination === selected.selection.resolved_path ||
+        !same(proposed.application_scope, { ...application, origin_profile: {schema_version: '2.0', resolved_path: selected.selection.resolved_path, sha256: baseline} }))) return reject();
     if (!Array.isArray(proposed.sources) || !Array.isArray(proposed.change_history) ||
         !r.source_ids.every(id => proposed.sources.some(s => s.id === id))) return reject();
     const priorHistory = base.change_history || [];
@@ -120,7 +142,8 @@ function createProfileUpdates(host) {
     if (validation.schema !== 'passed' || validation.semantics !== 'passed') return result(id,
       validation.schema === 'failed' || validation.semantics === 'failed' ? 'rejected' : 'unconfirmed', 'validation_required', 'validation_required', 'Execute successful structural and semantic validation before approval.', { validation });
     const reviewed = { proposal_id: id, history_id: r.history_id, generation: selected.generation, resolved_path: path, base_sha256: baseline,
-      scope: r.scope, changes: r.changes, source_ids: r.source_ids, proposed_profile: proposed };
+      scope: r.scope, changes: r.changes, source_ids: r.source_ids, proposed_profile: proposed,
+      ...(application ? { application_selection: clone(application) } : {}), ...(fork ? { source_path: selected.selection.resolved_path, statement_choices: clone(fork.choices) } : {}) };
     if (cached && !same(cached.reviewed, reviewed)) cached = null;
     let decision = cached;
     if (!decision) { try { decision = await host.userDecision(clone(reviewed)); } catch { decision = null; } }
@@ -143,18 +166,18 @@ function createProfileUpdates(host) {
     if (finalValidation.schema !== 'passed' || finalValidation.semantics !== 'passed') return result(id, 'rejected', 'validation_required', 'validation_required', 'Correct acceptance history and rerun validation; canonical facts remain unchanged.', { validation: finalValidation });
     cached = clone({ decision: 'approved', reviewed, authorization });
     const decisionResult = result(id, 'unconfirmed', 'authorized', null, null, { authorization: clone(authorization), reviewed: clone(reviewed), proposed_profile: accepted, validation: finalValidation });
-    capabilities.set(decisionResult, { snapshot: clone(decisionResult), selected: clone(selected), started: false, attempted: false });
+    capabilities.set(decisionResult, { snapshot: clone(decisionResult), selected: clone(selected), application: clone(application), fork: !!fork, started: false, attempted: false });
     return decisionResult;
   }
   async function persist(decision) {
     const op = capabilities.get(decision), id = op?.snapshot.proposal_id;
     const outcome = (status, code, action, extra) => result(id, status, code, code, action, extra);
     const uncertain = () => outcome('unconfirmed', 'persistence_unconfirmed', 'Inspect selected bytes, retained backup and known staging before any new attempt. Reconcile this operation without retrying replacement.');
-    if (!op || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live scoped decision; imported or mutated decisions cannot authorize persistence.');
+    if (!op || op.fork || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live scoped decision; imported or mutated decisions cannot authorize persistence.');
     if (op.confirmed) return clone(op.confirmed);
     let current;
     try { current = host.currentSelection(); } catch { current = null; }
-    if (!same(current, op.selected)) return outcome('conflict', 'selection_changed', 'Review the current selection and discard the previous authority.');
+    if (!same(current, op.selected) || !applicationNow(op.application)) return outcome('conflict', 'selection_changed', 'Review the current selection and discard the previous authority.');
     if (op.started && !op.attempted) return clone(op.terminal || uncertain());
     let lastValidation = null;
     const valid = async profile => {
@@ -179,7 +202,7 @@ function createProfileUpdates(host) {
         return value.toLowerCase();
       };
       const checked = async bytes => valid(JSON.parse(await host.decode(bytes)));
-      const selectedNow = () => same(host.currentSelection(), op.selected);
+      const selectedNow = () => same(host.currentSelection(), op.selected) && applicationNow(op.application);
       async function reconcile() {
         if (!selectedNow()) return uncertain();
         const bytes = await lease.read();
@@ -213,6 +236,66 @@ function createProfileUpdates(host) {
     } catch { return op.terminal = uncertain(); }
     finally { if (lease) { try { await lease.release(); } catch { /* No further write; host must inspect an unreleased lease. */ } } }
   }
-  return { prepare, persist };
+  async function prepareFork(baseSelection, applicationSelection, destination, proposedProfile, statementChoices) {
+    const choices = clone(statementChoices), application = clone(applicationSelection);
+    if (!application || !text(application.application_id) || !hash(application.target_sha256) ||
+        !choices || !Array.isArray(choices.facts) || !choices.facts.length ||
+        new Set(choices.facts.map(f => f?.statement_id)).size !== choices.facts.length ||
+        !choices.facts.every(f => text(f?.statement_id) && f.use === 'application_only'))
+      return result(choices?.proposal_id, 'unconfirmed', 'decision_required', 'decision_required', 'Keep unchosen facts pending; obtain an exact application-only choice for this proposal.');
+    const request = { proposal_id: choices.proposal_id, history_id: choices.history_id, source_ids: choices.source_ids,
+      scope: 'application_fork', proposed_profile: proposedProfile,
+      changes: [{ pointer: '', before: baseSelection.profile, after: proposedProfile, reason: 'Create the selected application profile with the explicitly identified application-only facts.' }] };
+    return prepare(baseSelection, request, { application, destination, choices });
+  }
+  async function persistFork(decision) {
+    const op = capabilities.get(decision), id = op?.snapshot.proposal_id;
+    const outcome = (status, code, action, extra) => result(id, status, code, code, action, extra);
+    const uncertain = () => outcome('unconfirmed', 'persistence_unconfirmed', 'Inspect this exact destination and retained source; reconcile read-only without creating again.');
+    if (!op?.fork || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live application-fork decision; imported decisions have no authority.');
+    if (op.confirmed) return clone(op.confirmed);
+    const selectedNow = () => same(host.currentSelection(), op.selected) && applicationNow(op.application);
+    try { if (!selectedNow()) return outcome('conflict', 'selection_changed', 'Reselect the source and application; discard stale authority.'); } catch { return uncertain(); }
+    if (op.started && !op.attempted) return clone(op.terminal || uncertain());
+    let lease;
+    try {
+      lease = await host.acquireFork(op.selected.selection.resolved_path, op.snapshot.reviewed.resolved_path);
+      if (!lease || lease.single_writer !== true || lease.private_location !== true || lease.exclusive_create !== true)
+        return outcome('unconfirmed', 'write_deferred', 'Establish private access, stable source/destination identity and exclusive creation under one writer interval.');
+      // Recheck after acquiring: concurrent calls on this decision must never create twice.
+      if (op.started && !op.attempted) return clone(op.terminal || uncertain());
+      const digest = async bytes => { const h = await host.sha256(bytes); if (!hash(h)) throw Error('hash unavailable'); return h.toLowerCase(); };
+      const valid = async bytes => { const v = await host.validate(JSON.parse(await host.decode(bytes))); return v?.schema === 'passed' && v?.semantics === 'passed' && (host.taskRequest == null || v.readiness === 'ready'); };
+      const reconcile = async () => {
+        if (!selectedNow()) return uncertain();
+        const bytes = await lease.read();
+        if (bytes === null || await digest(bytes) !== op.expected || !(await valid(bytes)) ||
+            await digest(await lease.readSource()) !== op.baseline || await digest(await lease.readRetained(op.retained)) !== op.baseline ||
+            !(await lease.verifySecurity()) || !selectedNow()) return uncertain();
+        op.confirmed = outcome('confirmed', 'persistence_confirmed', 'Exclusive creation, reopened exact bytes, complete validation, private access and unchanged retained reusable source agree.',
+          { resulting_sha256: op.expected, destination: {resolved_path: op.snapshot.reviewed.resolved_path, sha256: op.expected}, version: '2.1' });
+        return clone(op.confirmed);
+      };
+      if (op.attempted) return await reconcile();
+      op.started = true;
+      op.baseline = op.selected.selection.profile_sha256.toLowerCase();
+      if (await lease.read() !== null) return op.terminal = outcome('conflict', 'destination_exists', 'Choose a new private destination; never adopt or overwrite the existing file.');
+      const original = await lease.readSource();
+      if (await digest(original) !== op.baseline) return op.terminal = outcome('conflict', 'baseline_changed', 'Review the changed reusable source before a new proposal.');
+      const bytes = await host.encode(JSON.stringify(op.snapshot.proposed_profile, null, 2) + '\n');
+      if (!(await valid(bytes))) return op.terminal = uncertain();
+      op.expected = await digest(bytes);
+      op.retained = await lease.retainSource(original);
+      if (await digest(await lease.readRetained(op.retained)) !== op.baseline) return op.terminal = uncertain();
+      if (await digest(await lease.readSource()) !== op.baseline || !selectedNow()) return op.terminal = outcome('conflict', 'baseline_changed', 'Review changed source or selection before creating.');
+      if (await lease.read() !== null) return op.terminal = outcome('conflict', 'destination_exists', 'Destination appeared; retain it unchanged and select a new destination.');
+      if (!selectedNow()) return op.terminal = outcome('conflict', 'selection_changed', 'Review the selected source and application.');
+      op.attempted = true;
+      try { await lease.create(bytes); } catch { /* Creation may have completed; inspect only. */ }
+      return await reconcile();
+    } catch { return op.terminal = uncertain(); }
+    finally { if (lease) { try { await lease.release(); } catch { /* Retain private state for host inspection. */ } } }
+  }
+  return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork };
 }
 ```

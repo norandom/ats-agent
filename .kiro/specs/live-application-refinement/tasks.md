@@ -22,7 +22,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 1_
   - _Requirements: 1.6, 3.1, 3.5, 3.9, 3.11, 3.12, 7.3, 7.9_
 
-- [ ] 2.2 Create and update an application profile with verified authority
+- [x] 2.2 Create and update an application profile with verified authority
   - Add exact proposal and scope decisions for first creation and later application-profile updates, distinct from reusable-profile authority.
   - Establish exclusive private creation, existing-destination refusal, exact read-back and full validation; preserve source bytes and verify the reusable source remains unchanged.
   - Reuse baseline, backup, security-preserving replacement and uncertain-write reconciliation for later updates. A pending scope choice supplies no support or write permission.
