@@ -22,7 +22,7 @@ async function setup() {
     return {...r,confirmation:{application_id:'fictional-documents',record_sha256:fingerprint(r,sha256),interaction_ref:'fictional-confirmation-'+id,confirmed_at:'2026-01-03T10:01:00Z'}};
   });
   const application_context={application_id:'fictional-documents',target_sha256:strategy.target.sha256,records};
-  const sources={target:structuredClone(strategy.target),application_context_bytes:JSON.stringify(application_context),confirmation_observations:records.map(r=>r.confirmation)};
+  const sources={application_id:application_context.application_id,target:structuredClone(strategy.target),application_context_bytes:JSON.stringify(application_context),confirmation_observations:records.map(r=>r.confirmation)};
   const h=require('../targeted-application-strategy/foundation.cjs').createHarness();h.select(base.profile);
   const modules=load('strategy-contract.md',['fingerprint','stableSerialize','targetFingerprint','inspectStrategy','inspectApplicationContext']);
   const context=load('application-strategy.md',['createStrategyContext']).createStrategyContext({session:'fictional-documents',currentSelection:()=>h.intake.snapshot(),currentApplicationSelection:()=>structuredClone(sources),readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,...load('profile-contract.md',['dispatchVersion']),...load('profile-validation.md',['evidenceView']),validateProfile:p=>h.validate(p)},modules);
@@ -52,7 +52,7 @@ async function setup() {
       letter_inputs:kind==='cv'?null:{recipient:field('Fictional Dispatch House\nImaginary Lane 7\n12345 Musterstadt','organization','address'),date:field(version.language==='de'?'3. Januar 2026':'3 January 2026','date'),salutation:field(version.language==='de'?'Sehr geehrte Damen und Herren,':'Dear hiring team,','salutation-'+version.language),enclosures:field([],'enclosures'),missing_required:[]},
       presentation:{profile:kind==='cv'?'cv-blue-1':'de-letter-b-1',settings_sha256:null},session:null,anchors:[],checks:[],state:'draft',issues:[]};
   }));
-  const manifest = {schema_version:'1.1',origin_strategy_sha256:trusted.strategy_sha256,strategy_sha256:trusted.strategy_sha256,binding:structuredClone(trusted.binding),documents};
+  const manifest = {schema_version:'1.2',predecessor_manifest_sha256:null,origin_strategy_sha256:trusted.strategy_sha256,strategy_sha256:trusted.strategy_sha256,binding:structuredClone(trusted.binding),documents};
   const reselect=async(settings=strategy.settings)=>context.bindStrategy({snapshot:h.intake.snapshot(),target:sources.target,settings,evaluation_date:'2026-01-03'});
   return {manifest,trusted,validate,base,sources,context,reselect};
 }

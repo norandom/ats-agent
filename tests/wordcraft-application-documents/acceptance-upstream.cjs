@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{spawnSync}=require('node:child_process');
 const {fixture}=require('./acceptance-fixture.cjs'),{load,sha256}=require('./manifest-fixture.cjs');
 const {createHarness,classifyCheck}=require('../targeted-application-strategy/foundation.cjs');
-const {handoff}=require('../targeted-application-strategy/contract-fixture.cjs');
+const {handoff}=require('../targeted-application-strategy/contract-fixture-current.cjs');
 async function prepareAcceptance(output){
  const f=fixture(),h=createHarness(),modules=Object.assign({},...[
   ['strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']],
@@ -21,7 +21,7 @@ async function prepareAcceptance(output){
  record('organization','recipient_organization',f.metadata.recipient[0]);record('address','recipient_address',f.metadata.recipient.slice(1));record('date','application_date',f.metadata.date);record('enclosures','enclosure',f.metadata.enclosures);record('intent','application_intent',f.intent);
  for(const d of f.documents.filter(d=>d.kind==='cover_letter')){record('salutation-'+d.language,'salutation',d.letter.salutation);record('subject-'+d.language,'application_intent',d.letter.subject);}
  s.application_context={application_id:'fictional-acceptance',target_sha256:s.target.sha256,records};
- const sources={target:structuredClone(s.target),application_context_bytes:JSON.stringify(s.application_context),confirmation_observations:records.map(r=>structuredClone(r.confirmation))};
+ const sources={application_id:s.application_context.application_id,target:structuredClone(s.target),application_context_bytes:JSON.stringify(s.application_context),confirmation_observations:records.map(r=>structuredClone(r.confirmation))};
  h.select(f.profile);let serial=0;
  const validate=async(schema,value)=>{const file=path.join(h.workspace,'acceptance-'+(++serial)+'.json');fs.writeFileSync(file,JSON.stringify(value));return {state:classifyCheck(spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(h.skillRoot,schema),file],{encoding:'utf8',windowsHide:true,timeout:120000})),findings:[]};};
  const host={session:'fictional-acceptance',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,validate,validateProfile:p=>h.validate(p),currentApplicationSelection:()=>structuredClone(sources),reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};
@@ -68,7 +68,7 @@ async function prepareAcceptance(output){
   const hash=sha256(text);s.draft.versions.push({language,text,sha256:hash,inventory_status:'complete',claims:inventory});for(const d of documents.filter(d=>d.language===language))d.draft.sha256=hash;
  }
  const assembled=await workflow.assemble(s);assert.equal(assembled.status,'ready',JSON.stringify(assembled));
- const strategy=assembled.value,hash=modules.fingerprint(strategy,sha256),manifest={schema_version:'1.1',origin_strategy_sha256:hash,strategy_sha256:hash,binding:strategy.binding,documents};
+ const strategy=assembled.value,hash=modules.fingerprint(strategy,sha256),manifest={schema_version:'1.2',predecessor_manifest_sha256:null,origin_strategy_sha256:hash,strategy_sha256:hash,binding:strategy.binding,documents};
  const trusted={...modules,sha256,validate,current:workflow.current,strategy,strategy_sha256:hash,origin_strategy_sha256:hash,binding:strategy.binding,privateDestinations:documents.map(d=>d.destination),session:{connection:{id:'fictional-unopened'},bindings:[],snapshots:[]},savedArtifacts:[],observations:[]};
  assert.deepEqual(await load('application-documents.md',['inspectDocumentManifest']).inspectDocumentManifest(manifest,trusted),[]);
  return {fixture:f,strategy,manifest,workflow,trusted,sources,checks:assembled.checks};

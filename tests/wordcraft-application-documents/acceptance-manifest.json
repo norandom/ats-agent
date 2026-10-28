@@ -25,7 +25,10 @@
     "skills/targeted-cv/references/germany-cover-letter.md",
     "skills/targeted-cv/references/document-session.md",
     "skills/targeted-cv/references/wordcraft-operations.md",
-    "skills/targeted-cv/references/wordcraft-capabilities.md"
+    "skills/targeted-cv/references/wordcraft-capabilities.md",
+    "skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+    "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+    "skills/targeted-cv/schemas/cv-facts-application.schema.json"
   ],
   "suites": [
     "acceptance.test.cjs",
@@ -63,7 +66,8 @@
     "tests/targeted-application-strategy/fixtures.cjs",
     "tests/targeted-application-strategy/contract-fixture.cjs",
     "tests/portable-candidate-profile/foundation.cjs",
-    "tests/wordcraft-document-session/foundation.cjs"
+    "tests/wordcraft-document-session/foundation.cjs",
+    "tests/targeted-application-strategy/contract-fixture-current.cjs"
   ],
   "coverage": [
     {

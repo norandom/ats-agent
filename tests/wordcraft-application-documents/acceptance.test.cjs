@@ -10,7 +10,7 @@ test('synthetic success flags cannot replace current actual authoring and review
 });
 test('fictional bilingual source material traverses actual strategy assembly and manifest integrity',async()=>{
  const result=await prepareAcceptance('outputs/context-documents-impl/future-acceptance');
- assert.equal(result.strategy.schema_version,'1.1');assert.equal(result.manifest.schema_version,'1.1');
+ assert.equal(result.strategy.schema_version,'1.2');assert.equal(result.manifest.schema_version,'1.2');
  assert.equal(result.manifest.documents.length,4);
  assert.ok(result.strategy.claims.some(c=>c.subject==='offer'&&c.evidence.length===0));
  assert.ok(result.strategy.claims.some(c=>c.subject==='application'&&c.evidence.length===0));

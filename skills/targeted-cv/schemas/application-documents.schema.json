@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Private application documents 1.1",
+  "title": "Private application documents 1.2",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -8,11 +8,12 @@
     "origin_strategy_sha256",
     "strategy_sha256",
     "binding",
-    "documents"
+    "documents",
+    "predecessor_manifest_sha256"
   ],
   "properties": {
     "schema_version": {
-      "const": "1.1"
+      "const": "1.2"
     },
     "origin_strategy_sha256": {
       "$ref": "#/$defs/hash"
@@ -21,7 +22,7 @@
       "$ref": "#/$defs/hash"
     },
     "binding": {
-      "$ref": "application-strategy-v1.1.schema.json#/$defs/Binding"
+      "$ref": "application-strategy.schema.json#/$defs/Binding"
     },
     "documents": {
       "type": "array",
@@ -29,6 +30,9 @@
       "items": {
         "$ref": "#/$defs/document"
       }
+    },
+    "predecessor_manifest_sha256": {
+      "$ref": "#/$defs/nullableHash"
     }
   },
   "$defs": {

@@ -38,15 +38,25 @@ Before authoring, the host reads each complete assembled document against the ev
 
 ## Context metadata and compatibility
 
-New manifests and strategy handoffs must both be version 1.1. Validate historical manifests only with application-documents-v1.schema.json and its pinned strategy 1.0 binding. Unknown versions are rejected. Rebuild old applications from freshly selected inputs and reviewed claims; never insert defaults into old ready artifacts.
+New manifests and strategy handoffs must both be version 1.2. Validate historical 1.1 manifests with application-documents-v1.1.schema.json pinned to application-strategy-v1.1.schema.json, and historical 1.0 manifests with application-documents-v1.schema.json and its pinned strategy 1.0 binding. Unknown versions are rejected. Rebuild old applications from freshly selected inputs and reviewed claims; never insert defaults into old ready artifacts.
 
 Every letter field carries ordered context_refs to whole /value records in the current strategy application context. Recipient combines optional recipient_name, optional recipient_organization and required recipient_address records in output order, joining their lines with newlines. Date uses one application_date record, rendering ISO dates as “3 January 2026” in English or “3. Januar 2026” in German. Salutation uses one confirmed salutation record in the chosen language, without implicit translation. Enclosures uses one enclosure record and preserves its array order, including an explicitly confirmed empty array. Missing references or confirmation belong in missing_required and leave only the letter pending. A confirmed boolean or arbitrary provenance cannot authorize metadata. All factual metadata wording in emitted ranges also remains in the upstream reviewed claim inventory. Strategy owns source and claim eligibility; documents only checks metadata linkage and formatting.
 
 Supply current() from the live strategy workflow and the actual upstream inspectStrategy helper. Its source_observations bind independent current bytes and confirmations; never reconstruct them from the manifest. Context or confirmation changes require rebuilding and reviewing affected composition, even if text is identical, and cannot use check-only refresh.
 
+## Revise the selected members
+
+After any fact, scope, context or wording change, rebuild upstream claims, language drafts and the complete factual inventory, then compose new member mappings. Retain the exact predecessor manifest privately, with its hash and original origin. Set the new composition origin to the current strategy hash. Use `proposeDocumentRevision(previous, recomposed, trusted)` with independently retained `previousManifest` and `previous_manifest_sha256`. This proposes data only. It does not dispatch WordCraft operations. Initial manifests have `predecessor_manifest_sha256: null`.
+
+Inspect each selected live document before attaching it to the revision. The helper retains each prior logical document ID and destination through current session bindings and snapshots, clears checks, anchors and presentation verification, and keeps unsupported members pending. Keep the predecessor artifact separately; do not rewrite its origin or use old checks as new observations. A resumed connection needs the session owner's inspected rebinding before use.
+
+Compare current text, structure and formatting with the last baseline. Preserve unrelated manual prose and formatting; show before/current/proposed content for overlap or ambiguous targets and await resolution through the existing session protocol. Rebuild Unicode code-point mappings and the full factual inventory for all preserved manual text. Review assembled meaning for chronology, authority, causality and unsupported strengthening. Manual factual claims stay visible and pending until upstream evidence review resolves their support. For delivery, the complete observed body must match the mapped composition; presentation-only paragraphs belong in sections too. Automatic page fields are checked separately through pagination. Native targets always come from fresh inspection, never private anchors.
+
+Retain every requested kind/language. Missing letter metadata leaves that letter pending while the CV can advance. Mark languages awaiting factual correction explicitly. If the user limits a change to one member, describe any resulting factual inconsistency in each remaining affected member's issues; retain those as pending. Record authoring, checks and saved artifacts per member, with distinct destinations. Check-only refresh may change only newly observed checks and preserves the lineage and composition origin.
+
 ## Manifest integrity
 
-Keep manifest instances, exact excerpts and observations at an explicitly authorized private destination. The [closed 1.1 schema](../schemas/application-documents.schema.json) requires every field; null records an unknown or not-yet-observed value. Preserve the original strategy hash for audit. The current hash identifies the exact validated strategy snapshot. Do not update either from a manifest's own assertions.
+Keep manifest instances, exact excerpts and observations at an explicitly authorized private destination. The [closed 1.2 schema](../schemas/application-documents.schema.json) requires every field; null records an unknown or not-yet-observed value. Preserve the original strategy hash for audit. The current hash identifies the exact validated strategy snapshot. Do not update either from a manifest's own assertions.
 
 At creation, the origin equals the trusted current snapshot hash. For an existing manifest, supply `trusted.origin_strategy_sha256` from the independently retained origin record. `inspectDocumentManifest` does not authorize a strategy rebind.
 
@@ -91,10 +101,38 @@ async function proposeCheckOnlyRefresh(manifest, previousStrategy, trusted = {})
   } catch { return reject('Refresh validation could not be completed.'); }
 }
 
+async function proposeDocumentRevision(previous, recomposed, trusted = {}) {
+  const reject=reason=>({decision:'blocked',reason,proposal:null});
+  const t=trusted;
+  if (!t.previousManifest || typeof t.fingerprint!=='function' || typeof t.stableSerialize!=='function' || !t.previous_manifest_sha256) return reject('Independently retained predecessor is required.');
+  try {
+    if (t.fingerprint(previous,t.sha256)!==t.previous_manifest_sha256 || t.stableSerialize(previous)!==t.stableSerialize(t.previousManifest)) return reject('Predecessor differs from retained observation.');
+    if (previous.binding?.application_id && previous.binding.application_id!==t.binding?.application_id) return reject('Predecessor belongs to another application.');
+    const proposal=JSON.parse(JSON.stringify(recomposed));
+    proposal.schema_version='1.2';proposal.predecessor_manifest_sha256=t.previous_manifest_sha256;
+    proposal.origin_strategy_sha256=t.strategy_sha256;proposal.strategy_sha256=t.strategy_sha256;
+    for (const d of proposal.documents) {
+      const prior=previous.documents.find(p=>p.id===d.id&&p.kind===d.kind&&p.language===d.language);
+      if (!prior || prior.destination!==d.destination) return reject('Selected member identity or destination changed.');
+      d.checks=[];d.anchors=[];d.presentation.settings_sha256=null;d.session=null;
+      if (prior.session) {
+        const b=t.session?.bindings.find(b=>b.id===prior.session.document_id);
+        const x=t.session?.snapshots.find(x=>x.id===b?.currentSnapshotId&&x.documentId===b?.id&&x.connectionId===t.session.connection.id);
+        if (!b||b.path!==d.destination||b.kind!==d.kind||b.language!==d.language||b.connectionId!==t.session.connection.id||!x) return reject('Fresh same-document inspection is required.');
+        d.session={document_id:b.id,connection_id:b.connectionId,snapshot_id:x.id,snapshot_sha256:x.fingerprint,saved_path:null,saved_sha256:null};
+      }
+      d.state=d.issues.length||!d.draft?'pending':'draft';
+    }
+    const findings=await inspectDocumentManifest(proposal,{...t,origin_strategy_sha256:t.strategy_sha256});
+    if (findings.length) return reject('Recomposition or current support failed: '+findings.map(f=>f.code).join(', '));
+    return {decision:'revise',reason:'Current supported composition; checks reset and inspected identities retained.',proposal};
+  } catch { return reject('Revision inputs or observations are incomplete.'); }
+}
+
 async function inspectDocumentManifest(manifest, trusted = {}) {
   const findings = [];
   const add = (code,path,message,action='Refresh the affected private mapping from current trusted inputs.') => findings.push({code,path,message,action});
-  if (manifest?.schema_version!=='1.1' || trusted.strategy?.schema_version!=='1.1') { add('unsupported_version','/schema_version','Rebuild from current selected sources under version 1.1; historical ready status is not reusable.'); return findings; }
+  if (manifest?.schema_version!=='1.2' || trusted.strategy?.schema_version!=='1.2') { add('unsupported_version','/schema_version','Rebuild from current selected sources under version 1.2; historical ready status is not reusable.'); return findings; }
   let schema;
   try { schema = await trusted.validate('schemas/application-documents.schema.json',manifest); } catch { /* unavailable */ }
   if (!schema || !['passed','failed'].includes(schema.state)) {
@@ -114,6 +152,16 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
     if (!equal(manifest.binding,t.binding) || !equal(s.binding,t.binding)) add('binding_mismatch','/binding','Binding differs from independently selected current context.');
   } catch { add('context_unavailable','/','Current context cannot be serialized or fingerprinted.'); return findings; }
   if (findings.length) return findings;
+  if (manifest.predecessor_manifest_sha256!==null) {
+    const previous=t.previousManifest;
+    if (!previous || typeof t.previous_manifest_sha256!=='string' || manifest.predecessor_manifest_sha256!==t.previous_manifest_sha256 || t.fingerprint(previous,t.sha256)!==t.previous_manifest_sha256) add('predecessor_unverified','/predecessor_manifest_sha256','Retain the exact independently observed predecessor.');
+    else if (previous.binding?.application_id!==t.binding.application_id) add('predecessor_application','/predecessor_manifest_sha256','Retained predecessor belongs to a different application selection.');
+    else for (const d of manifest.documents) {
+      const prior=previous.documents.find(p=>p.id===d.id&&p.kind===d.kind&&p.language===d.language);
+      if (!prior||prior.destination!==d.destination||prior.session&&d.session?.document_id!==prior.session.document_id) add('revision_identity','/documents','Retain selected logical document and destination through current inspection.');
+      if (prior&&d.checks.some(c=>c.status!=='not_assessed'&&prior.checks.some(old=>equal(old,c)))) add('copied_check','/documents','Prior verification cannot be transplanted to a new composition.');
+    }
+  }
   const context=t.current();
   if (!context || context.evidence?.validation?.schema!=='passed' || context.evidence?.validation?.semantics!=='passed' || !equal(context.binding,t.binding)) { add('context_unavailable','/','Current upstream selection is unavailable.'); return findings; }
   const upstream=await t.inspectStrategy(s,{...context.source_observations,profile:context.evidence.profile,binding:context.binding,sha256:t.sha256,validate:t.validate});
@@ -226,6 +274,10 @@ async function inspectDocumentManifest(manifest, trusted = {}) {
       if (checkIds.has(c.id)) add('duplicate_check',q,'Check identifier repeats.'); checkIds.add(c.id);
       if (c.status==='not_assessed') { if (!c.reason) add('check_unverified',q,'Unassessed check requires a reason.'); continue; }
       if (!observed||!saved||c.snapshot_sha256!==observed.snapshot_sha256||c.artifact_sha256!==observed.saved_sha256||!c.method||!c.producer||!c.observed_at||!c.evidence_reference||!t.observations.some(o=>o.document_id===observed.document_id&&equal(o.check,c))) add('check_unverified',q,'Check is not bound to independently observed current snapshot and saved bytes.');
+    }
+    if (manifest.predecessor_manifest_sha256!==null&&d.state==='delivered'&&snapshot&&d.draft) {
+      const normalize=text=>text.replace(/\s+/gu,' ').trim();
+      if (normalize(snapshot.text)!==normalize(d.draft.sections.map(section=>section.range.excerpt).join('\n'))) add('preserved_content_unmapped',p+'/draft','Complete observed body, including manual prose, must match the reviewed composition.');
     }
     const mandatory=['content','reading_order','render','round_trip',...(d.kind==='cv'?['pagination']:d.market==='DE'?['letter_layout']:[])];
     const executed=mandatory.every(kind=>d.checks.some(c=>c.kind===kind&&c.mandatory&&c.status!=='not_assessed'));

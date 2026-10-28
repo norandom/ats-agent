@@ -5,7 +5,7 @@ const {inspectDocumentManifest}=load('application-documents.md',['inspectDocumen
 let baseline;
 async function fresh(){baseline ||= await setup();return {...baseline,manifest:structuredClone(baseline.manifest),trusted:{...baseline.trusted}};}
 test('context metadata is versioned and caller confirmation alone cannot release a letter',async()=>{
- const f=await fresh();assert.equal(f.manifest.schema_version,'1.1');
+ const f=await fresh();assert.equal(f.manifest.schema_version,'1.2');
  assert.deepEqual(await inspectDocumentManifest(f.manifest,f.trusted),[]);
  const letter=f.manifest.documents[1];letter.letter_inputs.recipient.context_refs=[];
  assert.ok((await inspectDocumentManifest(f.manifest,f.trusted)).some(x=>x.code==='missing_inputs'));
@@ -22,7 +22,10 @@ test('ordered recipient, localized dates, salutations and empty enclosures match
  assert.ok((await inspectDocumentManifest(f.manifest,f.trusted)).some(x=>x.code==='context_metadata'));
 });
 test('archived manifest binds original strategy contract; current consumer rejects old and unknown versions',async()=>{
- const f=await fresh(),old=structuredClone(f.manifest);old.schema_version='1.0';old.binding.schema_version='1.0';delete old.binding.application_id;delete old.binding.application_context_sha256;
+ const f=await fresh(),historical=structuredClone(f.manifest);delete historical.predecessor_manifest_sha256;historical.schema_version='1.1';historical.binding.schema_version='1.1';
+ assert.equal((await f.validate('schemas/application-documents-v1.1.schema.json',historical)).state,'passed');
+ assert.equal((await inspectDocumentManifest(historical,f.trusted))[0].code,'unsupported_version');
+ const old=structuredClone(f.manifest);delete old.predecessor_manifest_sha256;old.schema_version='1.0';old.binding.schema_version='1.0';delete old.binding.application_id;delete old.binding.application_context_sha256;
  for(const d of old.documents)if(d.letter_inputs)for(const k of ['recipient','date','salutation','enclosures'])delete d.letter_inputs[k].context_refs;
  assert.equal((await f.validate('schemas/application-documents-v1.schema.json',old)).state,'passed');
  assert.equal((await inspectDocumentManifest(old,f.trusted))[0].code,'unsupported_version');

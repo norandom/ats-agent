@@ -13,7 +13,7 @@ function inspectUpstreamReceipt(r){
   for(const name of ['strategy','manifest','sources','profile']){assert.equal(sha256(fs.readFileSync(u[name].path)),u[name].sha256);values[name]=JSON.parse(fs.readFileSync(u[name].path));}
   const {strategy:s,manifest:m,sources}=values;
   assert.equal(u.profile.sha256,s.binding.canonical_sha256);
-  assert.equal(s.schema_version,'1.1');assert.equal(m.schema_version,'1.1');assert.equal(fingerprint(s,sha256),m.strategy_sha256);assert.equal(m.strategy_sha256,u.strategy_snapshot_sha256);assert.equal(stableSerialize(m.binding),stableSerialize(s.binding));
+  assert.equal(s.schema_version,'1.2');assert.equal(m.schema_version,'1.2');assert.equal(fingerprint(s,sha256),m.strategy_sha256);assert.equal(m.strategy_sha256,u.strategy_snapshot_sha256);assert.equal(stableSerialize(m.binding),stableSerialize(s.binding));
   assert.equal(sha256(sources.application_context_bytes),s.binding.application_context_sha256);assert.equal(stableSerialize(JSON.parse(sources.application_context_bytes)),stableSerialize(s.application_context));assert.equal(stableSerialize(sources.target),stableSerialize(s.target));
   assert.equal(u.fixture_adapter_sha256,sha256(fs.readFileSync(path.join(__dirname,'acceptance-upstream.cjs'))));
   for(const d of m.documents){const text=d.draft.sections.map(x=>x.range.excerpt).join('\n'),stage=r.stages.find(x=>x.id===d.id);assert.equal(stage?.expected,text);}

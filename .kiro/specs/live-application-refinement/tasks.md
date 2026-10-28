@@ -75,7 +75,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 1.4, 3.7, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9_
 
 - [ ] 5. Refine current WordCraft documents safely
-- [ ] 5.1 Integrate current strategy with document revisions
+- [x] 5.1 Integrate current strategy with document revisions
   - Preserve historical document validators and introduce the current manifest binding, including a separately retained predecessor revision.
   - Recompose after fact, scope, context or wording changes; keep check-only refresh limited to new check observations.
   - Preserve selected live document identities and destinations through fresh inspection. Rebuild factual inventories and code-point mappings for preserved manual content; unresolved manual claims block verified delivery.
