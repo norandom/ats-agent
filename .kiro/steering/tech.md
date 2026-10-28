@@ -23,6 +23,8 @@ These describe existing code, not the target skill's runtime contract. No vendor
 
 `skills/targeted-cv/schemas/cv-facts.schema.json` defines the current 2.0 portable candidate input; `skills/targeted-cv/templates/cv-facts.blank.json` is an all-null intake scaffold. The unchanged 1.0 validator is `skills/targeted-cv/schemas/cv-facts-v1.schema.json`; existing private instances require explicit authorized migration. Structural conformance alone does not establish semantic validity or task readiness. Accept an explicit runtime facts-file path, with at most a workspace-relative default. Keep application language, market, offer, chosen documents and output destination separate from reusable candidate facts.
 
+Application-only career evidence uses the marked 2.1 profile in `schemas/cv-facts-application.schema.json`, with immutable application, target and origin scope. It passes the same evidence checks and cannot silently become reusable. Strategy and document contracts are currently 1.2; preserved historical validators remain version-specific. Private refinement records use `schemas/refinement-session.schema.json` and reference existing owner evidence rather than granting authority themselves.
+
 Validate structure, unique IDs, source references and task-specific completeness. Preserve source provenance and stable claim IDs; represent unknowns explicitly. Distinguish uncertain or absent evidence, transferable experience and user-confirmed qualification gaps. Document edits do not silently change canonical facts: ask whether factual corrections should update the reusable profile.
 
 ## Validation Standards

@@ -94,7 +94,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 2.2, 4.2, 5.1_
   - _Requirements: 3.5, 3.10, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.5, 5.6_
 
-- [ ] 6. Connect the conversational refinement flow
+- [x] 6. Connect the conversational refinement flow
 - [x] 6.1 Route questions, answers and user choices through the skill
   - Extend the entry flow to orient from current sources and reports, select finite useful question batches and accept free-text answers or unsolicited corrections.
   - Classify independently meaningful statements, seek only material clarifications, and let the applicant choose the scope for exact facts or identified groups. Accept qualitative results and distinguish later capabilities from earlier work.
@@ -105,7 +105,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 2.3, 3.2, 4.2, 5.2_
   - _Requirements: 1.1, 1.2, 1.3, 1.5, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 3.1, 3.2, 3.3, 3.4, 3.7, 3.8, 3.9, 3.11, 3.12, 3.13, 4.6_
 
-- [ ] 6.2 Explain member outcomes and terminate the loop correctly
+- [x] 6.2 Explain member outcomes and terminate the loop correctly
   - Present revision-specific diagnostic results with their methods, limits and reasons, distinguishing new evidence from editorial changes and avoiding guaranteed score gains.
   - Report partial profile writes, pending members, language inconsistencies and unassessed checks without presenting the whole application as verified.
   - End questioning and mutation initiation on acceptance, decline, stop or exhausted supported improvements; report last confirmed files, reusable-profile changes and remaining issues.
