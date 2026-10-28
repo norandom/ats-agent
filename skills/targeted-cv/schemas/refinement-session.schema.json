@@ -1,0 +1,729 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:targeted-cv:refinement-session:1.0",
+  "title": "Private refinement session 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "session_id",
+    "application_id",
+    "selection",
+    "owner_artifacts",
+    "questions",
+    "statements",
+    "choices",
+    "profile_operations",
+    "revisions",
+    "comparisons",
+    "stop_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "application_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "selection": {
+      "$ref": "#/$defs/selection"
+    },
+    "owner_artifacts": {
+      "$ref": "#/$defs/owners"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/question"
+      },
+      "uniqueItems": true
+    },
+    "statements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/statement"
+      },
+      "uniqueItems": true
+    },
+    "choices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/choice"
+      },
+      "uniqueItems": true
+    },
+    "profile_operations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/operation"
+      },
+      "uniqueItems": true
+    },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/revision"
+      },
+      "uniqueItems": true
+    },
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/comparison"
+      },
+      "uniqueItems": true
+    },
+    "stop_state": {
+      "$ref": "#/$defs/stop"
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resolved_path",
+        "sha256"
+      ],
+      "properties": {
+        "resolved_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resolved_path",
+        "sha256",
+        "schema_version"
+      ],
+      "properties": {
+        "resolved_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "schema_version": {
+          "enum": [
+            "2.0",
+            "2.1"
+          ]
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "reusable_base",
+        "target_sha256",
+        "settings_sha256",
+        "context"
+      ],
+      "properties": {
+        "profile": {
+          "$ref": "#/$defs/profile"
+        },
+        "reusable_base": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "settings_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "owners": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "document_manifest",
+        "document_session",
+        "predecessors"
+      ],
+      "properties": {
+        "strategy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_manifest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document_session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "predecessors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "distinction_key",
+        "question_id",
+        "disposition",
+        "statement_ids",
+        "reason"
+      ],
+      "properties": {
+        "distinction_key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "question_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "disposition": {
+          "enum": [
+            "pending",
+            "answered",
+            "skipped",
+            "not_applicable",
+            "confirmed_gap",
+            "reopened"
+          ]
+        },
+        "statement_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "statement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_turn_ref",
+        "supplied_text",
+        "classification",
+        "uncertainty",
+        "claim_ids",
+        "question_ids",
+        "temporal_qualifiers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "source_turn_ref": {
+          "$ref": "#/$defs/artifact"
+        },
+        "supplied_text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "classification": {
+          "enum": [
+            "career_evidence",
+            "application_context",
+            "editorial_preference",
+            "hypothetical",
+            "unresolved"
+          ]
+        },
+        "uncertainty": {
+          "enum": [
+            "none",
+            "uncertain",
+            "unresolved"
+          ]
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "question_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "temporal_qualifiers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "resolved_path"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "application",
+            "reusable"
+          ]
+        },
+        "resolved_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement_ids",
+        "fact_use",
+        "proposal_sha256",
+        "destinations",
+        "decision_ref"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "statement_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "fact_use": {
+          "enum": [
+            "application_only",
+            "application_and_reusable",
+            "pending"
+          ]
+        },
+        "proposal_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hash"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/destination"
+          },
+          "uniqueItems": true
+        },
+        "decision_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "proposal_ref",
+        "result_ref",
+        "statement_ids",
+        "destination_role",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "proposal_ref": {
+          "$ref": "#/$defs/artifact"
+        },
+        "result_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statement_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "destination_role": {
+          "enum": [
+            "application",
+            "reusable"
+          ]
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "unresolved"
+          ]
+        }
+      }
+    },
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "language",
+        "manifest_document_id",
+        "logical_document_id",
+        "intent_ids",
+        "receipt_refs",
+        "status",
+        "next_action"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "cv",
+            "cover_letter"
+          ]
+        },
+        "language": {
+          "enum": [
+            "en",
+            "de"
+          ]
+        },
+        "manifest_document_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "logical_document_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "intent_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "receipt_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "needs_revision",
+            "editing",
+            "uncertain",
+            "verified"
+          ]
+        },
+        "next_action": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_baselines",
+        "affected_claim_ids",
+        "predecessor_manifest",
+        "members",
+        "verification_refs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "source_baselines": {
+          "$ref": "#/$defs/selection"
+        },
+        "affected_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "predecessor_manifest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          },
+          "uniqueItems": true
+        },
+        "verification_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "comparison_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "comparable",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "comparable": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "before_review_ref",
+        "after_review_ref",
+        "rows"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "before_review_ref": {
+          "$ref": "#/$defs/artifact"
+        },
+        "after_review_ref": {
+          "$ref": "#/$defs/artifact"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/comparison_row"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "reason",
+        "pending_operation_refs",
+        "last_confirmed_deliverables"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "active",
+            "paused",
+            "accepted",
+            "declined",
+            "exhausted"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pending_operation_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        },
+        "last_confirmed_deliverables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

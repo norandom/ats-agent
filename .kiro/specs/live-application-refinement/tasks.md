@@ -57,7 +57,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 1.2, 1.3, 2.1, 2.2, 2.5, 2.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.2, 7.6_
 
 - [ ] 4. Retain private refinement progress
-- [ ] 4.1 Define and validate the refinement record
+- [x] 4.1 Define and validate the refinement record
   - Implement the closed record for selected sources, statements, scope decisions, question dispositions, owner artifact references, revision members and stop state.
   - Add the embedded deterministic integrity helper using independently observed owner artifacts and a trusted previous checkpoint.
   - Validate the design's permitted transitions and evidence guards, including verified-state invalidation and uncertainty reconciliation. Reject executable instructions, unknown fields and fabricated owner outcomes.
