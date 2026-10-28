@@ -21,7 +21,7 @@ Separate reusable instructions and contracts from runtime candidate data, docume
 
 Organize future instructions and assets around portable candidate intake, WordCraft document sessions, employer-oriented strategy, application documents, iterative refinement and standalone distribution. The authorized milestone split replaces the initial brief's provisional single-spec approach; detailed sequencing belongs in the roadmap and specifications.
 
-Use a dedicated distributable skill subtree with `SKILL.md` and only approved supporting references, contracts and templates. The profile assets use `skills/targeted-cv/`; M3 integrates the thin host entrypoint; release owns distribution metadata, build layout and package acceptance. Do not imply that a release artifact already exists. Follow sibling `../Skills` conventions without modifying its catalog or requiring that checkout at runtime.
+Use a dedicated distributable skill subtree with `SKILL.md` and only approved supporting references, contracts and templates. The profile assets use `skills/targeted-cv/`; M3 integrates the thin host entrypoint; release owns distribution metadata, build layout and package acceptance. The scoped alpha has published artifacts; this does not establish full installed-workflow acceptance. Follow sibling `../Skills` conventions without modifying its catalog or requiring that checkout at runtime.
 
 ## Naming and Dependency Rules
 

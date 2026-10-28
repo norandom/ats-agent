@@ -34,4 +34,4 @@ Validate structure, unique IDs, source references and task-specific completeness
 
 ## Distribution
 
-Follow the sibling `../Skills` ecosystem's versioned `SKILL.md` folders and portable/Codex/Claude/Gemini packaging conventions as documented in the project decisions. Keep this repository separate and the installed artifact independent of that checkout. Package only an explicit skill subtree and approved assets; exclude candidate instances, private references, local paths and generated applications. Build integration remains to be designed and verified.
+Follow the sibling `../Skills` ecosystem's versioned `SKILL.md` folders and portable/Codex/Claude/Gemini packaging conventions as documented in the project decisions. Keep this repository separate and the installed artifact independent of that checkout. Package only an explicit skill subtree and approved assets; exclude candidate instances, private references, local paths and generated applications. The scoped alpha uses Dagger locally and in GitHub Actions. Full installed-workflow acceptance and legacy retirement remain release-milestone work.

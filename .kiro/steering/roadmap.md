@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-10-27. M1 through M3 are validated: portable profile (14 tasks, 41 criteria), WordCraft session (9 tasks, 39 criteria), application strategy (14 original tasks plus five correction tasks, 48 criteria) and application documents (12 tasks, 42 criteria). M4 live refinement is next; its brief does not authorize implementation.
+Updated 2026-10-28. M1 through M3 are validated: portable profile (14 tasks, 41 criteria), WordCraft session (9 tasks, 39 criteria), application strategy (14 original tasks plus five correction tasks, 48 criteria) and application documents (12 tasks, 42 criteria). M4 live refinement requirements and design are approved. Its fifteen executable tasks cover all 56 criteria, passed independent review and await human approval before implementation.
 
 ## Overview
 Replace the legacy CV scorer with a separately distributable skill that reads private structured candidate data, interprets a pasted offer, develops an employer-oriented contribution argument, and creates/refines German or English application documents live in WordCraft MCP. Evidence constrains claims without dictating the narrative. Transparent diagnostics guide questions and improvements.
@@ -62,6 +62,7 @@ M1 is implemented and validated. WordCraft session acceptance covers fictional C
 Actual WordCraft capability verification is a hard gate before freezing dependent document/session designs. Planning can describe an investigation without falsely treating it as a successful proof.
 
 ## Existing Spec Updates
+- M4 scope decision (2026-10-27): the applicant chooses application-only use or use plus reusable-profile persistence for each confirmed new career fact or identified group. Current strategy requires confirmed profile persistence for new career evidence. M4 design must specify the scoped extension with profile, strategy and document owners, including provenance, application isolation, resume and score comparability; revalidate affected consumers before claiming support. Application context remains distinct from career evidence. This decision authorizes requirements for the behavior, not an unreviewed runtime contract change.
 - `targeted-cv-skill` is retained as the umbrella research/decision archive. Its original end-to-end scope is decomposed into the six specs above; it is not a seventh implementation spec. Original phase flags are preserved as historical, not used to schedule work.
 
 ## Direct Implementation Candidates
@@ -79,6 +80,6 @@ An independent discovery review accepted the decomposition. WordCraft session op
 
 M1 status: profile and session are implementation-complete with GO validation. All nine session tasks passed independent review, followed by coverage and integration review. The existing MCP remains the only document interface. Custom bridge work is dropped. See [session validation](../specs/wordcraft-document-session/validation-report.md) for the exact scope and evidence limits.
 
-M3 is complete with GO [application-document validation](../specs/wordcraft-application-documents/validation-report.md). All twelve tasks passed independent review. The checkout entrypoint connects profile, strategy, session and document capabilities; six current document assets and a historical schema remain distinct from release packaging. M4 must consume strategy and document contracts 1.1, preserve current source bindings and manual edits, and keep canonical profile updates explicit. Its next step is requirements and the normal review gates, followed by design and tasks. M5 remains a discovery brief.
+M3 is complete with GO [application-document validation](../specs/wordcraft-application-documents/validation-report.md). All twelve tasks passed independent review. The checkout entrypoint connects profile, strategy, session and document capabilities; six current document assets and a historical schema remain distinct from release packaging. M4 builds on strategy and document contracts 1.1, preserves current source bindings and manual edits, and keeps reusable-profile updates explicit. Its approved [design](../specs/live-application-refinement/design.md) introduces marked application profiles and versioned consumer bindings while reusing document-session 1.0. The [task plan](../specs/live-application-refinement/tasks.md) passed independent review and awaits human approval. M5 remains a discovery brief; the scoped published alpha does not complete its installation and legacy-retirement acceptance.
 
 `$kiro-spec-batch` is an available optional fast-track, not executed here: it automatically passes `-y` to design and tasks. Use only when that fast-track is intentionally requested.

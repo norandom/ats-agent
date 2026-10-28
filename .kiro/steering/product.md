@@ -7,7 +7,7 @@ This project is migrating a Python CV scorer into a reusable skill for persuasiv
 ## Current and Target State
 
 - Current implementation: the legacy Python CLI remains alongside validated portable profile, application-strategy and WordCraft session capabilities. Strategy supplies employer analysis, focused questions, bilingual contribution wording and bounded diagnostics. The session protocol supports verified document operations through existing WordCraft MCP.
-- Target architecture: a session-based skill with portable instructions and reference assets. Node.js helpers and tests use pnpm; they do not run a separate application. Bilingual document composition, live WordCraft authoring and artifact verification are validated. The conversational refinement loop and distributable packaging remain implementation work.
+- Target architecture: a session-based skill with portable instructions and reference assets. Node.js helpers and tests use pnpm; they do not run a separate application. Bilingual document composition, live WordCraft authoring and artifact verification are validated. A scoped alpha package is published. The conversational refinement loop and full installed-workflow acceptance remain implementation work.
 - Legacy vendor assertions and score deductions are research leads, not validated ATS rules. Retire legacy code only after the replacement workflow is validated.
 
 ## Core Capabilities and Value
@@ -16,6 +16,7 @@ This project is migrating a Python CV scorer into a reusable skill for persuasiv
 - Connect offer terminology to contextual evidence. Preserve real titles, chronology and qualifications; never manufacture metrics, seniority or skills, or reward keyword stuffing.
 - Produce coherent CV/cover-letter pairs and private explanations of positioning, evidence and unresolved gaps. Keep internal claim IDs, confidence labels and score apparatus out of submitted documents.
 - Ask small batches of useful missing-evidence questions, accept skipped questions and confirmed gaps, and refine the actual WordCraft documents while preserving user edits.
+- Let the applicant choose application-only use or application use plus a reusable-profile update for each new career fact or identified group. Apply the same factual support checks in both cases. Preserve additions and their chronology separately from corrections; application-only facts must not silently become reusable.
 - Open or raise WordCraft in the foreground and author CVs and requested cover letters live through its MCP-connected desktop session. Show the active document when switching between documents or languages. Background generation followed by opening the finished file does not satisfy the default live-authoring experience. Respect a user's later choice to minimize or switch away; do not repeatedly steal focus.
 - Use transparent diagnostic scores for coverage, evidence, relevance and readability. Define rubrics and uncertainty before scoring; do not present hiring probabilities or universal proprietary ATS scores.
 
