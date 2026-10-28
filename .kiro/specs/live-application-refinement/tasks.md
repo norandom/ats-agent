@@ -74,7 +74,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: RefinementRecord_
   - _Requirements: 1.4, 3.7, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9_
 
-- [ ] 5. Refine current WordCraft documents safely
+- [x] 5. Refine current WordCraft documents safely
 - [x] 5.1 Integrate current strategy with document revisions
   - Preserve historical document validators and introduce the current manifest binding, including a separately retained predecessor revision.
   - Recompose after fact, scope, context or wording changes; keep check-only refresh limited to new check observations.
@@ -85,7 +85,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 3.1, 3.2, 4.1, 4.2_
   - _Requirements: 1.4, 1.5, 3.10, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 5.2 Prove one application-only revision in visible WordCraft
+- [x] 5.2 Prove one application-only revision in visible WordCraft
   - Use the existing session protocol for focus, safe switching, current inspection, persisted intent, targeted edits and read-back; do not add a second operation coordinator.
   - Through the host session, add one sourced fictional application-only fact and revise an existing CV in place, preserving an unrelated manual text and formatting change.
   - Demonstrate overlap withholding and resolution on that document. Save, reopen and inspect the affected content, reading order, all rendered pages and automatic page fields.

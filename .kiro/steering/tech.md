@@ -16,6 +16,7 @@ These describe existing code, not the target skill's runtime contract. No vendor
 - Host-agent reasoning replaces legacy model API calls. Local scripts perform deterministic extraction, validation and comparisons only; no model endpoints, model SDK or API-key requirement. Reuse useful legacy checks after correcting their limitations.
 - Use `uv`/`uvx` for applicable external tooling. Verify actual package names, entry points and versions before publishing setup commands. External tools may use Python internally.
 - WordCraft MCP is the sole final DOCX creation engine. Discover and verify its tools before relying on creation, reading, rendering, export or targeted edits. Desktop-connected creation, targeted editing, text read-back and save/reopen have been demonstrated with fictional content. Use MCP for inspection as well; do not invent tool names or introduce another service or UI-automation dependency.
+- Use WordCraft MCP for document interaction and desktop inspection. Do not use computer-use skills for this workflow. If foreground control is unavailable through MCP, use the applicant's foreground confirmation and respect later focus changes.
 - Preserve document identity and manual user edits during refinement. Inspect current document state first; if required WordCraft capabilities are absent, retain private draft state and report the missing capability.
 
 ## Data Contract
