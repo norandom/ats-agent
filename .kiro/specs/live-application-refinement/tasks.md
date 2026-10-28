@@ -115,7 +115,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 4.7, 4.8, 5.1, 5.2, 5.3, 5.4, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.4, 7.5, 7.6, 7.7_
 
 - [ ] 7. Validate the complete refinement experience
-- [ ] 7.1 Verify bilingual revisions and mixed fact choices live
+- [x] 7.1 Verify bilingual revisions and mixed fact choices live
   - Exercise the complete skill flow with wholly fictional German/English CV and Germany-market letter members, retaining separate output files.
   - Demonstrate application-only and reusable choices, selective promotion, chronology-preserving additions, manual preservation and current supported wording across requested members.
   - Include a deliberately pending member, report it honestly, then resolve and verify it; inspect all final pages, reading order, automatic pagination and applicable letter conventions.
