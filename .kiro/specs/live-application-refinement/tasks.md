@@ -38,7 +38,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: ScopedProfile_
   - _Requirements: 3.3, 3.4, 3.5, 3.6, 3.7, 3.9, 3.11, 3.12, 3.13, 7.4_
 
-- [ ] 3. Bind strategy to the selected application evidence
+- [x] 3. Bind strategy to the selected application evidence
 - [x] 3.1 Integrate scoped profiles into current strategy bindings
   - Preserve historical strategy validation and introduce the current binding with an application identity even for role-only CV work.
   - Accept validated reusable or application-scoped career sources, enforce scope during binding and subsequent current-state checks, and keep application metadata on its separate source route.
@@ -48,7 +48,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 2.1, 2.2, 2.3_
   - _Requirements: 1.1, 1.2, 1.4, 1.6, 3.1, 3.2, 3.5, 3.8, 3.13, 6.5, 7.3, 7.9_
 
-- [ ] 3.2 Preserve question dispositions and honest diagnostic comparisons
+- [x] 3.2 Preserve question dispositions and honest diagnostic comparisons
   - Reassess prior dispositions by semantic distinction after forks, updates and resume; retain valid skipped/gap states and suppress paraphrased repeats.
   - Promote pending answers only after confirmed selected-source persistence and meaning review. Reopen questions only for the existing material-conflict, freshness or changed-requirement reasons.
   - Treat the first fork as a non-comparable baseline; extend directly observed same-profile update continuity without changing rubrics or relaxing population checks.

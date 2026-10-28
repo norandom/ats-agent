@@ -14,8 +14,16 @@ Create `createStrategyWorkflow(host, modules)` once per live session. `modules` 
 2. Read the current evidence and follow planning and composition. Call `editorialMethods()` with the editorial host callbacks; carry its actual `methods` into the handoff and retain setup handoffs privately. This reuses the session's existing optional-method choice, without installing anything. Host reviews must refer to the current binding, exact draft hashes and inventories.
 3. Give `assemble(handoff, {previous?})` the complete schema-shaped private working draft. It freezes the offer population, runs the question planner, withholds unsupported selected realizations, checks composition, executes arithmetic and editorial review, and validates the final immutable snapshot. Questions, rejected alternatives and findings remain private. A blocking review produces `needs_revision`; incomplete readiness produces `bounded`; otherwise the state is `ready_for_document_draft`. Only selected supported realizations may enter document authoring. Unassessed document observations remain unassessed.
 4. For a factual answer, call `prepareUpdate(request)` using the upstream exact proposed-profile/change envelope. The answer remains pending and strategy consumption stops even after authorization. Only `persistUpdate(theExactReturnedDecision)` calls upstream persistence. A confirmed result triggers one fresh selection; call `bind` again to execute validation on the reopened canonical profile. Failed persistence or an arbitrary selection discards reasoning. No caller-supplied confirmation report establishes continuity.
-5. `observeConfirmedUpdate` produces the comparison receipt only for the directly observed old binding, confirmed resulting hash and matching fresh generation. `restoreDispositions()` consults the previously assembled snapshot and calls `host.reassessDisposition(disposition, previousProfile, currentProfile, changedFields)` for each eligible answered, skipped, not-applicable or confirmed-gap distinction. Return `{retain:true,reason}` only after examining material changes. Pending answers are never promoted. Target changes, missing observation, skipped selection generations and changed bytes do not restore dispositions. Rebuild mappings and claims from current evidence regardless.
+5. `observeConfirmedUpdate` produces the comparison receipt only for the directly observed old binding, confirmed resulting hash and matching fresh generation. Same-profile 2.1 updates additionally require unchanged immutable scope and profile version. An initial fork or unobserved restart is a non-comparable baseline. Call `restoreDispositions()` separately to reassess interaction history as described below. Rebuild mappings, claims, language reviews and diagnostics from current evidence regardless.
 6. Call `save(snapshot, destination)` only for an explicitly selected or already authorized private output. `host.authorizePrivateOutput(destination)` must resolve and check the exact destination as ignored or outside the repository, verify private access and actual user authorization, and return `{authorized:true,private_location:true,resolved_path}`. It performs no directory search. `host.writePrivate(resolvedPath, serializedSnapshot)` must preserve that checked destination and privacy through writing. The coordinator rechecks live binding after validation and authorization. Retain returned schema/deterministic checks separately from the host review and external observations. Resume through explicit selection and validation; reading saved `state` never restores authority.
+
+## Reassess interaction history
+
+`restoreDispositions()` first consults this session's directly observed update chain. After a fork or resume without that chain it calls optional trusted `host.observeDispositionHistory(currentBinding)`. This capability must authenticate the actual private interaction history for the selected application, independently of an incoming strategy or saved refinement record. Return `{current_binding,previous_profile,dispositions,changed_fields}` with exact current binding and previously observed profile, or null. A saved receipt, matching identity string or old ready flag is insufficient. If history cannot be authenticated, ask the user to resolve the relevant disposition; do not treat it as confirmed. This interface grants no profile or document authorization, support flags or numerical continuity. Retain the source history privately through selection changes; the coordinator deliberately does not cache it as current authority.
+
+For each stable semantic distinction, call `host.reassessDisposition(disposition, previousProfile, currentProfile, changedFields, {binding,target,settings})`. Recheck the target, period, material conflicts and actual interaction. Return `{retain:true,reason,evidence?}` only with a current nonblank semantic reason; retain that reason in the private host review. Compare meaning to suppress paraphrases rather than assigning keys from new wording. Return false for invalidated distinctions and rebuild only relevant questions with the existing `conflict`, `freshness` or `changed_requirement` rationale. Valid answered, skipped, not-applicable and explicitly confirmed-gap dispositions retain their status. Missing or skipped evidence never becomes inability. Rebuild all career references from the selected current source in `evidence`; old support is not copied. Application-input dispositions remain on their separate context route.
+
+A pending career answer stays pending unless the semantic review returns `status:'answered'` with rebuilt career evidence and `host.observeDispositionPersistence(disposition,currentBinding)` independently observes its exact selected-source owner result. Return `{status:'confirmed',current_binding,distinction_key,resulting_sha256}` only after matching this answer's exact changes and fact-use choice to confirmed selected-source persistence and the current revalidated bytes. Proposed, authorized, uncertain, different-answer and old destination results return null. Neither callback is read from input files. The coordinator checks exact binding/hash/distinction and current evidence eligibility, rechecks current selection after asynchronous callbacks, and preserves pending status otherwise. Context answers use their own confirmation route. No restored disposition is permission to mutate any source.
 
 ## Bind the selected inputs
 
@@ -100,7 +108,7 @@ function createStrategyWorkflow(host, modules) {
     const result=await context.bindStrategy({...input,snapshot:host.intake.snapshot()});
     if(chain) {
       const c=context.current(),b=c?.binding;
-      if(!b || b.application_id!==chain.previous_binding.application_id || b.target_sha256!==chain.previous_binding.target_sha256 || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256) chain=null;
+      if(!b || b.application_id!==chain.previous_binding.application_id || b.target_sha256!==chain.previous_binding.target_sha256 || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256 || b.profile_version!==chain.previous_binding.profile_version || (b.profile_version==='2.1' && !same(c.evidence.profile.application_scope,chain.previous_profile.application_scope))) chain=null;
       else chain.current_binding=clone(b);
     }
     return result;
@@ -145,15 +153,37 @@ function createStrategyWorkflow(host, modules) {
     return clone({previous_binding:chain.previous_binding,current_binding:chain.current_binding,previous_profile:chain.previous_profile,changed_fields:chain.changed_fields});
   }
   async function restoreDispositions() {
-    const c=current();if(!c || !chain?.previous || chain.previous_binding.target_sha256!==c.binding.target_sha256 || !await observeConfirmedUpdate(chain.previous_binding,c.binding))return [];
-    const result=[];
-    for(const d of chain.previous.dispositions) {
-      if(!['answered','skipped','not_applicable','confirmed_gap'].includes(d.status))continue;
-      let review;try{review=await host.reassessDisposition(clone(d),clone(chain.previous_profile),clone(c.evidence.profile),clone(chain.changed_fields));}catch{}
+    const c=current();if(!c)return [];
+    let history=null;
+    if(chain?.previous && await observeConfirmedUpdate(chain.previous_binding,c.binding))
+      history={current_binding:c.binding,previous_profile:chain.previous_profile,dispositions:chain.previous.dispositions,changed_fields:chain.changed_fields};
+    else try { history=await host.observeDispositionHistory?.(clone(c.binding)); } catch {}
+    if(!stillCurrent(c) || !history || !same(history.current_binding,c.binding) || !history.previous_profile || !Array.isArray(history.dispositions) || !Array.isArray(history.changed_fields))return [];
+    const result=[],seen=new Set();
+    for(const d of clone(history.dispositions)) {
+      if(!['answered','skipped','not_applicable','confirmed_gap','pending'].includes(d.status) || d.binding?.application_id!==c.binding.application_id || seen.has(d.distinction_key))return [];
+      seen.add(d.distinction_key);
+      let review;try{review=await host.reassessDisposition(clone(d),clone(history.previous_profile),clone(c.evidence.profile),clone(history.changed_fields),clone({binding:c.binding,target:c.target,settings:c.settings}));}catch{}
       if(!stillCurrent(c))return [];
-      if(review?.retain===true && typeof review.reason==='string' && review.reason.trim())result.push({...clone(d),binding:clone(c.binding)});
+      if(review?.retain!==true || typeof review.reason!=='string' || !review.reason.trim())continue;
+      // Rebuild evidence from the present source; old support and ready flags never survive.
+      const rebuilt={...clone(d),binding:clone(c.binding),evidence:[],reopen_reason:null};
+      if(d.status==='pending' && review.status==='answered') {
+        let observed;try{observed=await host.observeDispositionPersistence?.(clone(d),clone(c.binding));}catch{}
+        if(!stillCurrent(c))return [];
+        if(observed?.status==='confirmed' && same(observed.current_binding,c.binding) && observed.distinction_key===d.distinction_key && observed.resulting_sha256===c.binding.canonical_sha256 && Array.isArray(review.evidence) && review.evidence.length && modules.claimEligibility({subject:'candidate',evidence:review.evidence,context_evidence:[]},{binding:c.binding,target:c.target,application_context:c.application_context},reviewHost(c)).state==='eligible') {
+          rebuilt.status='answered';rebuilt.evidence=clone(review.evidence);
+        }
+      } else if(d.status!=='pending' && Array.isArray(review.evidence) && review.evidence.length) {
+        if(modules.claimEligibility({subject:'candidate',evidence:review.evidence,context_evidence:[]},{binding:c.binding,target:c.target,application_context:c.application_context},reviewHost(c)).state!=='eligible')continue;
+        rebuilt.evidence=clone(review.evidence);
+      } else if(d.evidence?.length)continue;
+      result.push(rebuilt);
     }
-    return current() && same(current().binding,c.binding) ? result : [];
+    if(!stillCurrent(c))return [];
+    // Reuse the closed planner contract and distinction uniqueness rules before returning data.
+    const checked=modules.createQuestionPlanner({current},modules).questions({binding:c.binding,questions:[],dispositions:result});
+    return checked.status==='ready' ? checked.value.dispositions : [];
   }
   const stillCurrent = c => {const live=current();return live && same(live.binding,c.binding) && same(live.source_observations,c.source_observations);};
   // Only snapshots this session actually assembled have retained historical authority.

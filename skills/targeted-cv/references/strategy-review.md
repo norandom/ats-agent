@@ -154,6 +154,8 @@ async function compareRevisions(previous, current, host) {
   }
   const comparable=result.dimensions.some(d=>d.delta!==null);
   result.status=comparable?(evidenceUpdate?'evidence_update':'comparable'):'not_comparable';
+  if(result.dimensions.some(d=>d.delta===0))result.reasons.push('Unchanged eligible assessments are valid outcomes; clearer wording or additional evidence does not guarantee a score gain.');
+  if(result.dimensions.some(d=>d.delta!==null && d.delta<0))result.reasons.push('Lower eligible assessments reflect the current reviewed evidence or wording; preserve the lower result and its support limits rather than optimizing toward a threshold.');
   if(result.dimensions.some(d=>d.delta===null))result.reasons.push('Use only eligible dimension deltas; other dimensions remain side by side with their reasons.');
   return result;
 }

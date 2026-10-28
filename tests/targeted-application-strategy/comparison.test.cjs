@@ -19,7 +19,7 @@ const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('he
  const host={...c,sha256,validate,current:()=>structuredClone(live)};
  const run=async(a=s,b=s,extra={})=>{live.binding=b.binding;return compareRevisions(a,b,{...host,observeStrategySources:async()=>({profile:p,binding:a.binding,target:a.target,application_context_bytes:null,confirmation_observations:[]}),...extra});};
  const row=(r,dim)=>r.dimensions.find(d=>d.dimension===dim);
- const baseline=await run();assert.equal(baseline.status,'comparable');assert.ok(baseline.dimensions.every(d=>d.delta===0));
+ const baseline=await run();assert.equal(baseline.status,'comparable');assert.ok(baseline.dimensions.every(d=>d.delta===0));assert.match(baseline.reasons.join(' '),/Unchanged eligible assessments/);
  assert.equal((await validate('schemas/application-strategy.schema.json',{...s,comparison:baseline})).state,'passed');
  for(const [dimension,mutate] of [
   ['offer_coverage',x=>{x.diagnostics[0].value=99;}],
@@ -32,7 +32,7 @@ const sha256=x=>require('node:crypto').createHash('sha256').update(x).digest('he
   for(const [a,b] of [[s,invalid],[invalid,s]]){const r=await run(a,b);assert.equal(row(r,dimension).delta,null);assert.match(row(r,dimension).reasons.join(' '),/inconsistent|arithmetic/);}
  }
  const truthfulChange=structuredClone(s);truthfulChange.mappings[0].state='uncertain';truthfulChange.diagnostics[0].counts.supported=0;truthfulChange.diagnostics[0].counts.uncertain=1;truthfulChange.diagnostics[0].numerator=0;truthfulChange.diagnostics[0].value=0;
- assert.equal(row(await run(s,truthfulChange),'offer_coverage').delta,-100);
+ const lower=await run(s,truthfulChange);assert.equal(row(lower,'offer_coverage').delta,-100);assert.match(lower.reasons.join(' '),/Lower eligible assessments/);
  const wording=structuredClone(s);wording.draft.versions[0].text+=' Clear handover.';wording.draft.versions[0].sha256=sha256(wording.draft.versions[0].text);
  assert.equal((await run(s,wording)).status,'comparable');
  for(const mutate of [x=>x.claims[0].proposition='Directed a fictional fleet.',x=>{x.diagnostics[1].population=[];x.diagnostics[1].population_sha256=c.fingerprint([],sha256);}]){
