@@ -13,7 +13,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 1.1, 4.1, 4.9, 7.8, 7.9_
 
 - [ ] 2. Preserve the chosen scope of career facts
-- [ ] 2.1 Add marked application-profile validation
+- [x] 2.1 Add marked application-profile validation
   - Add the application-only profile version and its immutable application, target and origin marker while preserving reusable-profile and legacy-migration behavior.
   - Extend exact version dispatch, active-record validation and scoped selection. Preserve IDs, sources, history, unknowns and the existing career-reference shape.
   - Reject wrong applications, changed targets, unsupported versions and attempts to use scope/history metadata as career evidence. Verify unchanged field parity with the reusable contract.

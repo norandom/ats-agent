@@ -4,11 +4,17 @@ Read this reference when loading reusable candidate facts, interpreting evidence
 
 ## Compatibility and intake
 
-Dispatch on the exact `schema_version` before validation: `2.0` uses `schemas/cv-facts.schema.json`; `1.0` uses the retained `schemas/cv-facts-v1.schema.json` and requires an explicit migration proposal before current-version persistence. Missing, non-string and unknown versions return `unsupported_version`, with no schema fallback. Request a supported export or a documented migration; changing the version string is not migration.
+Dispatch on the exact `schema_version` before validation: `2.0` uses `schemas/cv-facts.schema.json`; `2.1` uses `schemas/cv-facts-application.schema.json` and requires the independently selected application ID and exact target hash; `1.0` uses the retained `schemas/cv-facts-v1.schema.json` and requires an explicit migration proposal before current-version persistence. Missing, non-string and unknown versions return `unsupported_version`, with no schema fallback. Request a supported export or a documented migration; changing the version string is not migration.
 
 Run pinned `uvx --from check-jsonschema==0.38.2 check-jsonschema --schemafile <selected-local-schema> <private-input>` without default filling or transformations. Structural conformance is only one check. Semantic validation and caller-declared task inputs must also be assessed before claiming validity or readiness. Unavailable checks are `not_assessed`.
 
 `templates/cv-facts.blank.json` is a valid intake scaffold, with no candidate evidence. Its structural candidate ID does not identify a person. Empty arrays mean no recorded entries; null scalars mean unknown. Never invent values to fill optional fields. A task declares its required inputs: optional unknowns stay unknown; required nulls, placeholders or unresolved values prevent readiness. Without a task request, readiness is `not_assessed`.
+
+## Application-scoped evidence
+
+Profile 2.1 retains every 2.0 career record, source, unknown and historical value. Its closed root adds mandatory immutable `application_scope`: application ID, exact offer/role target SHA-256 and creation origin (reusable 2.0 resolved path and original-byte SHA-256). Origin records creation; it does not assert the reusable source is still current. A copied file retains these restrictions on fresh intake. Never strip the marker or change the version to promote facts. Changed application or target requires a new selected scope from the reusable base with explicitly chosen carried-over facts. Legacy 1.0 first follows the existing authorized migration to reusable 2.0; the blank remains 2.0.
+
+Career references keep their existing record ID and record-relative pointer shape. Only active career records supply support; scope, origin, sources metadata, migration archives, questions, evidence wrappers and saved authorization/history are not career assertions. Historical application scopes `application_fork` and `application_fact_update` describe recorded decisions only. Approval-shaped data cannot authorize a write. Structure and pointer coverage do not prove meaning: review exact source meaning, responsibility, uncertainty, correction provenance, additive facts and supplied chronology before stronger wording.
 
 ## Integrated migration host sequence
 
@@ -39,13 +45,16 @@ Only legacy structure is established before mapping. Existing IDs are never repa
 
 ```javascript
 function dispatchVersion(profile) {
+  if (profile?.schema_version === '2.1') return {
+    status: 'current', schema: 'schemas/cv-facts-application.schema.json', action: 'Validate structure, semantics and independently selected application scope.'
+  };
   if (profile?.schema_version === '2.0') return {
     status: 'current', schema: 'schemas/cv-facts.schema.json', action: 'Validate structure, semantics and requested task inputs.'
   };
   if (profile?.schema_version === '1.0') return {
     status: 'migration_required', schema: 'schemas/cv-facts-v1.schema.json', action: 'Validate legacy input and review a 2.0 migration proposal; preserve the selected file.'
   };
-  return { status: 'unsupported_version', schema: null, action: 'Provide a supported 1.0 or 2.0 export or a documented migration; preserve the selected file.' };
+  return { status: 'unsupported_version', schema: null, action: 'Provide a supported 1.0, 2.0 or scoped 2.1 export or a documented migration; preserve the selected file.' };
 }
 
 async function proposeMigration(bytes, host) {
