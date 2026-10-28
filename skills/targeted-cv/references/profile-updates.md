@@ -40,6 +40,20 @@ The fork lease provides `readSource()`, `read()` (null only for positively confi
 
 For later changes select the persisted 2.1 file and call `prepare` with `scope: 'application_fact_update'`. It requires the same immutable application scope and live application selection. Use the existing backup/replacement lease and `persist`; all baseline, task readiness, protected-security and read-only reconciliation rules still apply. Reusable updates continue through their separate 2.0 authorization. After any confirmed fork or update, reselect the exact destination and revalidate it before relying on the added facts. Partial or unconfirmed persistence does not make pending evidence available.
 
+### Selective promotion and mixed choices
+
+Use `prepareSelected(selectionSnapshot, request, statementChoices)` for promotion and mixed-choice updates. It delegates to the same `prepare` decision and `persist` owner; it is no merge engine and grants no write authority. Ordinary intake, migration and existing single-scope updates retain their existing routes. `statementChoices` is `{facts: [{statement_id, use, source_ids, changes}]}`. Each identified fact or group carries its exact reviewed before/after changes and sources. A group may contain several related statements. Collection additions use the exact containing-collection diff, built against the selected destination, including its existing records. Combine related additions in one clearly identified group when their collection diffs would overlap. Changes must equal the ordered concatenation of these chosen diffs and source IDs must equal their union. The complete proposed document must still replay exactly from those changes. Extra copied local records, pending facts or source mutations outside that selected diff are rejected before authorization. The exact choices enter the authenticated envelope; changing a choice invalidates cached permission. For reusable `fact_update`, every group must choose `application_and_reusable`; an `application_fact_update` may also include `application_only`. Pending groups are never passed to preparation.
+
+The host must review what those diffs mean. A statement ID or successful equality check cannot establish evidence, timing, or that a broad collection replacement contains only the selected statements. Authenticate the actual applicant's choice for each named group, review the exact resulting diff and both destinations, and withhold preparation if the diff adds unrelated evidence. Retain private pending statements outside every proposal; unrelated supported groups continue. Clarify contradictions, ambiguous scope or capability timing before using the stronger claim. Preserve earlier contributions and their supplied dates when adding a later capability. Corrections retain sources, conflicting alternatives and a reason identifying affected wording for later review; do not erase accounts or backdate additions. A missing date remains unknown.
+
+1. Independently select and fully validate the current reusable 2.0 file. The application origin hash is creation provenance, never a current reusable baseline. Review the chosen statements against this fresh base, including records added since the fork. Build only their selected diffs, necessary sourced provenance and complete reusable proposal. Never copy the 2.1 profile, strip its marker, import application history, or replace the reusable profile with application contents. Earlier application-only facts can be promoted only through this same newly chosen route.
+2. Call `prepareSelected` on the reusable selection with `fact_update`. Resolve exact authority through the existing trusted `userDecision`, reusing the original explicit request when it covers these unchanged changes, baseline, sources and destination. Call `persist` with the live unchanged decision. Keep the actual owner result and exact decision privately. Only `confirmed` establishes reusable progress. On conflict, inspect/reselect and obtain a reviewed reconciliation; on uncertainty, reconcile the existing operation read-only. Do not run the application reconciliation as though unconfirmed changes had succeeded.
+3. After all selected reusable groups are confirmed, independently select and fully validate the current 2.1 application profile and matching live application. Review a combined application proposal containing only the confirmed reusable changes and chosen application-only additions. If a promoted statement is already present unchanged, leave it intact rather than adding a duplicate or copying reusable history. Preserve all local records, conflict accounts, provenance, earlier history, chronology and immutable scope, including the original origin hash. Reconciliation does not automatically import unrelated concurrent reusable changes. IDs that collide, contradictory values and changed destination bytes require new host review; never perform an automatic three-way merge or silently remap IDs. Unaffected groups may proceed separately after their own reviewed diff.
+4. Call `prepareSelected` with `application_fact_update`, then `persist` using that exact decision. Reuse unchanged covered authority through the trusted callback for this separate destination and scope. The reusable decision itself cannot authorize this write. Reselect and fully validate each confirmed destination before relying on its new facts. If the combined application proposal has no changes, report the reopened validated application as already containing the selected facts; do not manufacture a no-op write or history entry.
+5. Report each destination separately. If the reusable write confirmed but the application write failed or is uncertain, preserve that success and retain the application decision, owner result and next recovery action as pending reconciliation. Resume only the application's owner operation; never rerun a successful reusable replacement. Repeated `persist` on an attempted application operation performs read-only reconciliation. A pre-replacement conflict requires inspection and a newly reviewed application decision; a process loss requires fresh selection and inspection of retained private operation artifacts, never restored approval-shaped data. Profile persistence alone makes no document-update claim.
+
+Without an application profile, selected reusable updates stop after the reusable route and its confirmed reselection. Creating an application profile for a mixed answer follows the same reusable-first ordering, then `prepareFork`/`persistFork` from the freshly reopened reusable base with only chosen application-only groups. Do not fork pending groups or reinterpret an old target scope.
+
 ```javascript
 function createProfileUpdates(host) {
   const clone = value => structuredClone(value);
@@ -61,7 +75,7 @@ function createProfileUpdates(host) {
     if (!application) return true;
     try { return same(host.currentApplicationSelection(), application); } catch { return false; }
   }
-  async function prepare(selected, request, fork = null) {
+  async function prepare(selected, request, fork = null, choices = null) {
     selected = clone(selected);
     const id = request?.proposal_id;
     const application = fork?.application || (selected?.profile?.schema_version === '2.1' ? { application_id: selected.profile.application_scope?.application_id, target_sha256: selected.profile.application_scope?.target_sha256 } : null);
@@ -143,7 +157,8 @@ function createProfileUpdates(host) {
       validation.schema === 'failed' || validation.semantics === 'failed' ? 'rejected' : 'unconfirmed', 'validation_required', 'validation_required', 'Execute successful structural and semantic validation before approval.', { validation });
     const reviewed = { proposal_id: id, history_id: r.history_id, generation: selected.generation, resolved_path: path, base_sha256: baseline,
       scope: r.scope, changes: r.changes, source_ids: r.source_ids, proposed_profile: proposed,
-      ...(application ? { application_selection: clone(application) } : {}), ...(fork ? { source_path: selected.selection.resolved_path, statement_choices: clone(fork.choices) } : {}) };
+      ...(application ? { application_selection: clone(application) } : {}), ...(fork ? { source_path: selected.selection.resolved_path, statement_choices: clone(fork.choices) } : {}),
+      ...(choices ? { statement_choices: clone(choices) } : {}) };
     if (cached && !same(cached.reviewed, reviewed)) cached = null;
     let decision = cached;
     if (!decision) { try { decision = await host.userDecision(clone(reviewed)); } catch { decision = null; } }
@@ -296,6 +311,27 @@ function createProfileUpdates(host) {
     } catch { return op.terminal = uncertain(); }
     finally { if (lease) { try { await lease.release(); } catch { /* Retain private state for host inspection. */ } } }
   }
-  return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork };
+  async function prepareSelected(selected, request, statementChoices) {
+    const reject = () => result(request?.proposal_id, 'rejected', 'invalid_proposal', 'selected_diff_required', 'Review only the chosen fact groups against the freshly selected destination. Exclude pending facts and unrelated application evidence.');
+    let r, choices;
+    try { r = clone(request); choices = clone(statementChoices); } catch { return reject(); }
+    if (!['fact_update', 'application_fact_update'].includes(r?.scope) || !choices ||
+        !same(Object.keys(choices), ['facts']) || !Array.isArray(choices.facts) || !choices.facts.length ||
+        new Set(choices.facts.map(f => f?.statement_id)).size !== choices.facts.length) return reject();
+    const changes = [], sources = new Set();
+    for (const fact of choices.facts) {
+      if (!fact || Object.keys(fact).some(k => !['statement_id', 'use', 'source_ids', 'changes'].includes(k)) ||
+          !text(fact.statement_id) || !(r.scope === 'fact_update' ? fact.use === 'application_and_reusable' : ['application_only', 'application_and_reusable'].includes(fact.use)) ||
+          !Array.isArray(fact.changes) || !fact.changes.length || !Array.isArray(fact.source_ids) || !fact.source_ids.length ||
+          new Set(fact.source_ids).size !== fact.source_ids.length || !fact.source_ids.every(text)) return reject();
+      changes.push(...fact.changes);
+      fact.source_ids.forEach(id => sources.add(id));
+    }
+    if (!same(changes, r.changes) || !Array.isArray(r.source_ids) || !same([...sources].sort(), [...r.source_ids].sort())) return reject();
+    // Existing exact replay rejects any profile/source change outside the reviewed selected diff.
+    // Meaning, timing and the correspondence of each group to that diff require host review.
+    return prepare(selected, r, null, choices);
+  }
+  return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork, prepareSelected };
 }
 ```

@@ -12,7 +12,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: RefinementRecord validation foundation_
   - _Requirements: 1.1, 4.1, 4.9, 7.8, 7.9_
 
-- [ ] 2. Preserve the chosen scope of career facts
+- [x] 2. Preserve the chosen scope of career facts
 - [x] 2.1 Add marked application-profile validation
   - Add the application-only profile version and its immutable application, target and origin marker while preserving reusable-profile and legacy-migration behavior.
   - Extend exact version dispatch, active-record validation and scoped selection. Preserve IDs, sources, history, unknowns and the existing career-reference shape.
@@ -30,7 +30,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: ScopedProfile_
   - _Requirements: 3.4, 3.5, 3.6, 3.7, 3.8, 3.13, 7.1, 7.4, 7.9_
 
-- [ ] 2.3 Promote only selected facts to the reusable profile
+- [x] 2.3 Promote only selected facts to the reusable profile
   - Apply reusable choices against the freshly selected reusable base, then reconcile confirmed changes into the application profile without losing application-only additions.
   - Process mixed fact groups in the designed order; preserve correction provenance and additive chronology. Do not replace the reusable base with the complete application profile.
   - Surface collisions, conflicting edits and partial success separately for each destination. Reuse exact unchanged authorization, and request a revised decision only when scope or proposed changes differ.

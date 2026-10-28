@@ -15,6 +15,8 @@ Execute the existing JavaScript blocks in these four references with the documen
 
 For a selected 2.1 profile, continue through steps 5 and 6 using distinct `application_fact_update` authority, the live independent application selection and the verified existing-file persistence protocol. First creation instead uses `prepareFork` and `persistFork` as described in [profile-updates.md](profile-updates.md). Reusable 2.0 authorization cannot authorize a 2.1 write, and application authority cannot authorize a reusable write. These routes do not promote application-only facts to the reusable profile. Do not describe the application source as the reusable profile.
 
+For selective promotion or mixed fact choices, follow the [selected-statements procedure in profile-updates.md](profile-updates.md#selective-promotion-and-mixed-choices). Select the fresh reusable base separately, prepare only chosen reusable groups through `prepareSelected`, persist them first, then review the current application's combined proposal. Preserve application-only facts and chronology. Pending groups stay unused; partial results name each destination and resume only the unresolved owner operation.
+
 The synthetic integration scenario executes these same blocks, including unresolved intake saved with explicit authorization, a required-pointer handoff that remains incomplete, a sourced title-conflict resolution and a second confirmed write whose reopened history retains both decisions. It uses actual structural/semantic checks and Windows replacement/security checks in a fresh test-owned workspace. This is evidence for that isolated scenario, not writer-exclusion assurance for a real destination.
 
 ## Explicit selection
