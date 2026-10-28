@@ -56,7 +56,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: StrategyIntegration_
   - _Requirements: 1.2, 1.3, 2.1, 2.2, 2.5, 2.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.2, 7.6_
 
-- [ ] 4. Retain private refinement progress
+- [x] 4. Retain private refinement progress
 - [x] 4.1 Define and validate the refinement record
   - Implement the closed record for selected sources, statements, scope decisions, question dispositions, owner artifact references, revision members and stop state.
   - Add the embedded deterministic integrity helper using independently observed owner artifacts and a trusted previous checkpoint.
@@ -66,7 +66,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 3.1, 3.2_
   - _Requirements: 3.1, 3.2, 3.4, 3.7, 3.13, 5.4, 7.1, 7.3, 7.8, 7.9_
 
-- [ ] 4.2 Checkpoint, resume and stop without restoring stale authority
+- [x] 4.2 Checkpoint, resume and stop without restoring stale authority
   - Implement verified private checkpoints and expected-baseline checks; distinguish historical loaded state from current observations.
   - Route profile and document operations to their owner recovery protocols. Missing checkpoint guarantees block new dependent mutations and leave persisted resume unconfirmed.
   - Reestablish current source selections and context confirmations on resume; enforce explicit user continuation from stopped states and permit read-only reconciliation of in-flight work.
@@ -140,3 +140,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: RefinementFlow final validation_
   - _Depends: 7.1, 7.2_
   - _Requirements: 1.2, 1.6, 3.5, 6.1, 6.2, 6.5, 7.2, 7.3, 7.8, 7.9_
+
+## Implementation Notes
+
+- Windows validation adapters use pwsh and pnpm.exe; inherited Windows PowerShell 5.1 module paths can break Get-Acl, and a pnpm wrapper can hide an assertion exit code.
