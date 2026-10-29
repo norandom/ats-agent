@@ -124,7 +124,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 6.1, 6.2_
   - _Requirements: 1.1, 1.3, 1.5, 2.2, 2.3, 2.4, 2.7, 3.4, 3.5, 3.6, 3.8, 3.9, 3.10, 3.11, 3.12, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.8, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.3, 6.5, 6.6_
 
-- [ ] 7.2 Verify interruption, isolation and stopping
+- [x] 7.2 Verify interruption, isolation and stopping
   - Interrupt the actual connection after a dispatched edit at a controlled boundary, reconnect and reconcile through observed state without duplicate writing.
   - Exercise stale sources, another applicant/application, imported approvals, missing capabilities, skipped questions and explicit stop. Keep deterministic absent/ambiguous-effect controls distinct from actual observations.
   - Verify new writes remain blocked for unresolved operations and stopped sessions until the required reconciliation and explicit continuation occur.
