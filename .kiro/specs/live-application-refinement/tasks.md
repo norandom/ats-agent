@@ -114,7 +114,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 3.2, 4.2, 5.1_
   - _Requirements: 4.7, 4.8, 5.1, 5.2, 5.3, 5.4, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 7.4, 7.5, 7.6, 7.7_
 
-- [ ] 7. Validate the complete refinement experience
+- [x] 7. Validate the complete refinement experience
 - [x] 7.1 Verify bilingual revisions and mixed fact choices live
   - Exercise the complete skill flow with wholly fictional German/English CV and Germany-market letter members, retaining separate output files.
   - Demonstrate application-only and reusable choices, selective promotion, chronology-preserving additions, manual preservation and current supported wording across requested members.
@@ -132,7 +132,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: RefinementFlow end-to-end acceptance_
   - _Requirements: 1.4, 2.5, 2.6, 3.7, 3.13, 4.7, 4.9, 6.2, 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.9_
 
-- [ ] 7.3 Validate relocation, privacy and full coverage
+- [x] 7.3 Validate relocation, privacy and full coverage
   - Finish the receipt checker and full-acceptance runner, rejecting absent, altered or stale live evidence and any unsupported completion assertion.
   - Run affected profile, strategy and document regression suites with historical validators pinned; validate current scenarios against current contracts and update their declared inventories.
   - Run the declared M4 assets outside the checkout, check all 56 criteria against actual evidence, and perform repository/index privacy checks plus human review of shareable artifacts.

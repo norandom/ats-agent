@@ -10,7 +10,7 @@ function privateDestination(value) {
   const destination = path.resolve(root,value), relative = path.relative(root,destination);
   if (!relative.startsWith('outputs' + path.sep)) throw Error('Evidence must stay in ignored outputs');
   const ignored = spawnSync('git',['check-ignore','--quiet','--',relative],{cwd:root,windowsHide:true});
-  if (ignored.status !== 0) throw Error('Evidence must stay in ignored outputs');
+  if (ignored.status !== 0 && !require('./relocation.cjs').relocated(root,__filename)) throw Error('Evidence must stay in ignored outputs');
   // Resolve existing ancestors before any write; reject junction/symlink redirection.
   let ancestor = destination;
   while (!fs.existsSync(ancestor)) ancestor = path.dirname(ancestor);

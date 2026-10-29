@@ -3,11 +3,11 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {spawnSync}=require('node:child_process');
 const {createHarness,classifyCheck}=require('../foundation.cjs');
-const {profile}=require('../fixtures.cjs'),{handoff}=require('../contract-fixture.cjs');
+const {profile}=require('../fixtures.cjs'),{handoff}=require('../contract-fixture-current.cjs');
 const sha256=b=>require('node:crypto').createHash('sha256').update(b).digest('hex');
 const span=text=>({start:0,end:Array.from(text).length,excerpt:text});
 const ref=(namespace,id)=>({namespace,id:`${namespace}:${id}`});
-async function run(inputs,reviews){
+async function run(inputs,reviews,{recordCandidateFile}={}){
  const h=createHarness();let serial=0;
  const modules={...h.load('strategy-contract.md',['stableSerialize','fingerprint','targetFingerprint','inspectStrategy','inspectApplicationContext','claimEligibility']),...h.load('profile-contract.md',['dispatchVersion']),...h.load('profile-validation.md',['evidenceView']),...h.load('profile-updates.md',['createProfileUpdates']),...h.load('strategy-evidence.md',['createQuestionPlanner','freezeOfferAnalysis']),...h.load('strategy-editorial.md',['inspectComposition','applyEditorialMethods']),...h.load('strategy-review.md',['reviewDiagnostics','reviewEditorial','compareRevisions'])};
  const {createStrategyWorkflow}=h.load('application-strategy.md',['createStrategyWorkflow']);
@@ -19,7 +19,7 @@ async function run(inputs,reviews){
   if(input.id==='old-tools')p.employment[0].start='2012';
   const selected=h.select(p);let receiptDraft;
   const selectedTarget={kind:'offer',text:input.offer,sha256:sha256(input.offer)};
-  const host={currentApplicationSelection:()=>({target:structuredClone(selectedTarget),application_context_bytes:null,confirmation_observations:[]}),session:`semantic-${input.id}`,intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
+  const host={currentApplicationSelection:()=>({application_id:"fictional-current-semantic",target:structuredClone(selectedTarget),application_context_bytes:null,confirmation_observations:[]}),session:`semantic-${input.id}`,intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
    validateProfile:(v,t)=>h.validate(v,{taskRequest:t}),
    validate:async(schema,v)=>{const file=path.join(h.workspace,`semantic-${++serial}.json`);fs.writeFileSync(file,JSON.stringify(v));const r=spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(h.skillRoot,schema),file],{encoding:'utf8',windowsHide:true});return {state:classifyCheck(r),findings:[]};},
    // Receipts below replay the separate, host-reviewed exact prose artifact.
@@ -41,7 +41,7 @@ async function run(inputs,reviews){
   receiptDraft=structuredClone(v.draft.versions);
   v.positioning={audience:input.profile_kind==='operations'?'Dispatch hiring team':'Laboratory hiring team',intended_decision:'Discuss the evidenced contribution and unresolved qualification limits',contribution_thesis:review.correction?.en||review.en,selected_claims:[{claim:ref('claim','one'),languages:['en','de']}],selections:[{claim:ref('claim','one'),decision:'include',rationale:review.finding}],expertise_groups:[{name:input.profile_kind==='operations'?'Dispatch records':'Laboratory preparation',claims:[ref('claim','one')],rationale:'Group the actual work, not tools or assumed seniority.'}],terminology:[],criterion_set_sha256:modules.fingerprint(v.criteria,sha256)};
   v.guidance=[{id:'guidance:judgment',authority_class:'project_judgment',source:'Fresh fictional host acceptance review',url:null,version:'1.1',accessed_at:'2026-10-27',consulted_passage:review.finding,scope:'Fictional wording and evidence assessment',limits:['No external occupational source consulted. No vendor ATS, hiring, personality or DIN inference.']}];
-  v.editorial_methods=[{id:'editorial_method:embedded',name:'Embedded composition and language review',source:null,version:'1.0',available:true,executed:true,fallback:true,fallback_reason:'Task 11 host applied the shipped embedded criteria to these exact fictional pairs; optional installations were not executed for this acceptance.'}];
+  v.editorial_methods=[{id:'editorial_method:embedded',name:'Embedded composition and language review',source:null,version:'1.0',available:true,executed:true,fallback:true,fallback_reason:'Current 1.2 host reviewed the exact fictional pairs using shipped embedded criteria; optional installations were not executed.'}];
   if(review.question){v.questions=[{id:'question:one',distinction_key:input.id==='skipped-answer'?'recency':input.id,affected:[ref('criterion',input.id==='weak-inventory'?'c1':'c0')],text:review.question,rationale:review.reason,expected_effect:review.finding,missing_distinction:review.question,priority:input.id==='conflicting-priorities'?1:/weak-inventory|unsupported-appeal/.test(input.id)?3:2,offer_order:0,disposition:'open',reopen_reason:null}];}
   if(input.interaction)v.dispositions=[{id:'disposition:one',binding:v.binding,distinction_key:'recency',status:'skipped',answer:null,evidence:[],reopen_reason:null}];
   v.question_batch={limit:3,selected_ids:[],deferred_ids:[],suppressed_ids:[]};
@@ -58,9 +58,9 @@ async function run(inputs,reviews){
  h.saveEvidence();
  const assets={};for(const dir of ['references','schemas'])for(const name of fs.readdirSync(path.join(h.skillRoot,dir)).sort())assets[`${dir}/${name}`]=sha256(fs.readFileSync(path.join(h.skillRoot,dir,name)));
  assets['templates/cv-facts.blank.json']=sha256(fs.readFileSync(path.join(h.skillRoot,'templates/cv-facts.blank.json')));
- const observed={contract_version:'1.1',review_sha256:sha256(JSON.stringify(reviews)),inputs_sha256:sha256(JSON.stringify(inputs)),execution_kind:'Executed shipped integrated helpers over separately recorded task 11 host judgments; replay is not fresh semantic reasoning.',runtime_assets:assets,results};
- const output=path.join(__dirname,'observed-v1.1.json');
- if(process.argv.includes('--record-reviewed-v1.1'))fs.writeFileSync(output,JSON.stringify(observed,null,2)+'\n');
+ const observed={contract_version:'1.2',review_sha256:sha256(JSON.stringify(reviews)),inputs_sha256:sha256(JSON.stringify(inputs)),execution_kind:'Current 1.2 integrated helpers replay exact separately reviewed fictional wording; replay is not fresh semantic reasoning.',runtime_assets:assets,results};
+ const output=path.join(__dirname,'observed-v1.2.json');
+ if(recordCandidateFile){const selected=path.resolve(recordCandidateFile),root=path.resolve(__dirname,'../../..');assert.ok(path.relative(root,selected).startsWith('outputs'+path.sep),'Candidate observation must stay private');fs.writeFileSync(selected,JSON.stringify(observed,null,2)+'\n',{flag:'wx'});}
  else assert.deepEqual(observed,JSON.parse(fs.readFileSync(output,'utf8')),'Observed decisions/arithmetic or runtime assets changed: fresh review is required.');
  console.log(`PASS ${results.length} integrated semantic-case replays with real upstream and handoff validation; host meaning remains separately reviewed.`);
 }

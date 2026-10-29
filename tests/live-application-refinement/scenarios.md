@@ -1,18 +1,32 @@
-# Refinement validation foundation
+# Refinement acceptance
 
-Run `pnpm.exe exec node --test tests/live-application-refinement/foundation.test.cjs` on Windows. The existing strategy harness invokes `uvx --from check-jsonschema==0.38.2 check-jsonschema` on the exact fictional profile instances. These are reusable 2.0 fixtures; scoped 2.1 records and current 1.2 strategy/document checks arrive in their owning tasks. Profile semantics do not establish host meaning review.
+The final runner checks selected actual bilingual refinement and interruption receipts, then runs the declared M4 and affected profile, strategy, session and document suites from an unrelated temporary directory. It reads retained evidence and never authors documents. All fixture applicants are wholly fictional.
 
-Fixtures contain two invented logistics/field-service applicants, sourced answers and separate English/German CV and Germany-market letter destinations. No DOCX exists until actual WordCraft authoring. Prompt-shaped offer and restored approval data are inert adversarial inputs; their presence grants no authorization (7.9). Tests and observations write only into fresh ignored output directories (7.8).
+Use PowerShell on Windows. Supply the explicit private evidence index, its independently trusted normalized SHA-256 digest and the host selection review. Obtain these from the host who inspected the actual evidence. The runner never creates an index as a fallback.
 
-For a read-only desktop observation use `pnpm.exe exec node tests/live-application-refinement/acceptance-live.cjs <official-cli-executable> <127.0.0.1:control-port>`. It uses the existing test transport with official `mcp --connect`, initializes the selected connection and lists tools. It does not inspect candidate documents, bring windows forward or change documents. Actual receipts stay private and separate from simulated controls. Catalog availability does not prove visibility or selected-document identity. Before live authoring, independently identify the selected document and open or bring forward WordCraft (4.1). If foreground controls are unavailable, explain the missing action, request the necessary user action and retain pending work; never claim live authoring (4.9).
+```powershell
+pnpm.exe exec node tests/live-application-refinement/full-acceptance.cjs <private-index.json> <trusted-index-sha256> <private-index-review.json>
+pnpm.exe exec node tests/live-application-refinement/full-acceptance.cjs <private-index.json> <trusted-index-sha256> <private-index-review.json> --smoke
+```
 
-| Scenario | Later live acceptance | Criteria |
+Full mode requires every declared suite to finish with positive test counts, no skipped tests and a zero exit code. Smoke checks the same actual evidence and relocation binding with the small final-gate test suite; it does not establish full coverage. Neither command accepts absent receipts, catalog observations or fixture outcomes as live acceptance.
+
+The private index binds immutable original receipts and all selected owner, profile, strategy, manifest, intent, checkpoint, call, DOCX, render and review files. Its separate trusted digest prevents an edited index from authorizing altered evidence. Existing typed owner-file references must remain inside those independently selected evidence roots. The independent host review records the exact index, file count and reference count. Host honesty and semantic judgment are explicit trust boundaries.
+
+| Scenario | Retained observations and controls | Criteria |
 | --- | --- | --- |
-| application-only-revision | Select facts, target, languages and members; revise same visible document | 1.1, 4.1 |
-| manual-preservation-and-overlap | Preserve manual prose and formatting; withhold overlapping changes | 4.3, 4.4, 4.5 |
-| mixed-fact-choices-bilingual | Selective promotion, separate editable DE/EN files, resolve pending member | 3.4, 3.5, 3.6, 5.1, 5.6 |
-| interruption-and-stale-resume | Observe dispatched interruption and reconcile without replay | 4.7, 7.2, 7.3, 7.4 |
-| skip-correction-stop | Host trace proves no new questions or edits after stopping | 2.5, 2.7, 7.5 |
-| missing-foreground-simulated | Explicit simulated control; retain pending work and request action | 4.9 |
+| Mixed fact choices and bilingual refinement | Actual application-only correction, exclusive fork, selective promotion, chronology and unrelated manual prose/format preservation; four separate editable members | 3.4 through 3.12, 4.1 through 4.6, 5.1 through 5.6 |
+| Current checkpointed follow-up | Actual pre-write checkpoints, application-only follow-up, restored answered disposition and suppressed repeat question; deliberate pending German letter then current verified members | 1.3, 2.1, 2.2, 3.5, 4.8, 5.4 |
+| Interrupted edit | Actual unacknowledged edit, reconnect, inspected effect, owner reconciliation, zero replay and save only after reconciliation | 4.7, 7.1 through 7.4 |
+| Isolation and stopping | Thirty separately labeled deterministic controls; actual stopped trace has no later MCP calls | 2.5, 2.6, 3.13, 4.9, 7.2 through 7.9 |
+| Role-only and diagnostic limits | Contract/control assertions retain unassessed coverage, unchanged/lower/null comparisons and source-bound reporting | 1.2, 1.6, 6.1 through 6.6 |
 
-The initial manifest lists existing assets only. Extend it as each owner implements its assets. The foundation receipt gate deliberately fails final acceptance even for a catalog observation; task 7.3 completes independent receipt validation. Final evidence must bind actual selected sources, owner records, document identities, operations, saved bytes, rendered pages and runtime hashes. Never replace missing live evidence with fixture outcomes.
+The acceptance manifest maps all 56 criteria to executed suites and concrete source assertions. Some criteria require contract controls or host meaning review; the mapping does not relabel those as live experiments. Earlier mixed-scope observations have no closed refinement checkpoint and remain historical. The later checkpointed run supplies current continuity. Earlier task-local receipts are not mandatory current evidence and are never rehashed to imply new execution.
+
+Current scenarios require profile 2.1 and strategy/document contracts 1.2. Historical profile 1.0 and strategy/document 1.0/1.1 validators remain distinct retained assets. No historical fixture is migrated merely to make a test pass.
+
+The runner copies an explicit asset allowlist, hashes source and relocated files before and after, removes model credentials and Node import overrides from subprocess environments, and retains original absolute fictional evidence paths as explicit external inputs. The relocated runtime imports no source checkout or sibling skill repository. The allowlisted environment is not an operating-system sandbox.
+
+Run the repository privacy checker separately against the explicitly selected private facts file, then inspect changed shareable files and the staged index manually. The scanner does not prove the absence of paraphrased biographies or binary metadata. Machine paths and actual reports stay private under ignored outputs. Release publishing, installed-workflow acceptance and legacy removal belong to the later release milestone.
+
+Live observations establish supported document revisions and safe recovery within their recorded bounds. The recovery member remains awaiting revision and is not a complete verified application. Role-only offer coverage, employer appeal and readability can remain unassessed. No hiring probability, universal ATS prediction, numerical score gain or full normative DIN conformity is asserted.

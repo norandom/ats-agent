@@ -64,7 +64,7 @@
     "property": "Invalid profile blocks assembly",
     "correction": {
       "suite": "application-context.test.cjs",
-      "assertion": "assert.equal(x.schema_version, '1.1');"
+      "assertion": "assert.equal(x.schema_version, '1.2');"
     }
   },
   {
@@ -356,7 +356,7 @@
     "property": "Closed private handoff ready for document drafting",
     "correction": {
       "suite": "../wordcraft-application-documents/context.test.cjs",
-      "assertion": "const f=await fresh();assert.equal(f.manifest.schema_version,'1.1');"
+      "assertion": "const f=await fresh();assert.equal(f.manifest.schema_version,'1.2');"
     }
   },
   {

@@ -1,0 +1,7 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const runner=require('./full-acceptance.cjs'),manifest=require('./acceptance-manifest.json');
+test('runner requires exact executed membership, positive test counts and no skips',()=>{const rows=[{suite:'one',exit_code:0,skipped:0,tests:1}];assert.doesNotThrow(()=>runner.checkResults(rows,['one']));for(const x of [[],[...rows,...rows],[{...rows[0],exit_code:1}],[{...rows[0],skipped:1}],[{...rows[0],tests:NaN}],[{...rows[0],tests:0}]])assert.throws(()=>runner.checkResults(x,['one']));});
+test('declared inventory and all 56 assertion mappings are complete',()=>{runner.checkInventory();runner.checkCoverage();const row=manifest.coverage.pop();try{assert.throws(()=>runner.checkCoverage(),/56/);}finally{manifest.coverage.push(row);}});
+test('relocation environment removes model credentials and source injection',()=>{process.env.OPENAI_API_KEY='fictional-test-key';process.env.NODE_PATH='fictional-source';process.env.NODE_OPTIONS='fictional-options';const env=runner.environment('fictional-relocation',{inputs:{}});assert.equal(env.OPENAI_API_KEY,undefined);assert.equal(env.NODE_PATH,undefined);assert.equal(env.NODE_OPTIONS,undefined);delete process.env.OPENAI_API_KEY;delete process.env.NODE_PATH;delete process.env.NODE_OPTIONS;});
+test('fresh runner invocation cannot fall back when actual evidence is absent',async()=>{await assert.rejects(runner.run(),/Explicit actual/);});

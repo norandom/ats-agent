@@ -14,7 +14,7 @@ async function prepareIntegration(){
  ].map(([file,names])=>load(file,names)));
  const selected=h.select(p),factsPath=selected.snapshot.selection.resolved_path;
  const host={session:'fictional-entry-integration',intake:h.intake,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256,
-  validateProfile:(value,task)=>h.validate(value,{taskRequest:task}),validate:f.validate,currentApplicationSelection:()=>({target:s.target,application_context_bytes:null,confirmation_observations:[]}),
+  validateProfile:(value,task)=>h.validate(value,{taskRequest:task}),validate:f.validate,currentApplicationSelection:()=>({application_id:'fictional-document-integration',target:s.target,application_context_bytes:null,confirmation_observations:[]}),
   // Deterministic control callback; actual host meaning review is recorded separately.
   reviewInventories:async value=>Object.fromEntries(value.draft.versions.map(v=>[v.language,{binding:value.binding,draft_sha256:v.sha256,inventory_complete:true,semantics_assessed:true,claims:v.claims}])),
   reviewEditorialJudgments:async()=>({}),observeDocumentArtifacts:async()=>[]};

@@ -37,7 +37,7 @@ test('initial inventory lists only existing explicit assets', () => {
     assert.ok(!path.isAbsolute(file) && !file.includes('..'));
     assert.ok(fs.statSync(path.resolve(__dirname,'../..',file)).isFile(), file);
   }
-  assert.equal(manifest.phase, 'foundation');
+  assert.equal(manifest.phase, 'final-validation');
 });
 
 test('missing or catalog-only live evidence cannot pass final acceptance', () => {

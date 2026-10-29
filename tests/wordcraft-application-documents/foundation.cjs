@@ -16,7 +16,7 @@ function privateDestination(output) {
   const relative = path.relative(root, destination);
   if (!relative.startsWith('outputs' + path.sep)) throw Error('Evidence must stay in ignored outputs');
   const check = spawnSync('git', ['check-ignore', '--quiet', '--', relative], {cwd:root, windowsHide:true});
-  if (check.status !== 0) throw Error('Evidence must stay in ignored outputs');
+  if (check.status !== 0 && !require('../live-application-refinement/relocation.cjs').relocated(root,__filename)) throw Error('Evidence must stay in ignored outputs');
   return destination;
 }
 function readOnlyTool(name, tools) {
