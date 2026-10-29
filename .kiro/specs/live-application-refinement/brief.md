@@ -4,7 +4,7 @@
 A first draft may miss qualifications or persuasive evidence, while careless iteration can overwrite manual edits or mix document changes with reusable facts.
 
 ## Current State
-M1 through M3 are implemented and validated. M4 extends their profile, strategy, session and document contracts. Shared research remains in the targeted-cv-skill umbrella. Its requirements, design and task plan are approved. Twelve of fifteen executable tasks are implemented and independently reviewed, including the conversational entry, private checkpoints, actual scoped WordCraft revision, reporting and stopping. Final feature acceptance remains pending.
+M1 through M3 are implemented and validated. M4 extends their profile, strategy, session and document contracts. Shared research remains in the targeted-cv-skill umbrella. Its requirements, design and task plan are approved. All fifteen executable tasks are implemented and independently reviewed. Feature validation is GO, including actual bilingual WordCraft revisions, mixed fact choices, private checkpoints, interruption recovery and stopping.
 
 ## Desired Outcome
 The user watches and improves CVs and cover letters in the visible WordCraft desktop session through focused questions, controlled edits and understandable score changes. Refinement continues on the same identified live documents.
@@ -60,4 +60,4 @@ Do not silently redefine upstream-owned contracts. The user confirmed the applic
 No personal data in committed instructions or distributable assets. German/English target output; WordCraft MCP authors final DOCX; blue/no photos; DIN 5008 letters for Germany in either language. No maintained Python application. Keep professional source support distinct from editorial judgment and user preferences. Candidate examples are synthetic and unrelated to private profiles.
 
 ## Kiro Status
-Requirements, design and tasks approved: seven areas and 56 acceptance criteria. Tasks 1 through 6.2 are complete with task-local independent review. Next: 7.1 bilingual live acceptance, 7.2 interruption/isolation/stopping acceptance, and 7.3 relocation/privacy/full coverage, followed by feature validation. Task completion does not imply M4 GO.
+Requirements, design and tasks approved: seven areas and 56 acceptance criteria. All tasks are complete with independent review. The final relocated run passed 69 suites and 186 tests with no skips; all 56 criteria are covered. See [feature validation](validation-report.md) for the GO decision, evidence distinctions and limits. M5 retains installed-workflow acceptance and release work.
