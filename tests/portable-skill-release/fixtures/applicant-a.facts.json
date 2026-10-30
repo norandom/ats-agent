@@ -1,0 +1,475 @@
+{
+  "schema_version": "2.0",
+  "candidate": {
+    "id": "candidate-a",
+    "name": "John Doe",
+    "phone": null,
+    "email": "john.doe@example.invalid",
+    "postal_address": "Musterallee 18\n10115 Berlin\nGermany",
+    "location": {
+      "city": "Berlin",
+      "country": "Germany"
+    },
+    "links": [
+      {
+        "label": "Fictional portfolio",
+        "url": "https://a.example.invalid"
+      }
+    ],
+    "source_ids": [
+      "a-intake"
+    ]
+  },
+  "sources": [
+    {
+      "id": "a-intake",
+      "type": "user_answer",
+      "origin": "Wholly fictional applicant intake for release acceptance",
+      "locator": "Fictional structured intake",
+      "received_at": "2026-10-01",
+      "as_of": "2026-10-01",
+      "verification": "user_reported",
+      "verification_basis": null
+    },
+    {
+      "id": "a-clarification",
+      "type": "user_answer",
+      "origin": "Wholly fictional confirmation of earlier start-month transcription",
+      "locator": "Fictional structured intake",
+      "received_at": "2026-10-01",
+      "as_of": "2026-10-01",
+      "verification": "user_reported",
+      "verification_basis": null
+    }
+  ],
+  "profile": [
+    {
+      "id": "a-profile-1",
+      "statement": "Leads fictional Men in Black field operations across six urban districts, coordinating eleven field agents and specialist response partners.",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-profile-2",
+      "statement": "Combines incident command, negotiated resolution and evidence stewardship in encounters involving unfamiliar technologies and communities.",
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "employment": [
+    {
+      "id": "a-employment-1",
+      "employer": "Men in Black, fictional Berlin bureau",
+      "title": "Lead Field Agent",
+      "location": "Berlin, Germany",
+      "start": "2019-07",
+      "end": null,
+      "current": true,
+      "as_of": "2026-10-01",
+      "claims": [
+        {
+          "id": "a-work-1-1",
+          "statement": "Sets deployment priorities for eleven field agents and allocates response coverage across six districts.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-1-2",
+          "statement": "Coordinates transport, medical and translation specialists during complex public-space incidents.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-1-3",
+          "statement": "Reviews field evidence and escalation decisions before files pass to the bureau oversight panel.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-1-4",
+          "statement": "Mentors newly appointed field supervisors through scenario exercises and observed debriefs.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ],
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-employment-2",
+      "employer": "Men in Black, fictional Berlin bureau",
+      "title": "Field Agent",
+      "location": "Berlin, Germany",
+      "start": "2011-08",
+      "end": "2019-06",
+      "current": false,
+      "as_of": "2026-10-01",
+      "claims": [
+        {
+          "id": "a-work-2-1",
+          "statement": "Resolved contact incidents by combining witness interviews, scene assessment and negotiated agreements.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-2-2",
+          "statement": "Maintained traceable custody records for recovered devices and briefed laboratory colleagues on handling constraints.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-2-3",
+          "statement": "Served as liaison to railway control during multi-agency station exercises.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ],
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-employment-3",
+      "employer": "Fictional Riverside Civil Response Service",
+      "title": "Operations Dispatcher",
+      "location": "Potsdam, Germany",
+      "start": "2006-04",
+      "end": "2011-07",
+      "current": false,
+      "as_of": "2026-10-01",
+      "claims": [
+        {
+          "id": "a-work-3-1",
+          "statement": "Coordinated fielding operations management systems and relayed verified situation reports to response crews.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-work-3-2",
+          "statement": "Maintained shift logs and escalated unresolved requests to the duty controller.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ],
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "a-education-1",
+      "qualification": "Bachelor of Emergency Operations",
+      "institution": "Fictional Brandenburg Response College",
+      "start": null,
+      "end": null,
+      "completion_status": "completed",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-education-2",
+      "qualification": "Diploma in Interplanetary Contact Studies",
+      "institution": "Fictional Contact Studies Academy",
+      "start": null,
+      "end": null,
+      "completion_status": "completed",
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "professional_development": [
+    {
+      "id": "a-development-1",
+      "name": "Advanced Field Supervisor Qualification",
+      "organization": "Fictional Bureau Training School",
+      "since": null,
+      "valid_until": null,
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-development-2",
+      "name": "Evidence Handling Refresher",
+      "organization": "Fictional Bureau Training School",
+      "since": null,
+      "valid_until": "2027-06",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-development-3",
+      "name": "Legacy Orbital Equipment Permit, expired",
+      "organization": "Fictional Equipment Board",
+      "since": null,
+      "valid_until": "2020-12",
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "skill_groups": [
+    {
+      "id": "a-skills-1",
+      "label": "Field leadership",
+      "claims": [
+        {
+          "id": "a-skill-1-1",
+          "statement": "Turns incident priorities into clear deployment decisions and role assignments.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-skill-1-2",
+          "statement": "Uses structured debriefs to distinguish operational facts from untested explanations.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a-skills-2",
+      "label": "Contact and evidence practice",
+      "claims": [
+        {
+          "id": "a-skill-2-1",
+          "statement": "Uses translation devices as an aid to dialogue while checking meaning with community representatives.",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "id": "a-skill-2-2",
+          "statement": "Maintains device custody and containment records for specialist laboratory review.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a-skills-3",
+      "label": "Technical foundation",
+      "claims": [
+        {
+          "id": "a-skill-3-1",
+          "statement": "Earlier dispatcher work provides familiarity with fielding operations management systems; current software development proficiency is not claimed.",
+          "source_ids": [
+            "a-intake"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "a-project-1",
+      "statement": "Led a joint station evacuation exercise with railway, medical and translation teams, documenting decision points and unresolved handover issues.",
+      "source_ids": [
+        "a-intake"
+      ],
+      "start": "2024-02",
+      "end": "2024-10",
+      "employer_id": "a-employment-1"
+    },
+    {
+      "id": "a-project-2",
+      "statement": "Introduced a shared recovered-device register linking custody events, containment instructions and laboratory acknowledgements.",
+      "source_ids": [
+        "a-intake"
+      ],
+      "start": "2021-09",
+      "end": "2022-04",
+      "employer_id": "a-employment-1"
+    },
+    {
+      "id": "a-project-3",
+      "statement": "Coordinated liaison arrangements for a visiting off-world delegation and translated access constraints into an agreed station operating plan.",
+      "source_ids": [
+        "a-intake"
+      ],
+      "start": "2017-03",
+      "end": "2017-07",
+      "employer_id": "a-employment-2"
+    }
+  ],
+  "volunteering": [
+    {
+      "id": "a-volunteer",
+      "statement": "Supports a fictional community night-walking group by planning accessible routes and briefing volunteer guides.",
+      "source_ids": [
+        "a-intake"
+      ],
+      "since": "2016"
+    }
+  ],
+  "languages": [
+    {
+      "id": "a-language-1",
+      "language": "German",
+      "proficiency": "Native",
+      "cefr": null,
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-language-2",
+      "language": "English",
+      "proficiency": "Professional working proficiency",
+      "cefr": "C1",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-language-3",
+      "language": "Varkonian, fictional language",
+      "proficiency": "Conversational",
+      "cefr": null,
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "review_questions": [
+    {
+      "id": "a-question-impact",
+      "related_ids": [
+        "a-project-1"
+      ],
+      "question": "What changed after the joint station exercise, and what evidence can you describe?",
+      "disposition": "open",
+      "answer_source_ids": [],
+      "answer": null
+    },
+    {
+      "id": "a-question-dates",
+      "related_ids": [
+        "a-education-1"
+      ],
+      "question": "Should completed qualification award dates be shown?",
+      "disposition": "answered",
+      "answer_source_ids": [
+        "a-intake"
+      ],
+      "answer": "Omit completed qualification award dates unless the target role requires them."
+    },
+    {
+      "id": "a-question-gap",
+      "related_ids": [
+        "a-development-1"
+      ],
+      "question": "Do you hold an orbital pilot licence?",
+      "disposition": "confirmed_gap",
+      "answer_source_ids": [
+        "a-intake"
+      ],
+      "answer": "I do not hold an orbital pilot licence."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "a-evidence-core",
+      "record_id": "a-profile-1",
+      "field_pointer": "/statement",
+      "status": "supported",
+      "rationale": "Supplied fictional intake supports the stated scope; no independent verification claimed.",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-evidence-impact",
+      "record_id": "a-project-1",
+      "field_pointer": "/statement",
+      "status": "uncertain",
+      "rationale": "The activity is supplied; its measured outcome remains unknown and must not be invented.",
+      "source_ids": [
+        "a-intake"
+      ]
+    },
+    {
+      "id": "a-evidence-transfer",
+      "record_id": "a-work-3-1",
+      "field_pointer": "/statement",
+      "status": "transferable",
+      "rationale": "Earlier adjacent experience, not a claim of current specialist practice or automatic offer fit.",
+      "source_ids": [
+        "a-intake"
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "a-conflict-month",
+      "record_id": "a-employment-3",
+      "field_pointer": "/start",
+      "alternatives": [
+        {
+          "value": "2006-03",
+          "source_ids": [
+            "a-intake"
+          ]
+        },
+        {
+          "value": "2006-04",
+          "source_ids": [
+            "a-clarification"
+          ]
+        }
+      ],
+      "status": "resolved",
+      "resolution_source_ids": [
+        "a-clarification"
+      ],
+      "selected_alternative": 1
+    }
+  ],
+  "change_history": [
+    {
+      "id": "a-history-intake",
+      "proposal_id": "a-initial-proposal",
+      "base_sha256": null,
+      "authorization": {
+        "id": "a-historical-authorization",
+        "scope": "initial_intake",
+        "request_reference": "Fictional historical intake confirmation only; not authority for new writes.",
+        "approved_at": "2026-10-01T09:00:00Z",
+        "proposal_id": "a-initial-proposal",
+        "resolved_path": "fictional-a-facts.json"
+      },
+      "accepted_at": "2026-10-01T09:01:00Z",
+      "source_ids": [
+        "a-intake"
+      ],
+      "changes": [
+        {
+          "pointer": "/candidate/name",
+          "before": null,
+          "after": "John Doe",
+          "reason": "Recorded the explicitly supplied fictional identity."
+        }
+      ]
+    }
+  ],
+  "migration_origin": null
+}

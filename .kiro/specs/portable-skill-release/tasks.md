@@ -20,7 +20,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 1_
   - _Requirements: 1.1, 1.2, 1.4, 1.5, 3.1, 3.2, 3.5_
 
-- [ ] 2.2 Supply independently selectable fictional inputs
+- [x] 2.2 Supply independently selectable fictional inputs
   - Create two complete current-contract fictional applicants with isolated offers, application settings and scripted raw turns, unrelated to real candidate material.
   - Validate structure and semantic provenance, including unknown values, missing-evidence questions, skip and qualitative answers; package A as an explicitly selected example only.
   - Done when both sources validate independently and cross-applicant/application-scoped source selection is rejected without candidate defaults or expected CV prose.

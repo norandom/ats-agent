@@ -1,0 +1,24 @@
+{
+  "application_id": "release-application-a",
+  "facts_selection": "explicit_required",
+  "facts_file": "applicant-a.facts.json",
+  "offer_file": "applicant-a.offer.json",
+  "languages": [
+    "en",
+    "de"
+  ],
+  "target_country": "DE",
+  "requested_documents": [
+    "cv",
+    "cover_letter"
+  ],
+  "working_directory": "applicant-a-private-work",
+  "output_directory": "applicant-a-private-work/documents",
+  "writing_skills": "ask_install_or_embedded_fallback",
+  "presentation": {
+    "accent": "blue",
+    "photo": false,
+    "cv_page_numbers": "native_current_and_total",
+    "qualification_award_dates": "omit_completed_by_default"
+  }
+}

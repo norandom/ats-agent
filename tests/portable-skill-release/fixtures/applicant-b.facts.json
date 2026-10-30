@@ -1,0 +1,365 @@
+{
+  "schema_version": "2.0",
+  "candidate": {
+    "id": "candidate-b",
+    "name": "Tessa Moonweft",
+    "phone": null,
+    "email": "tessa.moonweft@example.invalid",
+    "postal_address": "Beispielgasse 9\n04109 Leipzig\nGermany",
+    "location": {
+      "city": "Leipzig",
+      "country": "Germany"
+    },
+    "links": [
+      {
+        "label": "Fictional portfolio",
+        "url": "https://b.example.invalid"
+      }
+    ],
+    "source_ids": [
+      "b-intake"
+    ]
+  },
+  "sources": [
+    {
+      "id": "b-intake",
+      "type": "user_answer",
+      "origin": "Wholly fictional applicant intake for release acceptance",
+      "locator": "Fictional structured intake",
+      "received_at": "2026-10-01",
+      "as_of": "2026-10-01",
+      "verification": "user_reported",
+      "verification_basis": null
+    },
+    {
+      "id": "b-clarification",
+      "type": "user_answer",
+      "origin": "Wholly fictional confirmation of earlier start-month transcription",
+      "locator": "Fictional structured intake",
+      "received_at": "2026-10-01",
+      "as_of": "2026-10-01",
+      "verification": "user_reported",
+      "verification_basis": null
+    }
+  ],
+  "profile": [
+    {
+      "id": "b-profile-1",
+      "statement": "Conserves historic stage textiles and plans treatment work with curators, makers and collection stewards.",
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-profile-2",
+      "statement": "Combines material documentation, careful trial treatments and practical exhibition support.",
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "employment": [
+    {
+      "id": "b-employment-1",
+      "employer": "Fictional Amberloom Costume Archive",
+      "title": "Textile Conservator",
+      "location": "Leipzig, Germany",
+      "start": "2020-05",
+      "end": null,
+      "current": true,
+      "as_of": "2026-10-01",
+      "claims": [
+        {
+          "id": "b-work-1-1",
+          "statement": "Plans stabilisation treatments for fragile stage garments after documenting fibre condition and previous repairs.",
+          "source_ids": [
+            "b-intake"
+          ]
+        },
+        {
+          "id": "b-work-1-2",
+          "statement": "Coordinates access requirements with curators and costume makers before garments enter display preparation.",
+          "source_ids": [
+            "b-intake"
+          ]
+        },
+        {
+          "id": "b-work-1-3",
+          "statement": "Records treatment materials and decisions so later conservators can distinguish original construction from intervention.",
+          "source_ids": [
+            "b-intake"
+          ]
+        }
+      ],
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-employment-2",
+      "employer": "Fictional Willowmask Theatre Workshop",
+      "title": "Costume Maker",
+      "location": "Halle, Germany",
+      "start": "2014-09",
+      "end": "2020-04",
+      "current": false,
+      "as_of": "2026-10-01",
+      "claims": [
+        {
+          "id": "b-work-2-1",
+          "statement": "Constructed touring costumes from approved patterns and adapted fastenings after supervised fit checks.",
+          "source_ids": [
+            "b-intake"
+          ]
+        },
+        {
+          "id": "b-work-2-2",
+          "statement": "Kept repair logs and discussed material substitutions with the workshop supervisor.",
+          "source_ids": [
+            "b-intake"
+          ]
+        }
+      ],
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "b-education-1",
+      "qualification": "Diploma in Textile Conservation",
+      "institution": "Fictional Saxon Material Heritage Institute",
+      "start": null,
+      "end": null,
+      "completion_status": "completed",
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "professional_development": [
+    {
+      "id": "b-development-1",
+      "name": "Collection Handling Certificate",
+      "organization": "Fictional Heritage Practice Centre",
+      "since": null,
+      "valid_until": null,
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-development-2",
+      "name": "Historic Dye Sampling Workshop",
+      "organization": "Fictional Colour Studies Guild",
+      "since": null,
+      "valid_until": null,
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "skill_groups": [
+    {
+      "id": "b-skills-1",
+      "label": "Conservation practice",
+      "claims": [
+        {
+          "id": "b-skill-1-1",
+          "statement": "Uses condition maps and small-area trials to select documented stabilisation methods.",
+          "source_ids": [
+            "b-intake"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b-skills-2",
+      "label": "Workshop foundation",
+      "claims": [
+        {
+          "id": "b-skill-2-1",
+          "statement": "Earlier costume construction supports practical interpretation of garment seams and repairs; independent chemical analysis is not claimed.",
+          "source_ids": [
+            "b-intake"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "b-project-1",
+      "statement": "Prepared a fragile travelling cloak for display using a removable support mount, with curator sign-off and handling notes.",
+      "source_ids": [
+        "b-intake"
+      ],
+      "start": "2025-01",
+      "end": "2025-07",
+      "employer_id": "b-employment-1"
+    },
+    {
+      "id": "b-project-2",
+      "statement": "Reorganised repair logs for a touring puppet production so workshop teams could trace repeated seam failures.",
+      "source_ids": [
+        "b-intake"
+      ],
+      "start": "2018-02",
+      "end": "2018-05",
+      "employer_id": "b-employment-2"
+    }
+  ],
+  "volunteering": [
+    {
+      "id": "b-volunteer",
+      "statement": "Teaches hand-sewing repair at a fictional neighbourhood reuse workshop.",
+      "source_ids": [
+        "b-intake"
+      ],
+      "since": "2019"
+    }
+  ],
+  "languages": [
+    {
+      "id": "b-language-1",
+      "language": "German",
+      "proficiency": "Native",
+      "cefr": null,
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-language-2",
+      "language": "English",
+      "proficiency": "Professional working proficiency",
+      "cefr": "B2",
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "review_questions": [
+    {
+      "id": "b-question-impact",
+      "related_ids": [
+        "b-project-1"
+      ],
+      "question": "How did the removable support mount affect exhibition handling?",
+      "disposition": "open",
+      "answer_source_ids": [],
+      "answer": null
+    },
+    {
+      "id": "b-question-dates",
+      "related_ids": [
+        "b-education-1"
+      ],
+      "question": "Should completed qualification award dates be shown?",
+      "disposition": "answered",
+      "answer_source_ids": [
+        "b-intake"
+      ],
+      "answer": "Omit completed qualification award dates unless the target role requires them."
+    },
+    {
+      "id": "b-question-gap",
+      "related_ids": [
+        "b-development-1"
+      ],
+      "question": "Are you authorised to perform independent chemical fibre analysis?",
+      "disposition": "confirmed_gap",
+      "answer_source_ids": [
+        "b-intake"
+      ],
+      "answer": "I am not authorised to perform independent chemical fibre analysis."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "b-evidence-core",
+      "record_id": "b-profile-1",
+      "field_pointer": "/statement",
+      "status": "supported",
+      "rationale": "Supplied fictional intake supports the stated scope; no independent verification claimed.",
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-evidence-impact",
+      "record_id": "b-project-1",
+      "field_pointer": "/statement",
+      "status": "uncertain",
+      "rationale": "The activity is supplied; its measured outcome remains unknown and must not be invented.",
+      "source_ids": [
+        "b-intake"
+      ]
+    },
+    {
+      "id": "b-evidence-transfer",
+      "record_id": "b-work-2-1",
+      "field_pointer": "/statement",
+      "status": "transferable",
+      "rationale": "Earlier adjacent experience, not a claim of current specialist practice or automatic offer fit.",
+      "source_ids": [
+        "b-intake"
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "b-conflict-month",
+      "record_id": "b-employment-2",
+      "field_pointer": "/start",
+      "alternatives": [
+        {
+          "value": "2014-08",
+          "source_ids": [
+            "b-intake"
+          ]
+        },
+        {
+          "value": "2014-09",
+          "source_ids": [
+            "b-clarification"
+          ]
+        }
+      ],
+      "status": "resolved",
+      "resolution_source_ids": [
+        "b-clarification"
+      ],
+      "selected_alternative": 1
+    }
+  ],
+  "change_history": [
+    {
+      "id": "b-history-intake",
+      "proposal_id": "b-initial-proposal",
+      "base_sha256": null,
+      "authorization": {
+        "id": "b-historical-authorization",
+        "scope": "initial_intake",
+        "request_reference": "Fictional historical intake confirmation only; not authority for new writes.",
+        "approved_at": "2026-10-01T09:00:00Z",
+        "proposal_id": "b-initial-proposal",
+        "resolved_path": "fictional-b-facts.json"
+      },
+      "accepted_at": "2026-10-01T09:01:00Z",
+      "source_ids": [
+        "b-intake"
+      ],
+      "changes": [
+        {
+          "pointer": "/candidate/name",
+          "before": null,
+          "after": "Tessa Moonweft",
+          "reason": "Recorded the explicitly supplied fictional identity."
+        }
+      ]
+    }
+  ],
+  "migration_origin": null
+}

@@ -1,0 +1,55 @@
+{
+  "fictional": true,
+  "application_id": "release-application-a",
+  "turns": [
+    {
+      "kind": "skip",
+      "topic": "Exact percentage reduction in station exercise response time",
+      "answer": "Please skip this question. I do not have a reliable number."
+    },
+    {
+      "kind": "qualitative_answer",
+      "topic": "What changed after the joint station exercise, and what evidence can you describe?",
+      "answer": "The station exercise exposed conflicting platform access instructions. I brought railway control and the response leads together, agreed one access sequence and tested it in a follow-up walk-through. I do not have a measured response-time reduction.",
+      "source": {
+        "id": "a-qualitative-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "new_fact",
+      "topic": "Application-specific example",
+      "answer": "For this application, include my 2025 temporary assignment translating evacuation briefings for visiting crews during the fictional Lantern Comet festival. I coordinated briefings, not the event command.",
+      "use": "application_only",
+      "source": {
+        "id": "a-local-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "new_fact",
+      "topic": "Reusable career addition",
+      "answer": "Since February 2026, I have run monthly peer-mediation practice for newly appointed field supervisors, using anonymised fictional contact scenarios.",
+      "use": "application_and_reusable",
+      "source": {
+        "id": "a-reusable-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "scope_confirmation",
+      "answer": "Use only the identified local fact in this application. Add only the identified reusable career addition to my reusable facts, after showing me its exact proposed change and destination."
+    },
+    {
+      "kind": "manual_edit",
+      "answer": "Keep my manual sentence about listening to unfamiliar communities and preserve the spacing I adjusted in the projects section."
+    },
+    {
+      "kind": "stop",
+      "answer": "Stop here. Keep the saved documents and unresolved items; do not ask another question or change, save or export anything further."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "fictional": true,
+  "application_id": "release-application-b",
+  "turns": [
+    {
+      "kind": "skip",
+      "topic": "Percentage reduction in collection handling time",
+      "answer": "Please skip this question. I do not have a reliable number."
+    },
+    {
+      "kind": "qualitative_answer",
+      "topic": "How did the removable support mount affect exhibition handling?",
+      "answer": "The mount let the display team move the cloak without gripping the original shoulders. I demonstrated the handling sequence to the curator and two gallery colleagues; no timed study was performed.",
+      "source": {
+        "id": "b-qualitative-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "new_fact",
+      "topic": "Application-specific example",
+      "answer": "For this application, include my temporary 2025 loan-preparation assignment checking packing supports for the fictional Glass Garden exhibition. Final loan approval stayed with the curator.",
+      "use": "application_only",
+      "source": {
+        "id": "b-local-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "new_fact",
+      "topic": "Reusable career addition",
+      "answer": "Since March 2026, I have maintained a photographed reference set of reversible seam-support trials for the conservation workshop.",
+      "use": "application_and_reusable",
+      "source": {
+        "id": "b-reusable-answer",
+        "type": "user_answer",
+        "as_of": "2026-10-02"
+      }
+    },
+    {
+      "kind": "scope_confirmation",
+      "answer": "Use only the identified local fact in this application. Add only the identified reusable career addition to my reusable facts, after showing me its exact proposed change and destination."
+    },
+    {
+      "kind": "manual_edit",
+      "answer": "Preserve my manual description of reversible treatment and the line break after the conservation project title."
+    },
+    {
+      "kind": "stop",
+      "answer": "Stop here. Keep the saved documents and unresolved items; do not ask another question or change, save or export anything further."
+    }
+  ]
+}
