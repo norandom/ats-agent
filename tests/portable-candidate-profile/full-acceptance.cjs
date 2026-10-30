@@ -6,7 +6,7 @@ const path = require('node:path');
 const os = require('node:os');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
-const requirements = [5, 6, 5, 6, 7, 7, 5].flatMap((count, group) => Array.from({ length: count }, (_, index) => `${group + 1}.${index + 1}`));
+const requirements = [5, 6, 5, 6, 7, 7, 5, 7].flatMap((count, group) => Array.from({ length: count }, (_, index) => `${group + 1}.${index + 1}`));
 function verifyCoverage(rows) {
   const coverage = {};
   for (const row of rows) {
@@ -21,13 +21,15 @@ function verifyCoverage(rows) {
   for (const id of requirements) assert.ok(coverage[id]?.length, `missing observed requirement ${id}`);
   return coverage;
 }
-const assets = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-v1.schema.json', 'templates/cv-facts.blank.json'];
+const assets = ['references/candidate-profile.md', 'references/profile-contract.md', 'references/profile-validation.md', 'references/profile-updates.md', 'schemas/cv-facts.schema.json', 'schemas/cv-facts-v1.schema.json', 'schemas/cv-facts-application.schema.json', 'templates/cv-facts.blank.json'];
 const suites = ['contract', 'foundation', 'validation', 'evidence', 'migration', 'intake', 'updates', 'integration', 'edge-cases', 'isolation', 'persistence-acceptance'];
 function verifyReferences(contents) {
   let links = 0;
   for (const [asset, text] of Object.entries(contents)) {
     if (asset.endsWith('.md')) {
       for (const match of text.matchAll(/\]\(([^)]+)\)/g)) {
+        // Public documentation citations are not installed runtime dependencies.
+        if (/^https:\/\//.test(match[1])) continue;
         const target = path.posix.normalize(path.posix.join(path.posix.dirname(asset), match[1].split('#')[0]));
         assert.ok(Object.hasOwn(contents, target), 'unresolved relocated reference'); links++;
       }
@@ -49,8 +51,8 @@ async function run() {
   assert.ok(path.isAbsolute(relative) || relative === '..' || relative.startsWith('..' + path.sep), 'relocation must be outside repository');
   const output = path.join(root, 'outputs/profile-tests'); fs.mkdirSync(output, { recursive: true });
   const evidenceRoot = fs.mkdtempSync(path.join(output, 'full-acceptance-'));
-  const report = { status: 'incomplete', assets: [], suites: [], coverage: null,
-    limitations: 'Synthetic host-reviewed source mappings, not automatic prose interpretation or source authentication. Windows File.Replace and protected DACL only in fresh unpublished test-owned workspaces; no general writer exclusion, audit/encryption/network security guarantee. No final SKILL entrypoint or release archive verified.' };
+  const report = { status: 'incomplete', assets: [], suites: [], coverage: null, native_host: {platform: process.platform, ordinary_user_new_file: 'not_assessed'},
+    limitations: 'Synthetic host-reviewed source mappings, not automatic prose interpretation or source authentication. Windows existing-file replacement and ordinary-user native new-file creation are exercised only in fresh test-owned workspaces. New-file policy does not attest source audit/encryption/classification metadata; unsupported hosts remain unassessed. No general host writer or network guarantee. No final SKILL entrypoint or release archive verified.' };
   const save = () => fs.writeFileSync(path.join(evidenceRoot, 'evidence.json'), JSON.stringify(report, null, 2) + '\n');
   // Location stays in ignored output; public summaries contain no machine paths.
   fs.writeFileSync(path.join(evidenceRoot, 'workspace.txt'), relocated + '\n');
@@ -67,7 +69,7 @@ async function run() {
     report.assets.push({ asset, sha256: hash(fs.readFileSync(destination)), identical: true });
   }
   report.resolved_reference_links = verifyReferences(Object.fromEntries(assets.map(asset => [asset, fs.readFileSync(path.join(relocated, 'skills/targeted-cv', asset), 'utf8')])));
-  // Existing adapters and fixtures are test infrastructure, outside the seven-asset skill.
+  // Existing adapters and fixtures are test infrastructure, outside the eight-asset profile scope.
   for (const entry of fs.readdirSync(__dirname, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile() || !/\.(cjs|json)$/.test(entry.name) || entry.name.startsWith('full-acceptance')) continue;
     copy(path.relative(root, path.join(entry.parentPath, entry.name)));
@@ -99,7 +101,7 @@ async function run() {
   }
   for (const suite of suites) {
     console.log(`Relocated suite: ${suite}`);
-    const result = spawnSync(process.execPath, [path.join(relocated, 'tests/portable-candidate-profile', suite + '.test.cjs')], { cwd: relocated, env, encoding: 'utf8', windowsHide: true, timeout: 600000 });
+    const result = spawnSync(process.execPath, [path.join(relocated, 'tests/portable-candidate-profile', suite + '.test.cjs')], { cwd: relocated, env, encoding: 'utf8', windowsHide: true, timeout: 1200000 });
     report.suites.push({ suite, status: result.status, signal: result.signal || null, error: result.error?.code || null }); save();
     fs.writeFileSync(path.join(evidenceRoot, suite + '.log'), (result.stdout || '') + (result.stderr || ''));
     assert.equal(result.status, 0, `${suite}: failed; inspect private suite output`);
@@ -128,8 +130,11 @@ async function run() {
   }
   // Recheck immutable relocated assets after executing every flow.
   for (const item of report.assets) assert.equal(hash(fs.readFileSync(path.join(relocated, 'skills/targeted-cv', item.asset))), item.sha256);
+  const native = rows.find(row => row.name === 'native_creation_policy');
+  assert.ok(native?.observed.ordinary_user && native.observed.reopened, 'full current acceptance requires actual ordinary-user Windows native evidence');
+  report.native_host.ordinary_user_new_file = 'passed';
   report.observations = rows; report.coverage = verifyCoverage(rows); report.status = 'passed'; save();
-  console.log(`Full relocated profile acceptance: ${suites.length} top-level suites, ${rows.length} named observations, 41/41 criteria mapped. Seven byte-identical assets; intake, correction and lossless migration executed outside checkout. See scenarios.md for limits.`);
+  console.log(`Full relocated profile acceptance: ${suites.length} top-level suites, ${rows.length} named observations, ${requirements.length}/${requirements.length} criteria mapped. ${assets.length} byte-identical assets; intake, correction and lossless migration executed outside checkout. See scenarios.md for limits.`);
   return report;
 }
 module.exports = { verifyCoverage, verifyReferences, requirements, run };

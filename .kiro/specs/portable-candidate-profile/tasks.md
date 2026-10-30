@@ -124,7 +124,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 4.1, 4.2_
   - _Requirements: 1.1, 2.6, 4.1, 4.4, 6.6, 7.4, 7.5_
 
-- [ ] 6. Support separately selected ordinary-user profile versions
+- [x] 6. Support separately selected ordinary-user profile versions
 - [x] 6.1 Establish verified private creation and inspection capabilities
   - Provide the installed host's bounded creation policy, native identity/exclusion lease and read-only inspection phase; preserve existing replacement guarantees.
   - Exercise real ordinary-user Windows create-new permissions, sharing, source/parent identity, collision refusal, flushed readback and unsupported-policy deferral. Other hosts retain explicit unassessed support.
@@ -147,7 +147,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Depends: 6.1, 6.2_
   - _Requirements: 6.4, 6.6, 6.7, 7.3, 8.1, 8.3, 8.4, 8.5, 8.6, 8.7_
 
-- [ ] 6.4 Validate profile versions and preserve compatibility
+- [x] 6.4 Validate profile versions and preserve compatibility
   - Extend existing complete profile suites and current criteria mappings; execute native ordinary-user source/target tests and retained replacement/fork/migration/isolation regressions.
   - Integrate selected-new-source behavior and copyable runtime guidance without exposing technical storage details or silently redirecting inputs.
   - Done when all current profile requirements have executed implementation evidence, preserved historical schemas/old behavior and a confirmed source-selection handoff for refinement; installed acceptance remains M5.

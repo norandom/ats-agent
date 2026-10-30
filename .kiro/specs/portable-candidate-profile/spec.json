@@ -1,9 +1,9 @@
 {
   "feature_name": "portable-candidate-profile",
   "created_at": "2026-10-25T17:53:28+01:00",
-  "updated_at": "2026-10-30T17:45:58.5848676Z",
+  "updated_at": "2026-10-30T20:07:16.216Z",
   "language": "en",
-  "phase": "tasks-generated",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -20,8 +20,11 @@
   },
   "ready_for_implementation": true,
   "validation": {
-    "decision": "NOT_ASSESSED",
-    "scope": "Ordinary-user versioning amendment: requirements, design and tasks approved; implementation authorized, validation outstanding."
+    "decision": "GO",
+    "report": "ordinary-user-versioning-validation-report.md",
+    "validated_on": "2026-10-30",
+    "criteria_covered": 48,
+    "scope": "Current profile owner implementation on assessed ordinary-user Windows host; downstream refinement and installed acceptance remain outstanding."
   },
   "validation_history": [
     {

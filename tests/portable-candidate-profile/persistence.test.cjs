@@ -12,6 +12,7 @@ const createWindowsCreationAdapter = load('profile-updates.md', 'createWindowsCr
 const createProfileIntake = load('candidate-profile.md', 'createProfileIntake');
 const dispatchVersion = load('profile-contract.md', 'dispatchVersion');
 const validateProfile = load('profile-validation.md', 'validateProfile');
+const evidenceView = load('profile-validation.md', 'evidenceView');
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 const blank = require('../../skills/targeted-cv/templates/cv-facts.blank.json');
 const base = require('./fixtures/populated.cjs')(blank); base.evidence = []; base.review_questions = [];
@@ -151,6 +152,7 @@ async function nativeCreationLease() {
     assert.equal((await ask({ op: 'createNew', lease: second.lease, bytes: bytes.toString('base64') })).ok, false, 'failed attempt cannot replay');
     assert.deepEqual(fs.readFileSync(raced.destination), bytes);
     await ask({ op: 'release', lease: first.lease }); await ask({ op: 'release', lease: second.lease });
+    evidence.record('native_creation_policy', ['7.3','8.2','8.3','8.4','8.6'], {ordinary_user:storage.ordinary_user, reopened:created.reopened, exact_bytes:created.bytes===bytes.toString('base64'), source_unchanged:fs.readFileSync(source).equals(original), source_acl_unchanged:acl(source)===sourceAcl, race_preserved:fs.readFileSync(raced.destination).equals(bytes)}, {ordinary_user:true,reopened:true,exact_bytes:true,source_unchanged:true,source_acl_unchanged:true,race_preserved:true});
   } finally { child.stdin.end(); child.kill(); }
 }
 async function run() {
@@ -202,7 +204,7 @@ async function run() {
     const before = fs.readFileSync(x.selectedPath); const r = await x.api.persist(arg);
     assert.notEqual(r.status, 'confirmed', mode); checks++;
     check(fs.readFileSync(x.selectedPath), before); check(x.replacements(), 0);
-    evidence.record(mode, [...(['forged','mutated'].includes(mode) ? ['6.2'] : mode === 'invalid' ? ['6.4'] : ['6.6']), '7.3','7.5'], {
+    evidence.record(mode, [...(['forged','mutated'].includes(mode) ? ['6.2'] : mode === 'invalid' ? ['6.4'] : mode === 'no_security' ? ['6.6','8.7'] : ['6.6']), '7.3','7.5'], {
       status: r.status, unchanged: fs.readFileSync(x.selectedPath).equals(before), replacements: x.replacements(), peer_unchanged: fs.readFileSync(x.other).equals(x.original)
     }, { status: ['stale','selection'].includes(mode) ? 'conflict' : mode === 'invalid' ? 'rejected' : 'unconfirmed', unchanged: true, replacements: 0, peer_unchanged: true });
   }
@@ -241,11 +243,16 @@ async function versionPersistenceCases(ask, storage) {
     const profile = structuredClone(mode==='lost_ack' ? priorConfirmed : base);
     if (mode === 'scoped') { profile.schema_version = '2.1'; profile.application_scope = { application_id: 'fictional-version-app', target_sha256: 'c'.repeat(64), origin_profile: {schema_version:'2.0',resolved_path:source,sha256:hash(original)} }; }
     const sourceBytes = Buffer.from(JSON.stringify(profile)); fs.writeFileSync(source, sourceBytes);
-    const selected = {generation:1, selection:{resolved_path:source,profile_sha256:hash(sourceBytes),schema_version:profile.schema_version},profile};
+    const intake=createProfileIntake({resolvePath:(w,p)=>path.resolve(w,p),realpath:fs.realpathSync,readBytes:fs.readFileSync,decodeUtf8:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),sha256:hash});
+    const applicationSelection=profile.application_scope && {application_id:profile.application_scope.application_id,target_sha256:profile.application_scope.target_sha256};
+    const selectionRequest={workspace_root:workspace,facts_path:source,...(applicationSelection?{application_selection:applicationSelection}:{})};
+    check(intake.select(selectionRequest).status,'selected');
+    const selected=intake.snapshot();
+    const integrated=['success','lost_ack','scoped'].includes(mode);
     const proposal = structuredClone(profile); proposal.candidate.name = mode==='lost_ack' ? 'Fictional Later Successor Person' : 'Fictional Successor Person';
     let creates = 0, firstRead = true, attempted = false, decisions = 0, failValidation = false, inspectOnly = false, inspected = 0, failedRelease = false;
     const taskRequest={task_id:'fictional-version-name',required:[{pointer:'/candidate/name',record_id:null,reason:'Explicitly selected candidate identity for synthetic intake.'}]};
-    const host = {taskRequest,creationPolicyId:'windows-private-new-file-v1',currentSelection:()=>structuredClone(selected),sha256:hash,
+    const host = {taskRequest,creationPolicyId:'windows-private-new-file-v1',currentSelection:()=>integrated?intake.snapshot():structuredClone(selected),sha256:hash,
       encode:s=>Buffer.from(s),decode:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),
       currentApplicationSelection:()=>profile.application_scope && {application_id:profile.application_scope.application_id,target_sha256:profile.application_scope.target_sha256},
       validate:async p => failValidation ? {schema:'failed',semantics:'failed'} : validateProfile(p,{applicationSelection:host.currentApplicationSelection(), validate:async()=>{
@@ -309,6 +316,7 @@ async function versionPersistenceCases(ask, storage) {
     if(mode==='restart')check((await createProfileUpdates(host).persistVersion(decision)).status,'unconfirmed');
     check(creates,['collision','source_changed','selection','pre_validation'].includes(mode)?0:1);
     if(['atomic_collision','partial','absent'].includes(mode))check(inspected,1);
+    let reportForEvidence=null, handoffForEvidence=null;
     if(result.status==='confirmed') {
       check(result.destination.sha256,hash(fs.readFileSync(destination)));check(result.destination.schema_version,profile.schema_version);
       const saved=JSON.parse(fs.readFileSync(destination));check(saved.change_history.slice(0,-1),profile.change_history);check(saved.sources,profile.sources);
@@ -316,20 +324,42 @@ async function versionPersistenceCases(ask, storage) {
       if(mode==='lost_ack')check(saved.change_history.length,base.change_history.length+2);
       check(saved,decision.proposed_profile);
       if(mode==='scoped')check(saved.application_scope,profile.application_scope);
-      const intake=createProfileIntake({resolvePath:(w,p)=>path.resolve(w,p),realpath:fs.realpathSync,readBytes:fs.readFileSync,decodeUtf8:host.decode,sha256:hash});
-      const selectionRequest={workspace_root:workspace,facts_path:source,...(mode==='scoped'?{application_selection:host.currentApplicationSelection()}:{})};
-      check(intake.select(selectionRequest).status,'selected');
+      // The live intake remains on the original until this explicit selection.
+      check(intake.snapshot().selection.profile_sha256,hash(sourceBytes));
       check(intake.snapshot().selection.resolved_path,source);
       const authorityCalls=decisions;
       // This explicit action is already covered by the reviewed select_after_confirmation request.
       check(intake.select({...selectionRequest,facts_path:result.destination.resolved_path}).status,'selected');
       const reopened=intake.snapshot();check(reopened.selection.profile_sha256,result.destination.sha256);
       check(dispatchVersion(reopened.profile).status,'current');
-      const report=await host.validate(reopened.profile);check(report.schema,'passed');check(report.semantics,'passed');check(report.readiness,'ready');
+      const report=await host.validate(reopened.profile);reportForEvidence=report;check(report.schema,'passed');check(report.semantics,'passed');check(report.readiness,'ready');
+      handoffForEvidence=evidenceView(reopened.selection,reopened.profile,report);
+      check(handoffForEvidence.selection.profile_sha256,result.destination.sha256);
+      check(handoffForEvidence.profile,decision.proposed_profile);
+      check(handoffForEvidence.validation.readiness,'ready');
+      check(host.currentSelection().selection.resolved_path,destination);
       check(decisions,authorityCalls);
     }
     check(fs.readFileSync(source),['source_changed','late_source'].includes(mode)?Buffer.concat([sourceBytes,Buffer.from(' ')]):sourceBytes);
     check(acl(source),originalAcl);
+    const sourceExpected=['source_changed','late_source'].includes(mode)?Buffer.concat([sourceBytes,Buffer.from(' ')]):sourceBytes;
+    const linked = {
+      success:['8.1','8.4','8.5'],lost_ack:['8.4','8.5','8.6'],scoped:['8.1','8.4','8.5'],
+      read_failure:['8.6'],collision:['8.3'],atomic_collision:['8.3','8.6'],partial:['8.6'],absent:['8.6'],policy:['8.2','8.4'],validation:['8.4'],source_changed:['8.1','8.3'],selection:['8.3'],busy:['8.6'],replaced_identity:['8.3','8.6'],restart:['8.6'],late_source:['8.3','8.6'],late_selection:['8.3','8.6'],source_identity:['8.3','8.6'],release_failure:['8.6'],release_selection:['8.3'],pre_validation:['8.4']
+    };
+    evidence.record('version_'+mode, ['7.3',...linked[mode]], {
+      status:result.status, reconciled_status:again.status, creates,
+      active_selection:result.active_selection, source_preserved:fs.readFileSync(source).equals(sourceExpected),
+      source_acl_preserved:acl(source)===originalAcl, artifact_hash_matches:result.destination ? result.destination.sha256===hash(fs.readFileSync(destination)) : null,
+      initial_schema:result.status==='confirmed'?reportForEvidence?.schema:null,
+      initial_semantics:result.status==='confirmed'?reportForEvidence?.semantics:null,
+      selected_readiness:result.status==='confirmed'?reportForEvidence?.readiness:null, handoff_hash_matches:handoffForEvidence?handoffForEvidence.selection.profile_sha256===result.destination.sha256:null
+    }, {
+      status:['success','lost_ack','scoped'].includes(mode)?'confirmed':mode==='pre_validation'?'rejected':['collision','source_changed','selection'].includes(mode)?'conflict':'unconfirmed',
+      reconciled_status:['success','lost_ack','scoped','read_failure','release_failure'].includes(mode)?'confirmed':mode==='pre_validation'?'rejected':['collision','source_changed','selection','late_selection','release_selection'].includes(mode)?'conflict':'unconfirmed',
+      creates:['collision','source_changed','selection','pre_validation'].includes(mode)?0:1,active_selection:'unchanged',source_preserved:true,source_acl_preserved:true,
+      artifact_hash_matches:result.status==='confirmed'?true:null,initial_schema:result.status==='confirmed'?'passed':null,initial_semantics:result.status==='confirmed'?'passed':null,selected_readiness:result.status==='confirmed'?'ready':null,handoff_hash_matches:result.status==='confirmed'?true:null
+    });
   }
   console.log('Task6.3 native owner cases passed: exact actual schema/readback, closed result, identity-backed reconciliation, collision isolation, scope/history and source continuity.');
 }

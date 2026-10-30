@@ -31,7 +31,15 @@ A job offer is not evidence about you. The agent must ask before treating an att
 
 Confirm extracted details and correct mistakes before relying on them in an application. You can leave a detail unknown, skip a question or state that it does not apply. These answers have different meanings.
 
-When a conversation reveals a reusable correction, the agent proposes an update to the facts file. Review that change separately from wording changes to the current CV. The workflow retains the previous version and confirms that the saved file contains the intended correction before using it as the new source.
+When a conversation reveals a reusable correction, the agent proposes an update to the facts file. Review that change separately from wording changes to the current CV. The agent confirms what was saved before treating the correction as a reusable fact.
+
+You can ask: "Save these confirmed corrections as a new private version, keep my original, and use the new version for this application once it has been checked." The agent shows the source, exact changes and proposed destination. If that request covers the same destination and later selection, you do not need to approve them again.
+
+Saving a version leaves your original untouched. The agent checks the saved file and reports its exact path before selecting it as the next source. Saving alone keeps the original selected. The new file can supply facts only after its selection and validation succeed. You can also save a version without switching to it. A file that already exists is a conflict, even if its contents match; the agent does not adopt or overwrite it.
+
+A supported new-file route creates the version in a verified private location. It does not copy or certify every security property of the original. If the required protection cannot be checked, the save stays deferred. This does not relax the checks for replacing an existing file.
+
+If saving is interrupted or cannot be verified, keep both files and let the agent inspect the exact attempted destination before another write. A retained file can be explicitly selected and validated, but its contents alone cannot prove that an interrupted save succeeded or authorize a retry.
 
 For bilingual applications, use one facts file. Translations may change phrasing, but must preserve the same qualifications, dates, responsibility and results.
 
