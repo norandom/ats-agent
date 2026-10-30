@@ -327,7 +327,10 @@
     "tests/wordcraft-document-session/scenarios.md",
     "THIRD_PARTY_NOTICES.md",
     "release/verify.cjs",
-    "tests/portable-skill-release/archive-verification.test.cjs"
+    "tests/portable-skill-release/archive-verification.test.cjs",
+    "release/pipeline.cjs",
+    "tests/portable-skill-release/pipeline.test.cjs",
+    "tests/portable-skill-release/reproducibility.test.cjs"
   ],
   "coverage": [
     {

@@ -1,44 +1,76 @@
-name: Alpha release
+name: Candidate validation
 on:
   push:
     tags: ['v*-alpha.*']
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: alpha-release-${{ github.ref }}
+  group: candidate-validation-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  release:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.23.4'
       - uses: pnpm/action-setup@v4
         with:
           version: '10.18.3'
-      - name: Check tag and prepare explicit context
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install the pinned validation launcher
+        run: python -m pip install uv==0.9.8
+      - name: Select provenance and prepare two isolated generic modules
         shell: bash
         run: |
+          set -euo pipefail
           if [[ "$GITHUB_REF_TYPE" == tag ]]; then
             test "$GITHUB_REF_NAME" = "v$(tr -d '\r\n' < VERSION)"
           fi
-          pnpm exec node release/prepare.cjs outputs/release-context
-      - name: Validate and package with Dagger
-        uses: dagger/dagger-for-github@v8.4.1
+          export SOURCE_REVISION="$(git rev-parse HEAD)"
+          export SOURCE_EPOCH="$(git show -s --format=%ct HEAD)"
+          echo "SOURCE_REVISION=$SOURCE_REVISION" >> "$GITHUB_ENV"
+          echo "SOURCE_EPOCH=$SOURCE_EPOCH" >> "$GITHUB_ENV"
+          node <<'NODE'
+          const {prepareRun}=require('./release/pipeline.cjs');
+          for(const name of ['left','right']) {
+            const result=prepareRun({root:process.cwd(),sourceRevision:process.env.SOURCE_REVISION,sourceEpoch:Number(process.env.SOURCE_EPOCH)},`outputs/${name}`);
+            if(result.status!=='passed')process.exit(1);
+          }
+          NODE
+      - uses: dagger/dagger-for-github@v8.4.1
         with:
           version: '0.21.8'
-          verb: call
-          args: dist --source=outputs/release-context export --path=outputs/release-dist
+      - name: Execute two fresh production builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in left right; do
+            (
+              cd "outputs/$attempt"
+              dagger call dist --source=candidate-source --source-revision="$SOURCE_REVISION" --source-epoch="$SOURCE_EPOCH" --run-id="$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$attempt" export --path="../$attempt-dist"
+            )
+          done
+      - name: Independently verify and compare both builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),{compareBuilds}=require('./release/pipeline.cjs');
+          const side=name=>({prepared:{root:path.resolve(`outputs/${name}/candidate-source`),sourceRevision:process.env.SOURCE_REVISION,sourceEpoch:Number(process.env.SOURCE_EPOCH)},dist:path.resolve(`outputs/${name}-dist`)});
+          const result=compareBuilds({left:side('left'),right:side('right')});
+          fs.writeFileSync('outputs/reproducibility.json',JSON.stringify(result,null,2)+'\n');
+          if(result.status!=='passed')process.exit(1);
+          NODE
       - uses: actions/upload-artifact@v4
         with:
-          name: alpha-bundles
-          path: outputs/release-dist/*
+          name: validated-candidate-builds
+          path: |
+            outputs/left-dist/*
+            outputs/right-dist/*
+            outputs/reproducibility.json
           if-no-files-found: error
-      - name: Publish alpha
-        if: github.ref_type == 'tag'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" outputs/release-dist/* --verify-tag --prerelease --title "Targeted CV $GITHUB_REF_NAME" --notes-file release/notes.md

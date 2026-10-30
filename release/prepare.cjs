@@ -5,7 +5,7 @@ const {checkRegularFile,validateFoundation}=require('../tests/portable-skill-rel
 const {readDeclaration,validateRecord}=require('./candidate-definition.cjs');
 const {checkDefinition}=require('./check.cjs');
 const descriptorName='SOURCE-SNAPSHOT.json';
-const metadata=['.gitattributes','VERSION','package.json','dagger.json','.dagger/src/index.ts','.dagger/package.json','.dagger/pnpm-lock.yaml','.dagger/tsconfig.json','.github/workflows/release.yml','release/README.md','release/prepare.cjs','release/package.cjs'];
+const metadata=['release/notes.md','.gitattributes','VERSION','package.json','dagger.json','.dagger/src/index.ts','.dagger/package.json','.dagger/pnpm-lock.yaml','.dagger/tsconfig.json','.github/workflows/release.yml','release/README.md','release/prepare.cjs','release/package.cjs'];
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 // Bytewise CRLF equivalence avoids lossy UTF-8 decoding of arbitrary maintenance bytes.
