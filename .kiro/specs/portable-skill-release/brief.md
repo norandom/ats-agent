@@ -4,7 +4,7 @@
 The completed workflow must be shareable without the author's data, machine paths, sibling checkout or obsolete Python scoring application.
 
 ## Current State
-This is a new milestone boundary split from the initialized targeted-cv-skill umbrella. Shared research and user decisions remain in that directory. A candidate schema and blank template already exist as preliminary inputs; the legacy Python scorer is still present. No milestone implementation or phase approval is implied.
+M1 through M4 are implemented and validated. A scoped earlier alpha has packaging and archive-check tooling, but its manifest and acceptance declarations predate M4. The legacy Python scorer remains present. M5 installed-workflow, rights and retirement acceptance have not been completed; shared research and user decisions remain in the targeted-cv-skill umbrella.
 
 ## Desired Outcome
 A separately maintained, installable skill package works for a new candidate and replaces the legacy Python workflow.
@@ -57,4 +57,4 @@ Do not redefine upstream-owned contracts. Any new dependency or ownership change
 No personal data in committed instructions or distributable assets. German/English target output; WordCraft MCP authors final DOCX; blue/no photos; DIN 5008 letters for Germany in either language. No maintained Python application. Keep professional source support distinct from editorial judgment and user preferences. Candidate examples are synthetic and unrelated to private profiles.
 
 ## Kiro Status
-Discovery brief only. Next: initialize, generate requirements, review requirements, design, review design, tasks, review tasks, implementation and validation. No automatic approval or implementation readiness.
+Requirements and design approved. The implementation task plan covers all 44 criteria and passed independent graph review after local repairs. The user approved implementation. MIT applies to project-owned code and skill content; third-party rights remain separately verified. See [tasks](tasks.md) and [task review](task-review.md). No release-readiness or publication claim is implied.
