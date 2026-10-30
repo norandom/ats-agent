@@ -53,7 +53,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 2.4_
   - _Requirements: 1.1, 1.3, 2.1, 2.2, 2.5, 2.7_
 
-- [ ] 3.2 Produce portable and ecosystem layouts
+- [x] 3.2 Produce portable and ecosystem layouts
   - Generate canonical portable ZIP, byte-identical .skill alias and plugin ZIP with format-specific host metadata, package-local extras and inner release identity.
   - Bind outer hash, size, metadata hash and inventory digest without self-reference; normalize ordering, epoch and regular-file modes.
   - Require fresh staging and archive-output destinations and reject collisions before ZIP invocation; do not overwrite or automatically retry.
