@@ -8,7 +8,9 @@
     "release:prepare": "node release/prepare.cjs",
     "release:check": "node release/check.cjs",
     "release:pipeline": "node release/pipeline.cjs",
-    "release:test": "node --test tests/portable-skill-release/*.test.cjs"
+    "release:test": "node --test tests/portable-skill-release/*.test.cjs",
+    "release:validate": "node tests/portable-skill-release/full-acceptance.cjs",
+    "release:retirement": "node release/retirement.cjs"
   },
   "license": "MIT"
 }

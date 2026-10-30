@@ -4,6 +4,10 @@ Maintainers can prepare two source-bound builds, verify each archive and compare
 
 Select a committed revision with the intended maintenance changes. Preparation captures its full revision, commit epoch and exact generic inventory in `SOURCE-SNAPSHOT.json`. It rejects substantive uncommitted changes. All destinations below must be absent. Choose a new output prefix for a repeat run.
 
+The Dagger `dist` entrypoint runs the complete deterministic inventory before packaging. Export its validation report separately with `dagger call validate --source=candidate-source --source-revision="$SOURCE_REVISION" --source-epoch="$SOURCE_EPOCH" --run-id=YOUR_SAME_ATTEMPT_ID export --path=../validation` in Bash. Use `$env:SOURCE_REVISION` and `$env:SOURCE_EPOCH` in PowerShell. Reusing the same attempt ID for the matching `dist` and `validate` calls retrieves the same execution; choose a fresh ID for another run. Reports remain outside the six-file distribution set. Generic success leaves actual host acceptance and all 44 actual criteria unassessed.
+
+For current host candidate A/B selections, owner validators, criterion review and the read-only retirement gate, follow [retirement maintenance](retirement.md). Its fixed A/B policy preserves acceptance before removal and fresh validation after removal. No command here publishes or retires anything.
+
 ## Prepare two contexts
 
 Run from the repository root. Bash on Linux or Debian WSL:

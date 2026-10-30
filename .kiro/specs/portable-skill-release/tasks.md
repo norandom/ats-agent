@@ -102,7 +102,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: InstalledAcceptance_
   - _Requirements: 3.3, 3.4, 3.5, 3.6, 4.1, 4.8_
 
-- [ ] 5. Integrate readiness and conditional retirement gates
+- [x] 5. Integrate readiness and conditional retirement gates
 - [x] 5.1 Aggregate artifact-bound readiness without mutation
   - Join candidate definition, rights, privacy/integrity, reproducibility, installed support and affected regressions in a read-only result with explicit blocking and unassessed gates.
   - Require the exact archive's operational evidence; matching content or older checkout receipts cannot transfer acceptance between artifacts or hosts.
@@ -111,7 +111,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 3.4, 4.3_
   - _Requirements: 2.7, 4.8, 6.5, 6.6, 7.1, 7.2_
 
-- [ ] 5.2 Gate the approved retirement scope and final validation
+- [x] 5.2 Gate the approved retirement scope and final validation
   - Declare the exact tracked legacy removal/update inventory and recovery policy separately from private attempt evidence and acceptance authority.
   - Verify accepted A prerequisites, unchanged approved scope and legacy-only ownership; reject injected approval, scope expansion and ignored-file operations.
   - Integrate a complete validation runner checking every declared suite, mandatory nonzero counts, zero mandatory skips, all 44 criteria and version-specific affected regressions.
@@ -204,3 +204,5 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 - Task 3.4 builds raw stages on the Linux container filesystem and exports finished archives only; DrvFS modes can differ despite chmod. Keep production /source immutable, tests in /work and unique attempt IDs before validation/production to avoid reusing prior execution evidence.
 
 - Group 4 separates collection, mechanical evidence verification and actual installed-workflow acceptance. Keep independently selected index/review digests and authenticated competent observations; a passed helper result or an old artifact's receipts do not grant readiness for a newly built artifact.
+
+- Group 5 adds the fixed complete-validation runner and exact retirement policy. Future task 7.1 must create a dedicated retirement commit containing only the eight declared removals and five updates. Record its prior revision and diff for scoped recovery; commit task/review metadata separately. Later approved metadata may advance HEAD, while frozen B retains its own exact source and evidence bindings.

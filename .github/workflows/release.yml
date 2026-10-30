@@ -53,6 +53,7 @@ jobs:
             (
               cd "outputs/$attempt"
               dagger call dist --source=candidate-source --source-revision="$SOURCE_REVISION" --source-epoch="$SOURCE_EPOCH" --run-id="$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$attempt" export --path="../$attempt-dist"
+              dagger call validate --source=candidate-source --source-revision="$SOURCE_REVISION" --source-epoch="$SOURCE_EPOCH" --run-id="$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$attempt" export --path="../$attempt-validation"
             )
           done
       - name: Independently verify and compare both builds
@@ -73,4 +74,6 @@ jobs:
             outputs/left-dist/*
             outputs/right-dist/*
             outputs/reproducibility.json
+            outputs/left-validation/*
+            outputs/right-validation/*
           if-no-files-found: error
