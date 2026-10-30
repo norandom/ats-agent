@@ -2,7 +2,7 @@
 
 Each executable task is a 1 to 3 hour work unit, including its focused checks. Container headings are not additional work units. Tasks run sequentially: shared release records, archive destinations and the desktop session prevent safe parallel implementation. Package guidance and notices are functional distribution assets, verified with their owning capability.
 
-- [ ] 1. Establish release validation foundations
+- [x] 1. Establish release validation foundations
   - Verify available Node/pnpm, uvx validator, archive tools and local Debian/Dagger versions against the approved baselines; distinguish applicant and maintenance prerequisites.
   - Establish the explicit maintenance test closure, criterion map, actual/control/host-judgment labels and focused test entrypoints without importing private assets.
   - Record unchanged hashes for all 31 core resources and retain upstream regression entrypoints; no new application service or model endpoint is introduced.

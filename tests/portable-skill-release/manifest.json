@@ -1,0 +1,931 @@
+{
+  "schema_version": "1.0",
+  "kind": "release-test-foundation",
+  "observation_classes": [
+    "actual",
+    "control",
+    "host_judgment"
+  ],
+  "core": [
+    {
+      "path": "skills/targeted-cv/SKILL.md",
+      "sha256": "34e7c87cb61bc81106ef8cd87f67840716fdc707d0e7a00a4bc5066e1cd16fd3"
+    },
+    {
+      "path": "skills/targeted-cv/references/application-documents.md",
+      "sha256": "8e86fd1133b70d92a6457e4d40963a7ebb3d0af6ef45a5584463ad13929d8bf1"
+    },
+    {
+      "path": "skills/targeted-cv/references/application-refinement.md",
+      "sha256": "9031987c4685b475df1e516e85f43e3ece93e5b8bbf98d3c2059f982fe29e148"
+    },
+    {
+      "path": "skills/targeted-cv/references/application-strategy.md",
+      "sha256": "ebeda4ede3ada71241488888c561402626d1cd71f8b6e6e86d1b365a292e8e32"
+    },
+    {
+      "path": "skills/targeted-cv/references/candidate-profile.md",
+      "sha256": "f2deb9580c70cc06b5d03e7fb8d22247f066c43b6285b6ce9aa43f7f032bd627"
+    },
+    {
+      "path": "skills/targeted-cv/references/document-presentation.md",
+      "sha256": "e03ec637fb27c496016ca8c57ccfbb1b34d0db0ba94552dc27a18c6881f97881"
+    },
+    {
+      "path": "skills/targeted-cv/references/document-session.md",
+      "sha256": "089904894289c2993caafd99b2bdde56bd754bdf84edd030bc42c854a2545f57"
+    },
+    {
+      "path": "skills/targeted-cv/references/document-verification.md",
+      "sha256": "3ad1f81915c558e3c2b851a91732998f17975a8bc67bc3da5fc9f6f7f657ec51"
+    },
+    {
+      "path": "skills/targeted-cv/references/germany-cover-letter.md",
+      "sha256": "f471fbc92cff33e681bf7234ddb96396fa9060d0a5788fc99614f7660e9e4361"
+    },
+    {
+      "path": "skills/targeted-cv/references/profile-contract.md",
+      "sha256": "af44e60f0c504db053994e28fc65e71c40f4c0207f75af9150ef49bcd9566408"
+    },
+    {
+      "path": "skills/targeted-cv/references/profile-updates.md",
+      "sha256": "4ab168ceadf74548c3c2b56ac8571660618ea76461f63daa79d943d41fbcf385"
+    },
+    {
+      "path": "skills/targeted-cv/references/profile-validation.md",
+      "sha256": "86f39c791827cf21d4601951733301bed01abf0e1329e561b27bbe3a5f6b2193"
+    },
+    {
+      "path": "skills/targeted-cv/references/refinement-session.md",
+      "sha256": "f5392711f15d5a54d0ca9a27cae0976604ba13b92830fffd75e1be6943e77ecd"
+    },
+    {
+      "path": "skills/targeted-cv/references/strategy-contract.md",
+      "sha256": "90956309bc0e3e5fb736446693f76f9a4cfc435c44cfe690445a2ab2d35fcb76"
+    },
+    {
+      "path": "skills/targeted-cv/references/strategy-editorial.md",
+      "sha256": "08ad8787d8ae254b121199d475b25aea3ba64322cc2e355124a14dc239d065da"
+    },
+    {
+      "path": "skills/targeted-cv/references/strategy-evidence.md",
+      "sha256": "f3233a0dafdaec6955c06f3a35b3a23f77a6ba718be18955d48773ca188f2a10"
+    },
+    {
+      "path": "skills/targeted-cv/references/strategy-review.md",
+      "sha256": "de556bf71347db2ea4b8888d3668f9a185433f8501854731292a32538e86604c"
+    },
+    {
+      "path": "skills/targeted-cv/references/wordcraft-capabilities.md",
+      "sha256": "7349ca72362970209b56db5edf9c168bc5d2187541c035381fb2c0b4045b10fd"
+    },
+    {
+      "path": "skills/targeted-cv/references/wordcraft-operations.md",
+      "sha256": "4040f046c20477c5fd7e6309a64e8f784b5bb1f14f90486c7a43f9586a9ecf08"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+      "sha256": "8dad05ff7ec5c7c12d23f3f84a210bf5bf834a8592bb00d1744e489f63fb3783"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-documents-v1.schema.json",
+      "sha256": "a11561561645924a82fcd47aa31161bceedfba1add08bea56ab4d3dd561ff9ce"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-documents.schema.json",
+      "sha256": "af7d1e95527eb12aa15f3dd8ec2681bdec7d9df48c823f22ba5633d16f4281e5"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+      "sha256": "5ca6aaef1d7251f42dbab83702045ed5ba095f68bd31b92196dcde5c9276efbb"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+      "sha256": "1a93d54179856bc2eb8205d744d836e66d6f6057deeb8b3cab3a3fc2228aa728"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/application-strategy.schema.json",
+      "sha256": "c8272bb564263c80843481f734e2467c931bae8c454d256c109bdbb13e747d60"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/cv-facts-application.schema.json",
+      "sha256": "71398ec8949b839cff6fb8bbc908c92f02e7cf7db51219b8e309d996e7837b3e"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+      "sha256": "83ff6c5aafe7d507905cfa2a0638bd4350b4b4bae3f8d48c58a0f430fe1c53a3"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/cv-facts.schema.json",
+      "sha256": "8f6657fa9ec8675c81313db91691c4e5961138a6955554c319593b717a13ef37"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/document-session.schema.json",
+      "sha256": "e287c1d2738fab0640e0a41b3f9638f2284da806b2132940b602ba1f9f9a4b15"
+    },
+    {
+      "path": "skills/targeted-cv/schemas/refinement-session.schema.json",
+      "sha256": "2760519b2cf63278ae23d9bec56c1f0d53830e2e287c4a0e73f0011386fb620d"
+    },
+    {
+      "path": "skills/targeted-cv/templates/cv-facts.blank.json",
+      "sha256": "20586b6d032cf09ff8a93eefed46949013a6b8e1a37c79ed6f0986a8478da938"
+    }
+  ],
+  "maintenance": [
+    "tests/live-application-refinement/acceptance-check.cjs",
+    "tests/live-application-refinement/acceptance-check.test.cjs",
+    "tests/live-application-refinement/acceptance-live.cjs",
+    "tests/live-application-refinement/acceptance-manifest.json",
+    "tests/live-application-refinement/bilingual-evidence.cjs",
+    "tests/live-application-refinement/bilingual-evidence.test.cjs",
+    "tests/live-application-refinement/bilingual-followup-evidence.cjs",
+    "tests/live-application-refinement/bilingual-followup-evidence.test.cjs",
+    "tests/live-application-refinement/bilingual-followup-fixture.cjs",
+    "tests/live-application-refinement/bilingual-followup-live.cjs",
+    "tests/live-application-refinement/bilingual-followup-profile.cjs",
+    "tests/live-application-refinement/bilingual-live.cjs",
+    "tests/live-application-refinement/bilingual-profile.cjs",
+    "tests/live-application-refinement/bilingual-report.cjs",
+    "tests/live-application-refinement/document-revision.test.cjs",
+    "tests/live-application-refinement/fixtures.json",
+    "tests/live-application-refinement/foundation.cjs",
+    "tests/live-application-refinement/foundation.test.cjs",
+    "tests/live-application-refinement/recovery-controls.cjs",
+    "tests/live-application-refinement/recovery-evidence.cjs",
+    "tests/live-application-refinement/recovery-evidence.test.cjs",
+    "tests/live-application-refinement/recovery-live.cjs",
+    "tests/live-application-refinement/refinement-flow-evidence.cjs",
+    "tests/live-application-refinement/refinement-flow-live.cjs",
+    "tests/live-application-refinement/refinement-flow-record.cjs",
+    "tests/live-application-refinement/refinement-flow.test.cjs",
+    "tests/live-application-refinement/refinement-record.test.cjs",
+    "tests/live-application-refinement/refinement-report-retained.cjs",
+    "tests/live-application-refinement/refinement-report.test.cjs",
+    "tests/live-application-refinement/refinement-stop.test.cjs",
+    "tests/live-application-refinement/resume.test.cjs",
+    "tests/live-application-refinement/revision-evidence.cjs",
+    "tests/live-application-refinement/revision-evidence.test.cjs",
+    "tests/live-application-refinement/revision-live.cjs",
+    "tests/live-application-refinement/revision-profile.cjs",
+    "tests/live-application-refinement/revision-resume.cjs",
+    "tests/live-application-refinement/revision-upstream.cjs",
+    "tests/live-application-refinement/scenarios.md",
+    "tests/live-application-refinement/scoped-persistence.test.cjs",
+    "tests/live-application-refinement/scoped-profile.test.cjs",
+    "tests/live-application-refinement/scoped-strategy.test.cjs",
+    "tests/live-application-refinement/selective-promotion.test.cjs",
+    "tests/live-application-refinement/strategy-continuity.test.cjs",
+    "tests/portable-candidate-profile/acceptance-evidence.cjs",
+    "tests/portable-candidate-profile/contract.test.cjs",
+    "tests/portable-candidate-profile/edge-cases.cjs",
+    "tests/portable-candidate-profile/edge-cases.test.cjs",
+    "tests/portable-candidate-profile/evidence.test.cjs",
+    "tests/portable-candidate-profile/fixtures/intake-reviewed.cjs",
+    "tests/portable-candidate-profile/fixtures/populated.cjs",
+    "tests/portable-candidate-profile/fixtures/probe-definitions.schema.json",
+    "tests/portable-candidate-profile/fixtures/probe-invalid.json",
+    "tests/portable-candidate-profile/fixtures/probe-valid.json",
+    "tests/portable-candidate-profile/fixtures/probe.schema.json",
+    "tests/portable-candidate-profile/foundation.cjs",
+    "tests/portable-candidate-profile/foundation.test.cjs",
+    "tests/portable-candidate-profile/full-acceptance.cjs",
+    "tests/portable-candidate-profile/full-acceptance.test.cjs",
+    "tests/portable-candidate-profile/intake.test.cjs",
+    "tests/portable-candidate-profile/integration.test.cjs",
+    "tests/portable-candidate-profile/isolation.cjs",
+    "tests/portable-candidate-profile/isolation.test.cjs",
+    "tests/portable-candidate-profile/migration-integration.test.cjs",
+    "tests/portable-candidate-profile/migration.test.cjs",
+    "tests/portable-candidate-profile/persistence-acceptance.test.cjs",
+    "tests/portable-candidate-profile/persistence.test.cjs",
+    "tests/portable-candidate-profile/scenarios.md",
+    "tests/portable-candidate-profile/updates.test.cjs",
+    "tests/portable-candidate-profile/validation.test.cjs",
+    "tests/targeted-application-strategy/acceptance-coverage.json",
+    "tests/targeted-application-strategy/application-context.test.cjs",
+    "tests/targeted-application-strategy/comparison.test.cjs",
+    "tests/targeted-application-strategy/composition.test.cjs",
+    "tests/targeted-application-strategy/context-review.test.cjs",
+    "tests/targeted-application-strategy/context.test.cjs",
+    "tests/targeted-application-strategy/contract-fixture-current.cjs",
+    "tests/targeted-application-strategy/contract-fixture-v1.cjs",
+    "tests/targeted-application-strategy/contract-fixture.cjs",
+    "tests/targeted-application-strategy/contracts.test.cjs",
+    "tests/targeted-application-strategy/diagnostics.test.cjs",
+    "tests/targeted-application-strategy/editorial-cases.md",
+    "tests/targeted-application-strategy/editorial-review-cases.md",
+    "tests/targeted-application-strategy/editorial-review.test.cjs",
+    "tests/targeted-application-strategy/evidence.test.cjs",
+    "tests/targeted-application-strategy/fictionalcases/editorial-cases.md",
+    "tests/targeted-application-strategy/fictionalcases/method-fallback.md",
+    "tests/targeted-application-strategy/fixtures.cjs",
+    "tests/targeted-application-strategy/foundation.cjs",
+    "tests/targeted-application-strategy/foundation.test.cjs",
+    "tests/targeted-application-strategy/full-acceptance.cjs",
+    "tests/targeted-application-strategy/full-acceptance.test.cjs",
+    "tests/targeted-application-strategy/host-context.test.cjs",
+    "tests/targeted-application-strategy/integration.test.cjs",
+    "tests/targeted-application-strategy/methods.test.cjs",
+    "tests/targeted-application-strategy/offer-cases.cjs",
+    "tests/targeted-application-strategy/offer.test.cjs",
+    "tests/targeted-application-strategy/persistence-adapter.cjs",
+    "tests/targeted-application-strategy/questions.test.cjs",
+    "tests/targeted-application-strategy/scenarios.md",
+    "tests/targeted-application-strategy/semantic-acceptance.test.cjs",
+    "tests/targeted-application-strategy/semantic-cases/context-review-v1.1.md",
+    "tests/targeted-application-strategy/semantic-cases/host-review-v1.1.json",
+    "tests/targeted-application-strategy/semantic-cases/host-review.json",
+    "tests/targeted-application-strategy/semantic-cases/inputs.json",
+    "tests/targeted-application-strategy/semantic-cases/observed-v1.1.json",
+    "tests/targeted-application-strategy/semantic-cases/observed.json",
+    "tests/targeted-application-strategy/semantic-cases/run.cjs",
+    "tests/wordcraft-document-session/acceptance-manifest.json",
+    "tests/wordcraft-document-session/capabilities.test.cjs",
+    "tests/wordcraft-document-session/contracts.test.cjs",
+    "tests/wordcraft-document-session/final-acceptance.cjs",
+    "tests/wordcraft-document-session/final-acceptance.test.cjs",
+    "tests/wordcraft-document-session/fixtures.json",
+    "tests/wordcraft-document-session/foundation.cjs",
+    "tests/wordcraft-document-session/foundation.test.cjs",
+    "tests/wordcraft-document-session/integration.test.cjs",
+    "tests/wordcraft-document-session/live-acceptance.cjs",
+    "tests/wordcraft-document-session/live-scenarios.cjs",
+    "tests/wordcraft-document-session/live-scenarios.test.cjs",
+    "tests/wordcraft-document-session/protocol.test.cjs",
+    "tests/wordcraft-document-session/scenarios.md",
+    "tests/wordcraft-application-documents/acceptance-check.cjs",
+    "tests/wordcraft-application-documents/acceptance-fixture.cjs",
+    "tests/wordcraft-application-documents/acceptance-live.cjs",
+    "tests/wordcraft-application-documents/acceptance-manifest.json",
+    "tests/wordcraft-application-documents/acceptance-upstream.cjs",
+    "tests/wordcraft-application-documents/acceptance.test.cjs",
+    "tests/wordcraft-application-documents/composition-cases.json",
+    "tests/wordcraft-application-documents/composition.test.cjs",
+    "tests/wordcraft-application-documents/consumer.test.cjs",
+    "tests/wordcraft-application-documents/context.test.cjs",
+    "tests/wordcraft-application-documents/contracts.test.cjs",
+    "tests/wordcraft-application-documents/fixtures.json",
+    "tests/wordcraft-application-documents/formatting-probe.cjs",
+    "tests/wordcraft-application-documents/formatting-probe.test.cjs",
+    "tests/wordcraft-application-documents/foundation.cjs",
+    "tests/wordcraft-application-documents/foundation.test.cjs",
+    "tests/wordcraft-application-documents/full-acceptance.cjs",
+    "tests/wordcraft-application-documents/full-acceptance.test.cjs",
+    "tests/wordcraft-application-documents/integration-fixture.cjs",
+    "tests/wordcraft-application-documents/integration-live.cjs",
+    "tests/wordcraft-application-documents/integration.test.cjs",
+    "tests/wordcraft-application-documents/language-pair-cases.json",
+    "tests/wordcraft-application-documents/languages.test.cjs",
+    "tests/wordcraft-application-documents/letter-check.cjs",
+    "tests/wordcraft-application-documents/letter-fixture.cjs",
+    "tests/wordcraft-application-documents/letter-live.cjs",
+    "tests/wordcraft-application-documents/letter.test.cjs",
+    "tests/wordcraft-application-documents/manifest-fixture.cjs",
+    "tests/wordcraft-application-documents/presentation-exercise.cjs",
+    "tests/wordcraft-application-documents/presentation-live.cjs",
+    "tests/wordcraft-application-documents/presentation.test.cjs",
+    "tests/wordcraft-application-documents/read-only-smoke.cjs",
+    "tests/wordcraft-application-documents/scenarios.md",
+    "tests/wordcraft-application-documents/verification-replay.cjs",
+    "tests/wordcraft-application-documents/verification.test.cjs",
+    "tests/live-application-refinement/relocation.cjs",
+    "tests/live-application-refinement/full-acceptance.cjs",
+    "tests/fantasy-cv/facts.json",
+    "tests/live-application-refinement/full-acceptance.test.cjs",
+    "tests/targeted-application-strategy/semantic-cases/host-review-v1.2.json",
+    "tests/targeted-application-strategy/semantic-cases/observed-v1.2.json",
+    "tests/portable-skill-release/foundation.cjs",
+    "tests/portable-skill-release/foundation.test.cjs",
+    "tests/portable-skill-release/manifest.json",
+    "tests/portable-skill-release/scenarios.md"
+  ],
+  "coverage": [
+    {
+      "requirement": "1.1",
+      "tasks": [
+        "2.1",
+        "3.1",
+        "3.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "1.2",
+      "tasks": [
+        "2.1",
+        "3.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "1.3",
+      "tasks": [
+        "2.4",
+        "3.1",
+        "3.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "1.4",
+      "tasks": [
+        "1",
+        "2.1",
+        "2.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "1.5",
+      "tasks": [
+        "2.1",
+        "2.4",
+        "3.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "1.6",
+      "tasks": [
+        "4.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.1",
+      "tasks": [
+        "2.4",
+        "3.1",
+        "3.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.2",
+      "tasks": [
+        "1",
+        "3.1",
+        "3.3",
+        "6.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.3",
+      "tasks": [
+        "3.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.4",
+      "tasks": [
+        "3.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.5",
+      "tasks": [
+        "3.1",
+        "3.2",
+        "3.3",
+        "7.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.6",
+      "tasks": [
+        "3.4",
+        "7.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "2.7",
+      "tasks": [
+        "3.1",
+        "3.3",
+        "5.1",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.1",
+      "tasks": [
+        "1",
+        "2.1",
+        "2.3",
+        "3.4",
+        "4.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.2",
+      "tasks": [
+        "2.1",
+        "2.3",
+        "4.1",
+        "6.1",
+        "6.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.3",
+      "tasks": [
+        "4.2",
+        "4.3",
+        "6.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.4",
+      "tasks": [
+        "4.1",
+        "4.2",
+        "4.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.5",
+      "tasks": [
+        "1",
+        "2.1",
+        "4.2",
+        "4.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "3.6",
+      "tasks": [
+        "2.3",
+        "4.1",
+        "4.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "4.1",
+      "tasks": [
+        "4.2",
+        "4.3",
+        "6.1",
+        "6.3",
+        "6.4",
+        "7.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.2",
+      "tasks": [
+        "2.2",
+        "6.1",
+        "6.3",
+        "6.4",
+        "7.4",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.3",
+      "tasks": [
+        "6.1",
+        "6.2",
+        "7.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.4",
+      "tasks": [
+        "2.2",
+        "6.1",
+        "7.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.5",
+      "tasks": [
+        "4.2",
+        "6.1",
+        "6.2",
+        "7.2",
+        "7.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.6",
+      "tasks": [
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4",
+        "7.2",
+        "7.3",
+        "7.4",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.7",
+      "tasks": [
+        "6.2",
+        "7.3"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "4.8",
+      "tasks": [
+        "4.3",
+        "5.1",
+        "5.2",
+        "6.2",
+        "6.4",
+        "7.3",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control",
+        "host_judgment"
+      ]
+    },
+    {
+      "requirement": "5.1",
+      "tasks": [
+        "2.3",
+        "4.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "5.2",
+      "tasks": [
+        "2.2",
+        "2.3",
+        "4.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "5.3",
+      "tasks": [
+        "2.2"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "5.4",
+      "tasks": [
+        "2.3",
+        "3.4",
+        "4.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "5.5",
+      "tasks": [
+        "2.3",
+        "4.1",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.1",
+      "tasks": [
+        "2.4",
+        "6.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.2",
+      "tasks": [
+        "2.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.3",
+      "tasks": [
+        "2.4"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.4",
+      "tasks": [
+        "1",
+        "3.4",
+        "5.2",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.5",
+      "tasks": [
+        "5.1",
+        "5.2",
+        "6.4",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "6.6",
+      "tasks": [
+        "3.2",
+        "3.4",
+        "5.1",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.1",
+      "tasks": [
+        "5.1",
+        "5.2",
+        "6.4",
+        "7.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.2",
+      "tasks": [
+        "5.1",
+        "5.2",
+        "6.4",
+        "7.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.3",
+      "tasks": [
+        "5.2",
+        "7.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.4",
+      "tasks": [
+        "5.2",
+        "7.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.5",
+      "tasks": [
+        "5.2",
+        "7.1"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    },
+    {
+      "requirement": "7.6",
+      "tasks": [
+        "5.2",
+        "7.1",
+        "7.2",
+        "7.3",
+        "7.4",
+        "7.5"
+      ],
+      "status": "not_assessed",
+      "observation_classes": [
+        "actual",
+        "control"
+      ]
+    }
+  ],
+  "regressions": [
+    {
+      "entrypoint": "tests/portable-candidate-profile/full-acceptance.cjs",
+      "required_inputs": []
+    },
+    {
+      "entrypoint": "tests/targeted-application-strategy/full-acceptance.cjs",
+      "required_inputs": []
+    },
+    {
+      "entrypoint": "tests/wordcraft-document-session/final-acceptance.cjs",
+      "required_inputs": [
+        "actual report",
+        "session record",
+        "fresh external output destination"
+      ]
+    },
+    {
+      "entrypoint": "tests/wordcraft-application-documents/full-acceptance.cjs",
+      "required_inputs": [
+        "live receipt",
+        "host review"
+      ]
+    },
+    {
+      "entrypoint": "tests/live-application-refinement/full-acceptance.cjs",
+      "required_inputs": [
+        "immutable evidence index",
+        "expected digest",
+        "independent index selection review"
+      ]
+    }
+  ]
+}
