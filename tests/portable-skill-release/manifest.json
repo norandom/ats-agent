@@ -335,7 +335,10 @@
     "tests/portable-skill-release/installation.test.cjs",
     "release/observe.cjs",
     "tests/portable-skill-release/observation.test.cjs",
-    "release/installed-observation.md"
+    "release/installed-observation.md",
+    "release/installed-evidence.cjs",
+    "release/installed-evidence.md",
+    "tests/portable-skill-release/installed-evidence.test.cjs"
   ],
   "coverage": [
     {

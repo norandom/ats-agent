@@ -88,6 +88,8 @@ Candidate validation performs no publication. Tag creation, publication and cata
 
 ## Exercise safe host installation
 
+For collection and independent read-only evidence checking, follow [installed observations](installed-observation.md) and [installed evidence verification](installed-evidence.md). Their mechanical checks leave workflow acceptance and release readiness unassessed.
+
 The package [adopter guide](adopter-guide.md) remains the user-facing authority. Release maintenance can exercise its filesystem operation through `installManaged` in `release/install.cjs`. This callable helper runs once in the selected host; it provides no installer service, application workflow or readiness authority. Keep facts, outputs, application state and private backups outside the installation parent used for staging and recovery.
 
 Select `{archive, expected}` independently. `expected` contains the exact outer `artifact` record and selected `prepared` source identity used by `verifyArtifact`; it must not contain an extraction destination. Load maintenance code from that selected prepared source. No source checkout is needed to follow the installed skill after installation. The maintenance helper stays outside every distribution format.

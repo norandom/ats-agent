@@ -77,7 +77,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: ArtifactPipeline_
   - _Requirements: 2.6, 3.1, 5.4, 6.4, 6.6_
 
-- [ ] 4. Enable verifiable standalone acceptance
+- [x] 4. Enable verifiable standalone acceptance
 - [x] 4.1 Verify safe installation and adopter routing
   - Test the existing package-local guidance from the verified archive for facts, offer, questions and live refinement routing.
   - Exercise documented host filesystem installation: absent initial destination, sibling staging, exact verified managed update inventory and retained recovery copy; reject unmanaged or changed user files.
@@ -95,7 +95,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 3.3, 4.1_
   - _Requirements: 3.3, 3.4, 3.5, 4.1, 4.5_
 
-- [ ] 4.3 Verify installed evidence and adverse controls
+- [x] 4.3 Verify installed evidence and adverse controls
   - Implement the read-only verifier for immutable independently selected evidence indexes, expected digests, referenced files, artifact/install identity and competent reviews.
   - Test stale/missing receipts, checkout imports, omitted templates, absent capabilities, optional-skill decline and actual/control/judgment substitution.
   - Done when changed artifacts, unsupported success claims and source application-code use fail while complete selected evidence passes.
@@ -202,3 +202,5 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 - Task 3.1 preserves payload bytes with Git attributes and selective raw-byte staging. Maintenance inputs use selected Git blobs when checkout differences are CRLF-only. Keep checkout_sha256 observations outside artifact identity; canonical build-input identity uses path, size and sha256 only.
 
 - Task 3.4 builds raw stages on the Linux container filesystem and exports finished archives only; DrvFS modes can differ despite chmod. Keep production /source immutable, tests in /work and unique attempt IDs before validation/production to avoid reusing prior execution evidence.
+
+- Group 4 separates collection, mechanical evidence verification and actual installed-workflow acceptance. Keep independently selected index/review digests and authenticated competent observations; a passed helper result or an old artifact's receipts do not grant readiness for a newly built artifact.
