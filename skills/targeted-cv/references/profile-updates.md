@@ -6,7 +6,9 @@ Other hosts remain unassessed. The following Windows PowerShell 5.1 child is an 
 
 The host first sends `establishRoot` with an explicitly authorized absolute `workspace` and a fresh simple `name`. It atomically creates a new protected storage child; it never adopts or tightens an existing directory. Show the actual destination in that child before reviewing creation authority. The applicant chooses the destination, without technical ACL questions. Only fresh child directories held by this process are supported: the parent policy grants current user and SYSTEM Modify without DeleteChild. FullControl parents are rejected. Parent handles prevent relocation; the source uses a read handle denying writes and deletion. Local fixed NTFS volumes, ordinary files, one link, current owner, protected exact DACL and no reparse/encryption are required. The token SID controls filesystem access only; it supplies no candidate identity.
 
-`acquire` takes `root` (the returned live capability), `policy_id: windows-private-new-file-v1`, `phase: create|inspect`, exact absolute `destination`, and `source: {resolved_path, sha256}|null`. Profile callers always provide their selected source. The returned `lease` is private to this child. Commands `readSource`, `readDestination`, `verifyPolicy`, `createNew` (base64 `bytes`, create phase once only) and `release` use that lease. Inspection is read-only and supports an absent destination. Returned base64 bytes are private data requiring full caller validation. These handles and capability IDs are never saved as authorization.
+`acquire` takes `root` (the returned live capability), `policy_id: windows-private-new-file-v1`, `phase: create|inspect`, exact absolute `destination`, and `source: {resolved_path, sha256}|null`. Profile callers always provide their selected source. The returned `lease` is private to this child. Commands `readSource`, `readDestination`, `verifyPolicy`, `createNew` (base64 `bytes`, create phase once only), `creationOrigin` and `release` use that lease. Inspection is read-only and supports an absent destination. Returned base64 bytes are private data requiring full caller validation. These handles and capability IDs are never saved as authorization.
+
+`creationOrigin` returns an opaque child-local receipt only after that lease's own CreateNew has completed its exact reopen and policy checks. A lost create acknowledgement can query the same lease. Later `acquire` with `phase: inspect` and `origin_receipt` verifies the same root capability, source path/hash/native identity and destination path/native identity; only then does it return `origin_verified: true`. Closing a lease retains this evidence in the same live child. Child termination loses it. An ordinary inspection of an existing matching file supplies no origin evidence. Failed creation, atomic collision or a substituted identity cannot borrow another lease's receipt. No operation repairs permissions or deletes uncertain artifacts.
 
 Creation has a protected private DACL from the first handle and denies all data readers/writers. After flush, a metadata handle changes only the new file's DACL to read-only during actual close/reopen. The supported parent's lack of DeleteChild and the new file's lack of Delete prevent deletion during that handoff; the metadata handle alone provides no deletion guarantee. A reopened Share.Read guardian then holds write/delete exclusion while the final full private DACL is restored and the caller validates. Ordinary readers may read after the reopened phase. This is a trusted-host contract, not an OS sandbox against malicious same-user ACL rewriting or privileged code. The policy does not copy or attest source SACL, classification, encryption or audit metadata. Unreadable original SACL still defers existing-file replacement unchanged.
 
@@ -40,7 +42,7 @@ public static class PrivateLeaseNative {
 }
 '@
 $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-$roots = @{}; $leases = @{}
+$roots = @{}; $leases = @{}; $origins = @{}
 function FullPath([string]$p) {
  if (-not [IO.Path]::IsPathRooted($p) -or $p.StartsWith('\\') -or $p.IndexOf(':',2) -ge 0) { throw 'unsupported path' }
  $full = [IO.Path]::GetFullPath($p)
@@ -128,7 +130,7 @@ try {
      $root=$roots[[string]$q.root];if(-not $root){throw 'live fresh-root capability required'}
      $destination=FullPath $q.destination
      if([IO.Path]::GetDirectoryName($destination) -cne $root.path){throw 'destination outside supported parent'}
-     $l=@{root=$root;destination=$destination;phase=$q.phase;attempted=$false;guards=(Guards $root.path)}
+     $l=@{root=$root;rootCapability=([string]$q.root);destination=$destination;phase=$q.phase;attempted=$false;guards=(Guards $root.path)}
      try {
       CheckAcl $root.path $true
       if($q.source){$p=FullPath $q.source.resolved_path;if($p -ieq $destination){throw 'source equals destination'}
@@ -142,11 +144,18 @@ try {
        try{$l.target=[IO.FileStream]::new($destination,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read);$l.targetId=Identity $l.target.SafeFileHandle}
        catch [IO.FileNotFoundException] {$l.target=$null}
       }
-      Verify $l;$id=[guid]::NewGuid().ToString('N');$leases[$id]=$l
+      Verify $l
+      $origin=$origins[[string]$q.origin_receipt]
+      if($q.origin_receipt){
+       if($q.phase -ne 'inspect' -or -not $origin -or $origin.root -ne $q.root -or $origin.destination -cne $destination -or $origin.sourcePath -cne $l.sourcePath -or $origin.sourceHash -ne $l.sourceHash -or $origin.sourceId -ne $l.sourceId -or -not $l.target -or $origin.targetId -ne $l.targetId){throw 'own creation origin unavailable'}
+       $l.originReceipt=[string]$q.origin_receipt
+      }
+      $id=[guid]::NewGuid().ToString('N');$leases[$id]=$l
       $result.lease=$id;$result.policy_id=$q.policy_id;$result.phase=$q.phase;$result.destination=$destination
       $result.source_identity=$l.sourceId;$result.destination_identity=$l.targetId
       $result.parent_identity=Identity $root.guards[$root.guards.Count-1].handle $true
       $result.private_location=$true;$result.stable_identity=$true;$result.single_writer=$true;$result.exclusive_create=($q.phase -eq 'create')
+      $result.origin_verified=($null -ne $l.originReceipt)
       $l=$null
      } finally {if($l){CloseLease $l}}
     }
@@ -156,6 +165,7 @@ try {
       readSource {Verify $l;$result.bytes=Bytes $l.source}
       readDestination {Verify $l;$result.bytes=Bytes $l.target}
       verifyPolicy {Verify $l}
+      creationOrigin {Verify $l;$result.origin_receipt=$l.originReceipt}
       release {CloseLease $l;$leases.Remove([string]$q.lease)}
       createNew {
        if($l.phase -ne 'create' -or $l.attempted){throw 'creation unavailable or already attempted'}
@@ -176,7 +186,11 @@ try {
         $l.targetId=Identity $l.target.SafeFileHandle
         if($l.targetId -ne $createdId -or (Bytes $l.target) -cne [Convert]::ToBase64String($data)){throw 'actual reopened bytes or identity mismatch'}
         if(-not [PrivateLeaseNative]::SetKernelObjectSecurity($metadata,4,$full.GetSecurityDescriptorBinaryForm())){throw 'final new-file DACL restore failed'}
-        Verify $l;$result.bytes=Bytes $l.target;$result.reopened=$true
+        Verify $l
+        $receipt=[guid]::NewGuid().ToString('N')
+        $origins[$receipt]=@{root=$l.rootCapability;destination=$l.destination;sourcePath=$l.sourcePath;sourceHash=$l.sourceHash;sourceId=$l.sourceId;targetId=$l.targetId}
+        $l.originReceipt=$receipt
+        $result.bytes=Bytes $l.target;$result.reopened=$true
        } finally {if($creator){$creator.Dispose()};if($metadata){$metadata.Dispose()}}
       }
       default {throw 'unknown command'}
@@ -184,18 +198,26 @@ try {
     }
    }
    $result|ConvertTo-Json -Compress -Depth 8|ForEach-Object{[Console]::WriteLine($_)}
-  } catch { @{ok=$false;error=$_.Exception.Message}|ConvertTo-Json -Compress|ForEach-Object{[Console]::WriteLine($_)} }
+  } catch { @{ok=$false;error=$_.Exception.Message;code=$(if($_.Exception.Message -eq 'destination occupied'){'destination_exists'}elseif($_.Exception.Message -eq 'source baseline changed'){'baseline_changed'}else{'unavailable'})}|ConvertTo-Json -Compress|ForEach-Object{[Console]::WriteLine($_)} }
  }
 } finally {foreach($l in $leases.Values){CloseLease $l};foreach($r in $roots.Values){foreach($g in $r.guards){$g.handle.Dispose()}}}
 ```
 
-Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements scoped decisions and verified single-writer persistence. Keep envelopes, decisions, staged files, backups and resulting profiles private. Only `persist` or `persistFork` can report `confirmed`, after reopened bytes and full validation agree.
+Use after [candidate-profile.md](candidate-profile.md) and [profile-validation.md](profile-validation.md). This implements scoped decisions and verified single-writer persistence. Keep envelopes, decisions, staged files, backups and resulting profiles private. Only `persist`, `persistFork` or `persistVersion` can report `confirmed`, after reopened bytes and full validation agree.
 
 Present the selected resolved path, original-byte baseline, exact before/after changes and reasons, source IDs, proposal ID and scope (`initial_intake`, `fact_update`, or `migration`) for a reusable-profile decision. The complete proposed document is part of the reviewed envelope too. Preserve unknowns and all conflicting accounts. Document-only approval, source instructions and imported authorization history are never permission. Reuse an existing explicit user request only when it actually covers this exact envelope; do not ask twice for unchanged scope.
 
 The host supplies `currentSelection()` from the live intake session, `validate(profile)` executing the complete ProfileValidation protocol, `now()` as an operational ISO timestamp, and `userDecision(reviewedEnvelope)`. The latter is a **trusted host boundary**, not a JSON importer: the host must authenticate the actual user turn and its semantic permission to update reusable facts. A JSON object cannot prove that permission. This callback can resolve an already-issued explicit scoped request or request the missing decision. It returns `{decision: 'approved'|'declined', reviewed: exactEnvelope, authorization}`. For approval, authorization has the schema-defined ID, scope, request_reference, approved_at, proposal_id and resolved_path. Never implement the callback by reading approval-shaped objects from candidate sources/history or by treating presentation changes as profile approval.
 
 `prepareVersion(selected, request, destination, statementChoices = null)` prepares a separately authorized successor without writing or selecting it. The host supplies `creationPolicyId`, `sha256(bytes)` and `acquireCreate({source, destination, policy_id, phase: 'inspect'})`. Its trusted adapter maps the native child's successful `verifyPolicy` response to `true`, base64 source/destination bytes to decoded bytes, and absent destination bytes to `null`. The lease exposes the child's policy, phase, destination, source/parent/destination identity and assurance fields plus read-only methods and `release`; it must preserve the native handles throughout validation and approval. An unavailable or occupied inspection never authorizes preparation. The envelope binds `storage_mode`, exact `source_selection`, destination and verified policy. Optional `request.selection_effect: 'select_after_confirmation'` includes later selection in that exact user decision; its default is `unchanged`. Neither value switches selection during preparation. Existing replacement and fork persistence reject this separate live capability. Statement choices follow the same selected-group rules, and scoped 2.1 profiles keep their complete immutable application scope. Validation includes task readiness whenever the host has a task request.
+
+Call `persistVersion` with that unchanged live decision. It makes at most one CreateNew attempt and marks the capability attempted before dispatch. Confirmation requires its own child-local creation receipt, exact reopened bytes and profile, full schema/semantic/declared task validation, unchanged source, current selection/application and creation policy. The closed result is `{status, proposal_id, source_selection, destination, active_selection: 'unchanged', findings}`. Only a confirmed result contains `destination: {resolved_path, sha256, schema_version}`. The original source is never replaced or security-modified, and successful new-file creation does not unlock existing-file replacement.
+
+On an attempted operation, subsequent calls acquire only read-only inspection with its origin receipt. Missing origin, partial/absent/busy artifacts, policy failures or changed native identities remain unconfirmed; source/selection conflicts require review. An occupied destination is a conflict even with identical bytes. An atomic collision cannot supply a receipt and remains unconfirmed without adoption. Retain all files. Do not replay, overwrite, merge or clean up. A full host restart loses the live decision; it may inspect and explicitly select validated data but cannot report the interrupted operation confirmed or recover authority from history.
+
+For the actual Windows adapter, use `createWindowsCreationAdapter` in the executable block below. Supply `request(object)` as a serialized, response-correlated JSON-lines transport to the same live child, the `establishRoot` capability as `root`, and strict host `fromBase64(string)` / `toBase64(bytes)` codecs. In a Node-capable host these codecs are `s => Buffer.from(s, 'base64')` and `b => Buffer.from(b).toString('base64')`. Set `host.acquireCreate` to the returned function and `host.creationPolicyId` to `windows-private-new-file-v1`. Native `ok: false` is unavailable, except explicit pre-create `destination_exists` and `baseline_changed` conflict codes. Methods throw on failed native commands; never turn failure into empty bytes, absence or a successful policy check. Release each lease after full validation, and terminate the child only when no live operation needs origin evidence. The adapter starts no service and opens no port.
+
+After confirmation, separately execute the candidate intake `select` for exactly the returned destination, compare its reopened SHA-256 with the result, dispatch its version and run complete validation with the same task and independent application selection. Clear pending evidence through this new selection. Only then build its evidence view. Reuse the exact reviewed request when `selection_effect: select_after_confirmation` already covers this action; otherwise obtain explicit selection authority. Saving itself never switches canonical source.
 
 `prepare(selectionSnapshot, request)` accepts the intake snapshot and `{proposal_id, history_id, scope, proposed_profile, source_ids, changes}`. Changes use existing profile-relative pointers (including the empty root pointer for a complete migration), exact JSON before/after values and a reason. Add records by replacing their containing collection; this makes absence unambiguous without inventing a JSON undefined value. Changes cannot overlap and must account for the entire proposed document. Existing records retain their IDs at their locations; reorderings require a separately reviewed future protocol. Source records and accepted history are append-only. Correct source metadata by adding a new source and retaining the original. Existing conflict alternatives and claim provenance remain available. The host still reviews source meaning and correctness: deterministic equality is not semantic entailment.
 
@@ -246,6 +268,34 @@ The host must review what those diffs mean. A statement ID or successful equalit
 Without an application profile, selected reusable updates stop after the reusable route and its confirmed reselection. Creating an application profile for a mixed answer follows the same reusable-first ordering, then `prepareFork`/`persistFork` from the freshly reopened reusable base with only chosen application-only groups. Do not fork pending groups or reinterpret an old target scope.
 
 ```javascript
+function createWindowsCreationAdapter({ request, root, fromBase64, toBase64 }) {
+  // request sends data to the same live child and resolves its corresponding JSON response.
+  return async function acquireCreate(options) {
+    const r = await request({...options, op: 'acquire', root});
+    if (r?.ok !== true) return ['destination_exists', 'baseline_changed'].includes(r?.code) ? {conflict: r.code} : null;
+    const command = async (op, fields = {}) => {
+      const response = await request({op, ...fields, lease: r.lease});
+      if (response?.ok !== true) throw Error('Native creation operation unavailable');
+      return response;
+    };
+    const read = async op => {
+      const value = (await command(op)).bytes;
+      if (value === null) return null;
+      if (typeof value !== 'string') throw Error('Native bytes unavailable');
+      const bytes = fromBase64(value);
+      if (toBase64(bytes) !== value) throw Error('Invalid native base64');
+      return bytes;
+    };
+    return {...r,
+      readSource: () => read('readSource'), readDestination: () => read('readDestination'),
+      verifyPolicy: async () => { await command('verifyPolicy'); return true; },
+      release: () => command('release'),
+      ...(r.phase === 'create' ? {
+        createNew: bytes => command('createNew', {bytes: toBase64(bytes)}),
+        creationOrigin: async () => (await command('creationOrigin')).origin_receipt
+      } : {})};
+  };
+}
 function createProfileUpdates(host) {
   const clone = value => structuredClone(value);
   const same = (a, b) => {
@@ -506,6 +556,76 @@ function createProfileUpdates(host) {
     } catch { return op.terminal = uncertain(); }
     finally { if (lease) { try { await lease.release(); } catch { /* Retain private state for host inspection. */ } } }
   }
+  async function persistVersion(decision) {
+    const op = capabilities.get(decision);
+    const outcome = (status, code, action, destination = null) => ({
+      status, proposal_id: op?.snapshot.proposal_id ?? null,
+      source_selection: op?.version ? clone(op.snapshot.reviewed.source_selection) : null,
+      destination, active_selection: 'unchanged',
+      findings: [{code, pointer: null, record_id: null, message: action, corrective_action: action}]
+    });
+    const uncertain = () => outcome('unconfirmed', 'persistence_unconfirmed', 'Inspect this exact destination and own creation origin read-only; never replay, overwrite, adopt or clean up an uncertain file.');
+    if (!op?.version || op.fork || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use only this instance\'s unchanged live new-version decision.');
+    const reviewed = op.snapshot.reviewed;
+    const current = () => same(host.currentSelection(), op.selected) && applicationNow(op.application) && host.creationPolicyId === reviewed.creation_policy_id;
+    try { if (!current()) return outcome('conflict', 'version_context_changed', 'Review changed selection, application or creation policy.'); } catch { return uncertain(); }
+    if (op.running) return uncertain();
+    if (op.started && !op.attempted) return clone(op.terminal || uncertain());
+    op.running = true;
+    let lease, answer;
+    const digest = async bytes => { const h = await host.sha256(bytes); if (!hash(h)) throw Error('hash unavailable'); return h.toLowerCase(); };
+    const valid = async profile => {
+      const v = await host.validate(clone(profile));
+      return v?.schema === 'passed' && v?.semantics === 'passed' && (host.taskRequest == null || v.readiness === 'ready');
+    };
+    const policy = async () => lease && lease.policy_id === reviewed.creation_policy_id &&
+      lease.destination === reviewed.resolved_path && lease.private_location === true && lease.stable_identity === true &&
+      lease.single_writer === true && text(lease.source_identity) && text(lease.parent_identity) && await lease.verifyPolicy() === true;
+    try {
+      if (!op.started) op.started = true;
+      if (!op.attempted && !(await valid(op.snapshot.proposed_profile))) {
+        return op.terminal = outcome('rejected', 'validation_required', 'Repair full schema, semantic and declared task-readiness findings before a newly reviewed decision.');
+      }
+      lease = await host.acquireCreate({source: {resolved_path: reviewed.source_selection.resolved_path, sha256: reviewed.source_selection.profile_sha256},
+        destination: reviewed.resolved_path, policy_id: reviewed.creation_policy_id, phase: op.attempted ? 'inspect' : 'create',
+        ...(op.attempted && text(op.origin) ? {origin_receipt: op.origin} : {})});
+      if (!op.attempted && ['destination_exists', 'baseline_changed'].includes(lease?.conflict)) return op.terminal = outcome('conflict', lease.conflict, 'Inspect the changed source or occupied destination; retain both unchanged and review a new proposal.');
+      if (!(await policy()) || lease.phase !== (op.attempted ? 'inspect' : 'create')) return uncertain();
+      const baseline = reviewed.source_selection.profile_sha256.toLowerCase();
+      if (await digest(await lease.readSource()) !== baseline || !current()) return op.terminal = outcome('conflict', 'version_context_changed', 'Review the changed source baseline or current context.');
+      if (!op.attempted) {
+        if (lease.exclusive_create !== true || lease.destination_identity != null || await lease.readDestination() !== null) return op.terminal = outcome('conflict', 'destination_exists', 'Retain the occupied destination unchanged and review a distinct path.');
+        op.bytes = await host.encode(JSON.stringify(op.snapshot.proposed_profile, null, 2) + '\n');
+        op.expected = await digest(op.bytes);
+        const parsed = JSON.parse(await host.decode(op.bytes));
+        if (!same(parsed, op.snapshot.proposed_profile) || !(await valid(parsed))) return op.terminal = outcome('rejected', 'validation_required', 'Repair encoded proposal validation before a new decision.');
+        if (!(await policy()) || await digest(await lease.readSource()) !== baseline || !current()) return op.terminal = outcome('conflict', 'version_context_changed', 'Review changed source or creation policy.');
+        if (await lease.readDestination() !== null || !current()) return op.terminal = outcome('conflict', 'destination_exists', 'Do not adopt or overwrite an occupied destination.');
+        op.attempted = true;
+        try { await lease.createNew(op.bytes); } catch { /* Read-only origin and content inspection, never another create. */ }
+        // This opaque evidence is issued only by the originating native child after its own verified reopen.
+        try { op.origin = await lease.creationOrigin(); } catch { return uncertain(); }
+        if (!text(op.origin)) return uncertain();
+      } else if (lease.origin_verified !== true) {
+        await lease.readDestination(); // Inspect data only; matching content cannot establish our creation origin.
+        return uncertain();
+      }
+      const bytes = await lease.readDestination();
+      if (bytes === null || await digest(bytes) !== op.expected || !same(JSON.parse(await host.decode(bytes)), op.snapshot.proposed_profile) ||
+          !(await valid(JSON.parse(await host.decode(bytes)))) || await digest(await lease.readSource()) !== baseline ||
+          !(await policy()) || !current()) return uncertain();
+      answer = outcome('confirmed', 'persistence_confirmed', 'Own newly created identity, exact reopened bytes, full validation, source continuity and private creation policy agree. Explicitly select and validate this artifact before canonical use.',
+        {resolved_path: reviewed.resolved_path, sha256: op.expected, schema_version: op.snapshot.proposed_profile.schema_version});
+      return answer;
+    } catch { return op.terminal = uncertain(); }
+    finally {
+      try {
+        if (typeof lease?.release === 'function') await lease.release();
+        if (answer && !current()) return uncertain();
+      } catch { return uncertain(); }
+      finally { op.running = false; }
+    }
+  }
   async function prepareVersion(selected, request, destination, statementChoices = null) {
     const id = request?.proposal_id;
     const reject = () => result(id, 'rejected', 'invalid_proposal', 'invalid_proposal', 'Review an exact supported successor diff and a distinct absolute destination.');
@@ -582,6 +702,6 @@ function createProfileUpdates(host) {
   }
   return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork,
     prepareSelected: (selected, request, statementChoices) => prepareSelected(selected, request, statementChoices),
-    prepareVersion };
+    prepareVersion, persistVersion };
 }
 ```

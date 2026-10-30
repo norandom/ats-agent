@@ -8,6 +8,9 @@ const { spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
 const load = (file, name) => new Function(fs.readFileSync(path.join(root, 'skills/targeted-cv/references', file), 'utf8').match(/```javascript\r?\n([\s\S]*?)```/)[1] + `;return ${name};`)();
 const createProfileUpdates = load('profile-updates.md', 'createProfileUpdates');
+const createWindowsCreationAdapter = load('profile-updates.md', 'createWindowsCreationAdapter');
+const createProfileIntake = load('candidate-profile.md', 'createProfileIntake');
+const dispatchVersion = load('profile-contract.md', 'dispatchVersion');
 const validateProfile = load('profile-validation.md', 'validateProfile');
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 const blank = require('../../skills/targeted-cv/templates/cv-facts.blank.json');
@@ -101,6 +104,7 @@ async function nativeCreationLease() {
     const storage = await ask({ op: 'establishRoot', workspace, name: 'fresh-private-' + crypto.randomUUID() });
     assert.equal(storage.ok, true, JSON.stringify(storage));
     assert.equal(storage.ordinary_user, true, 'actual native proof requires an ordinary user');
+    await versionPersistenceCases(ask, storage);
     const destination = path.join(storage.path, 'successor.json');
     const request = { op: 'acquire', phase: 'create', policy_id: 'windows-private-new-file-v1', root: storage.capability,
       source: { resolved_path: source, sha256: hash(original) }, destination };
@@ -227,3 +231,105 @@ async function run() {
   console.log(`Profile persistence: ${checks} checks passed; real .NET File.Replace, full schema/semantic validation, exact-byte backup, protected destination and backup SDDL preserved. Single-writer assurance: fresh test-owned workspace only.`);
 }
 run().catch(e => { console.error(e); process.exitCode = 1; });
+async function versionPersistenceCases(ask, storage) {
+  const source = path.join(workspace, 'version-source.json'), original = Buffer.from(JSON.stringify(base));
+  fs.writeFileSync(source, original); const originalAcl = acl(source);
+  let serial = 0, priorConfirmed = null;
+  const acquireNative = createWindowsCreationAdapter({request:ask,root:storage.capability,fromBase64:s=>Buffer.from(s,'base64'),toBase64:b=>Buffer.from(b).toString('base64')});
+  for (const mode of ['success', 'lost_ack', 'read_failure', 'collision', 'atomic_collision', 'partial', 'absent', 'policy', 'validation', 'source_changed', 'selection', 'busy', 'replaced_identity', 'restart', 'late_source', 'late_selection', 'source_identity', 'release_failure', 'release_selection', 'pre_validation', 'scoped']) {
+    const destination = path.join(storage.path, 'version-' + mode + '.json');
+    const profile = structuredClone(mode==='lost_ack' ? priorConfirmed : base);
+    if (mode === 'scoped') { profile.schema_version = '2.1'; profile.application_scope = { application_id: 'fictional-version-app', target_sha256: 'c'.repeat(64), origin_profile: {schema_version:'2.0',resolved_path:source,sha256:hash(original)} }; }
+    const sourceBytes = Buffer.from(JSON.stringify(profile)); fs.writeFileSync(source, sourceBytes);
+    const selected = {generation:1, selection:{resolved_path:source,profile_sha256:hash(sourceBytes),schema_version:profile.schema_version},profile};
+    const proposal = structuredClone(profile); proposal.candidate.name = mode==='lost_ack' ? 'Fictional Later Successor Person' : 'Fictional Successor Person';
+    let creates = 0, firstRead = true, attempted = false, decisions = 0, failValidation = false, inspectOnly = false, inspected = 0, failedRelease = false;
+    const taskRequest={task_id:'fictional-version-name',required:[{pointer:'/candidate/name',record_id:null,reason:'Explicitly selected candidate identity for synthetic intake.'}]};
+    const host = {taskRequest,creationPolicyId:'windows-private-new-file-v1',currentSelection:()=>structuredClone(selected),sha256:hash,
+      encode:s=>Buffer.from(s),decode:b=>new TextDecoder('utf-8',{fatal:true}).decode(b),
+      currentApplicationSelection:()=>profile.application_scope && {application_id:profile.application_scope.application_id,target_sha256:profile.application_scope.target_sha256},
+      validate:async p => failValidation ? {schema:'failed',semantics:'failed'} : validateProfile(p,{applicationSelection:host.currentApplicationSelection(), validate:async()=>{
+        const file=path.join(workspace,'version-validate-'+(++serial)+'.json');fs.writeFileSync(file,JSON.stringify(p));
+        const r=spawnSync('uvx',['--from','check-jsonschema==0.38.2','check-jsonschema','--schemafile',path.join(root,'skills/targeted-cv/schemas',p.schema_version==='2.1'?'cv-facts-application.schema.json':'cv-facts.schema.json'),file],{encoding:'utf8',windowsHide:true});
+        return {state:r.status===0?'passed':'failed',findings:[]}; }},taskRequest),
+      userDecision:async reviewed=>{decisions++;return {decision:'approved',reviewed,authorization:{id:'version-auth-'+mode,scope:reviewed.scope,request_reference:'fictional-exact-request',approved_at:'2026-10-30T12:00:00Z',proposal_id:reviewed.proposal_id,resolved_path:reviewed.resolved_path}};},now:()=> '2026-10-30T12:01:00Z',
+      acquireCreate:async options=>{
+        if (inspectOnly) check(options.phase,'inspect');
+        if (attempted && options.phase==='inspect') inspected++;
+        const lease=await acquireNative(options); if(!lease || lease.conflict)return lease;
+        const read=lease.readDestination, create=lease.createNew, verify=lease.verifyPolicy;
+        return {...lease,
+          readDestination:async()=>{if(attempted && ['read_failure','busy','replaced_identity','restart','late_source','late_selection','source_identity'].includes(mode) && firstRead){firstRead=false;throw Error('read unavailable');}return read();},
+          release:async()=>{await lease.release();if(attempted && mode==='release_failure' && !failedRelease){failedRelease=true;throw Error('release acknowledgement unavailable');}if(attempted && mode==='release_selection')selected.generation++;},
+          verifyPolicy:async()=>{if(attempted && mode==='policy')return false;return verify();},
+          ...(create ? {createNew:async bytes=>{creates++;attempted=true;
+            if(mode==='atomic_collision') {
+              const competitor=await acquireNative(options);
+              await competitor.createNew(bytes); await competitor.release();
+            }
+            if(mode==='partial'){await create(Buffer.from('{}'));throw Error('partial');}
+            if(mode==='absent')throw Error('dispatch unavailable');
+            await create(bytes);
+            if(mode==='validation')failValidation=true;
+            if(mode==='lost_ack')throw Error('lost acknowledgement');}} : {})};
+      }};
+    const request={proposal_id:'version-proposal-'+mode,history_id:'version-history-'+mode,scope:mode==='scoped'?'application_fact_update':'fact_update',source_ids:['source-demo'],proposed_profile:proposal,selection_effect:'select_after_confirmation',changes:[{pointer:'/candidate/name',before:profile.candidate.name,after:proposal.candidate.name,reason:'Fictional authorized successor correction.'}]};
+    const api=createProfileUpdates(host), decision=await api.prepareVersion(selected,request,destination);
+    check(decision.decision_state,'authorized'); check(decisions,1);
+    if(mode==='success') {
+      check((await api.persistVersion(structuredClone(decision))).status,'unconfirmed');
+      check((await createProfileUpdates(host).persistVersion(decision)).status,'unconfirmed');
+      const old=await api.prepare(selected,request); check((await api.persistVersion(old)).status,'unconfirmed');
+      decision.proposed_profile.candidate.name='Unapproved Fictional Mutation';
+      check((await api.persistVersion(decision)).status,'unconfirmed');
+      decision.proposed_profile.candidate.name=proposal.candidate.name;
+      check((await api.persist(decision)).decision_state,'decision_required');
+      check((await api.persistFork(decision)).decision_state,'decision_required');
+    }
+    if(mode==='collision') {
+      const competitor=await acquireNative({source:{resolved_path:source,sha256:hash(sourceBytes)},destination,policy_id:host.creationPolicyId,phase:'create'});
+      await competitor.createNew(Buffer.from(JSON.stringify(decision.proposed_profile,null,2)+'\n')); await competitor.release();
+    }
+    if(mode==='source_changed')fs.appendFileSync(source,' ');
+    if(mode==='selection')selected.generation++;
+    if(mode==='pre_validation')failValidation=true;
+    const result=await api.persistVersion(decision);
+    check(result.status,['success','lost_ack','scoped'].includes(mode)?'confirmed':mode==='pre_validation'?'rejected':mode==='collision'||mode==='source_changed'||mode==='selection'?'conflict':'unconfirmed');
+    check(Object.keys(result).sort(),['active_selection','destination','findings','proposal_id','source_selection','status']);
+    check(result.active_selection,'unchanged');
+    check(creates,['collision','source_changed','selection','pre_validation'].includes(mode)?0:1);
+    inspectOnly=true;
+    if(mode==='busy'){host.acquireCreate=async options=>{check(options.phase,'inspect');return null;};}
+    if(mode==='replaced_identity') {fs.renameSync(destination,destination+'.retained'); fs.writeFileSync(destination,fs.readFileSync(destination+'.retained')); ps('Set-Acl -LiteralPath $env:TEST_FILE -AclObject (Get-Acl -LiteralPath $env:TEST_ORIGINAL)',{TEST_FILE:destination,TEST_ORIGINAL:destination+'.retained'});}
+    if(mode==='source_identity') {fs.renameSync(source,source+'.retained');fs.writeFileSync(source,sourceBytes);}
+    if(mode==='late_source')fs.appendFileSync(source,' ');
+    if(mode==='late_selection')selected.generation++;
+    const again=await (mode==='restart'?createProfileUpdates(host):api).persistVersion(decision);
+    check(again.status,['success','lost_ack','scoped','read_failure','release_failure'].includes(mode)?'confirmed':mode==='pre_validation'?'rejected':['collision','source_changed','selection','late_selection','release_selection'].includes(mode)?'conflict':'unconfirmed');
+    if(mode==='restart')check((await createProfileUpdates(host).persistVersion(decision)).status,'unconfirmed');
+    check(creates,['collision','source_changed','selection','pre_validation'].includes(mode)?0:1);
+    if(['atomic_collision','partial','absent'].includes(mode))check(inspected,1);
+    if(result.status==='confirmed') {
+      check(result.destination.sha256,hash(fs.readFileSync(destination)));check(result.destination.schema_version,profile.schema_version);
+      const saved=JSON.parse(fs.readFileSync(destination));check(saved.change_history.slice(0,-1),profile.change_history);check(saved.sources,profile.sources);
+      if(mode==='success')priorConfirmed=structuredClone(saved);
+      if(mode==='lost_ack')check(saved.change_history.length,base.change_history.length+2);
+      check(saved,decision.proposed_profile);
+      if(mode==='scoped')check(saved.application_scope,profile.application_scope);
+      const intake=createProfileIntake({resolvePath:(w,p)=>path.resolve(w,p),realpath:fs.realpathSync,readBytes:fs.readFileSync,decodeUtf8:host.decode,sha256:hash});
+      const selectionRequest={workspace_root:workspace,facts_path:source,...(mode==='scoped'?{application_selection:host.currentApplicationSelection()}:{})};
+      check(intake.select(selectionRequest).status,'selected');
+      check(intake.snapshot().selection.resolved_path,source);
+      const authorityCalls=decisions;
+      // This explicit action is already covered by the reviewed select_after_confirmation request.
+      check(intake.select({...selectionRequest,facts_path:result.destination.resolved_path}).status,'selected');
+      const reopened=intake.snapshot();check(reopened.selection.profile_sha256,result.destination.sha256);
+      check(dispatchVersion(reopened.profile).status,'current');
+      const report=await host.validate(reopened.profile);check(report.schema,'passed');check(report.semantics,'passed');check(report.readiness,'ready');
+      check(decisions,authorityCalls);
+    }
+    check(fs.readFileSync(source),['source_changed','late_source'].includes(mode)?Buffer.concat([sourceBytes,Buffer.from(' ')]):sourceBytes);
+    check(acl(source),originalAcl);
+  }
+  console.log('Task6.3 native owner cases passed: exact actual schema/readback, closed result, identity-backed reconciliation, collision isolation, scope/history and source continuity.');
+}

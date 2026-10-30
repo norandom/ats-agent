@@ -139,7 +139,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: ProfileUpdate_
   - _Requirements: 6.1, 6.3, 6.7, 7.3, 8.1, 8.3, 8.5_
 
-- [ ] 6.3 Persist and explicitly select verified new versions
+- [x] 6.3 Persist and explicitly select verified new versions
   - Integrate one-attempt creation with full reopened validation, exact history, unchanged source and current context checks; use inspection only after an uncertain attempt.
   - Keep confirmed creation separate from active canonical selection and retain exact already-covered selection authority.
   - Done when validated successors become eligible only through explicit reselection, while partial/occupied/stale destinations and lost capabilities cause no replay, overwrite or original mutation.
@@ -158,3 +158,5 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
 ## Versioning implementation notes
 
 - Task 6.1: Windows creation requires a freshly owned protected storage child without DeleteChild. Atomic native directory creation supplies its origin handle. Existing source and parent ACLs remain untouched; other hosts remain unassessed. Independent review and current native tests passed; downstream integration remains outstanding.
+
+- Task 6.3: Reconciliation requires a child-local native creation-origin receipt as well as exact bytes and policy. Matching competitor files never establish origin. A native child or owner restart loses operation authority; retained files can still be selected and validated as data.
