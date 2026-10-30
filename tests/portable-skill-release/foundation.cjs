@@ -1,7 +1,7 @@
 'use strict';
 // Maintenance checks only. No candidate discovery, application flow or document operations.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
-const own=['tests/portable-skill-release/foundation.cjs','tests/portable-skill-release/foundation.test.cjs','tests/portable-skill-release/manifest.json','tests/portable-skill-release/scenarios.md'];
+const own=["release/candidate.json","release/candidate.schema.json","release/candidate-definition.cjs","tests/portable-skill-release/contracts.test.cjs",'tests/portable-skill-release/foundation.cjs','tests/portable-skill-release/foundation.test.cjs','tests/portable-skill-release/manifest.json','tests/portable-skill-release/scenarios.md'];
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 function checkRegularFile(root,relative){
  if(typeof relative!=='string'||!relative||relative.includes('\\')||relative.startsWith('/')||/^[A-Za-z]:/.test(relative)||relative.split('/').some(p=>!p||p==='.'||p==='..')||/^(private|outputs|examples|\.git|\.agents|\.codex)(\/|$)/i.test(relative)||/(^|\/)(\.env(?:\..*)?|credentials?)(\/|$)/i.test(relative))throw Error('Forbidden closure path');

@@ -11,7 +11,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Requirements: 1.4, 2.2, 3.1, 3.5, 6.4_
 
 - [ ] 2. Define the distributable candidate
-- [ ] 2.1 Declare identity, contracts and supported targets
+- [x] 2.1 Declare identity, contracts and supported targets
   - Create closed versioned declaration and maintenance-record validation, including prepared snapshots, artifacts, observations, readiness and retirement variants.
   - Select a new alpha version relative to the published baseline; align VERSION, package metadata and generated host identities without adding a core entrypoint version.
   - Declare current and retained historical contracts, required pinned uvx validation and trusted JavaScript/filesystem capabilities; distinguish layout, host-load and workflow support.
@@ -191,3 +191,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: ReadinessRetirement, InstalledAcceptance, ArtifactPipeline (integration)_
   - _Depends: 7.4, 5.2_
   - _Requirements: 2.7, 4.2, 4.6, 4.8, 5.5, 6.4, 6.5, 6.6, 7.6_
+
+## Implementation notes
+
+- Before the next candidate version, derive the root-version test assertion from VERSION; fixed fictional record examples can retain explicit versions.

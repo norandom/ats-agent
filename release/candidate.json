@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0",
+  "kind": "candidate-declaration",
+  "name": "targeted-cv",
+  "version_source": "VERSION",
+  "scope": [
+    "profile",
+    "strategy",
+    "document-session",
+    "documents",
+    "refinement"
+  ],
+  "contracts": {
+    "profile": [
+      "1.0",
+      "2.0",
+      "2.1"
+    ],
+    "strategy": [
+      "1.0",
+      "1.1",
+      "1.2"
+    ],
+    "documents": [
+      "1.0",
+      "1.1",
+      "1.2"
+    ],
+    "document_session": [
+      "1.0"
+    ],
+    "refinement_session": [
+      "1.0"
+    ]
+  },
+  "targets": [
+    {
+      "id": "windows-filesystem",
+      "format": "portable-zip",
+      "platform": "windows",
+      "host": "selected-host-required",
+      "connection": "desktop-wordcraft-mcp",
+      "javascript_runtime": "host",
+      "layout_verified": "not_assessed",
+      "host_load_verified": "not_assessed",
+      "workflow_verified": "not_assessed",
+      "evidence": null
+    },
+    {
+      "id": "portable-skill-alias",
+      "format": "skill-alias",
+      "platform": "unspecified",
+      "host": "selected-host-required",
+      "connection": "desktop-wordcraft-mcp",
+      "javascript_runtime": "host",
+      "layout_verified": "not_assessed",
+      "host_load_verified": "not_assessed",
+      "workflow_verified": "not_assessed",
+      "evidence": null
+    },
+    {
+      "id": "ecosystem-plugin-layout",
+      "format": "plugin-zip",
+      "platform": "unspecified",
+      "host": "selected-host-required",
+      "connection": "desktop-wordcraft-mcp",
+      "javascript_runtime": "host",
+      "layout_verified": "not_assessed",
+      "host_load_verified": "not_assessed",
+      "workflow_verified": "not_assessed",
+      "evidence": null
+    }
+  ],
+  "prerequisites": [
+    {
+      "id": "host-reasoning",
+      "role": "applicant",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "session-reasoning"
+      ],
+      "command": []
+    },
+    {
+      "id": "private-files",
+      "role": "applicant",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "explicit-selection",
+        "hashing",
+        "stable-path-identity",
+        "exclusive-writer",
+        "security-preserving-stage-backup-replace",
+        "exact-authorization",
+        "readback"
+      ],
+      "command": []
+    },
+    {
+      "id": "javascript",
+      "role": "applicant",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "embedded-owner-algorithms",
+        "trusted-filesystem-adapters"
+      ],
+      "command": []
+    },
+    {
+      "id": "schema-validator",
+      "role": "applicant",
+      "required": true,
+      "version": "0.38.2",
+      "capabilities": [],
+      "command": [
+        "uvx",
+        "--from",
+        "check-jsonschema==0.38.2",
+        "check-jsonschema"
+      ]
+    },
+    {
+      "id": "wordcraft-mcp",
+      "role": "applicant",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "desktop-connection",
+        "tool-discovery",
+        "live-authoring",
+        "readback",
+        "render",
+        "save-reopen"
+      ],
+      "command": []
+    },
+    {
+      "id": "cobesy",
+      "role": "optional",
+      "required": false,
+      "version": null,
+      "capabilities": [
+        "install-or-embedded-fallback"
+      ],
+      "command": []
+    },
+    {
+      "id": "humanizer",
+      "role": "optional",
+      "required": false,
+      "version": null,
+      "capabilities": [
+        "install-or-embedded-fallback"
+      ],
+      "command": []
+    },
+    {
+      "id": "node",
+      "role": "maintenance",
+      "required": true,
+      "version": "22",
+      "capabilities": [],
+      "command": []
+    },
+    {
+      "id": "pnpm",
+      "role": "maintenance",
+      "required": true,
+      "version": "10.18.3",
+      "capabilities": [],
+      "command": []
+    },
+    {
+      "id": "uv",
+      "role": "maintenance",
+      "required": true,
+      "version": "0.9.8",
+      "capabilities": [],
+      "command": []
+    },
+    {
+      "id": "dagger",
+      "role": "maintenance",
+      "required": true,
+      "version": "0.21.8",
+      "capabilities": [],
+      "command": []
+    },
+    {
+      "id": "archive-tools",
+      "role": "maintenance",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "zip",
+        "unzip"
+      ],
+      "command": []
+    },
+    {
+      "id": "checkout-tests",
+      "role": "maintenance",
+      "required": true,
+      "version": null,
+      "capabilities": [
+        "deterministic-regressions"
+      ],
+      "command": []
+    }
+  ],
+  "inventory_ref": "release/manifest.json",
+  "rights_ref": "release/rights.json",
+  "project_license": "MIT",
+  "publication": "separate-instruction-required"
+}

@@ -1,7 +1,7 @@
 {
   "name": "targeted-cv-tooling",
   "private": true,
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Deterministic checks and release tooling for the targeted-cv skill; no application service",
   "packageManager": "pnpm@10.18.3",
   "scripts": {
