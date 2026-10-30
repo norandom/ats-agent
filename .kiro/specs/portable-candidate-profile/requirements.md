@@ -103,9 +103,23 @@ M1 establishes portable candidate facts, provenance and correction behavior. The
 
 1. The Candidate Profile capability shall keep reusable candidate facts separate from offer input, application language, target country, chosen documents, output destination and live document state.
 2. When the selected candidate profile changes, the Candidate Profile capability shall derive the new candidate's facts and review state only from that selected profile and sources explicitly supplied for that candidate.
-3. When a profile update is authorized, the Candidate Profile capability shall apply it only to the selected profile and leave other candidate profiles unchanged.
+3. When a profile update is authorized, the Candidate Profile capability shall apply it only to the selected profile or the explicitly authorized new-version destination, and leave all other candidate profiles unchanged.
 4. The Candidate Profile capability shall keep candidate instances and their source history out of reusable instructions, blank templates and other distributable profile assets.
 5. When demonstrating or validating reusable profile behavior, the Candidate Profile capability shall use unrelated synthetic candidate fixtures that contain no private candidate data.
+
+### Requirement 8: Save a separately authorized reusable version
+
+**Objective:** As an applicant, I want to save confirmed facts as a new private version without replacing my selected original, so that an unsupported replacement policy does not prevent every supported update route.
+
+#### Acceptance criteria
+
+1. When the applicant authorizes saving selected factual changes as a new reusable version, the Candidate Profile capability shall identify the selected source, its current baseline, the exact changes and proposed destination, and preserve the selected source without replacement.
+2. Where a new-version persistence route is supported, the Candidate Profile capability shall state its verified creation-security guarantees and unassessed properties without representing them as preservation of the source's security metadata.
+3. If the destination exists, the source or destination context changes, or required privacy or security assurances are unavailable, the Candidate Profile capability shall withhold creation and report the conflict or deferred prerequisite without adopting or overwriting another file.
+4. When a new version is created, the Candidate Profile capability shall confirm persistence only after exact reopened content, full applicable validation, source continuity and the declared creation policy have been verified.
+5. When a new version is confirmed, the Candidate Profile capability shall retain private provenance and its exact artifact reference and require explicit selection before using it as the next canonical source, reusing an existing exact request that already covers that selection.
+6. If creation has an uncertain outcome or the process is interrupted, the Candidate Profile capability shall preserve the original and inspect the exact attempted destination before further writes, without replaying creation or reconstructing authorization from saved content.
+7. If existing-file replacement requires security guarantees that cannot be verified, the Candidate Profile capability shall retain strict deferral regardless of successful new-file creation or ordinary-user route availability.
 
 ## Verification Intent
 

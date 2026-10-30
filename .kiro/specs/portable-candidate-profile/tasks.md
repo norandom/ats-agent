@@ -1,5 +1,7 @@
 # Implementation Plan
 
+Ordinary-user versioning requirements, design and new group 6 tasks are approved by the user on 2026-10-30. Earlier checked tasks retain their historical scope. Run this group before refinement's new versioning tasks; package rights/closure are finalized in refinement task 10.1, so do not bypass interim release-definition failures.
+
 Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25; implementation started. Each executable task is sized for approximately 1–3 hours. Reference protocols are the skill implementation, not a new application. Tests use synthetic data only; private candidate migration, WordCraft integration, final SKILL.md wiring and legacy retirement remain outside this plan.
 
 - [x] 1. Establish the profile implementation and verification environment
@@ -121,3 +123,34 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: Verification_
   - _Depends: 4.1, 4.2_
   - _Requirements: 1.1, 2.6, 4.1, 4.4, 6.6, 7.4, 7.5_
+
+- [ ] 6. Support separately selected ordinary-user profile versions
+- [ ] 6.1 Establish verified private creation and inspection capabilities
+  - Provide the installed host's bounded creation policy, native identity/exclusion lease and read-only inspection phase; preserve existing replacement guarantees.
+  - Exercise real ordinary-user Windows create-new permissions, sharing, source/parent identity, collision refusal, flushed readback and unsupported-policy deferral. Other hosts retain explicit unassessed support.
+  - Done when the complete usable lease remains valid through the guarded operation and real failure controls reject races, redirects, links and unavailable guarantees without touching the source.
+  - _Boundary: ProfileUpdate_
+  - _Requirements: 8.2, 8.3, 8.4, 8.7_
+
+- [ ] 6.2 Prepare exact authorized successor proposals
+  - Bind source selection/generation, exact supported changes, new destination and verified creation policy in a live owner capability; retain existing history scopes and full prior content.
+  - Reuse exact existing requests when they cover destination and selection; reject stale/cloned/foreign decisions, whole-profile promotion and source/schema/scope changes.
+  - Done when preparation validates real complete proposals, leaves selection/files unchanged and refuses every unsupported authority case.
+  - _Boundary: ProfileUpdate_
+  - _Requirements: 6.1, 6.3, 6.7, 7.3, 8.1, 8.3, 8.5_
+
+- [ ] 6.3 Persist and explicitly select verified new versions
+  - Integrate one-attempt creation with full reopened validation, exact history, unchanged source and current context checks; use inspection only after an uncertain attempt.
+  - Keep confirmed creation separate from active canonical selection and retain exact already-covered selection authority.
+  - Done when validated successors become eligible only through explicit reselection, while partial/occupied/stale destinations and lost capabilities cause no replay, overwrite or original mutation.
+  - _Boundary: ProfileUpdate, ProfileContract, ProfileValidation (integration)_
+  - _Depends: 6.1, 6.2_
+  - _Requirements: 6.4, 6.6, 6.7, 7.3, 8.1, 8.3, 8.4, 8.5, 8.6, 8.7_
+
+- [ ] 6.4 Validate profile versions and preserve compatibility
+  - Extend existing complete profile suites and current criteria mappings; execute native ordinary-user source/target tests and retained replacement/fork/migration/isolation regressions.
+  - Integrate selected-new-source behavior and copyable runtime guidance without exposing technical storage details or silently redirecting inputs.
+  - Done when all current profile requirements have executed implementation evidence, preserved historical schemas/old behavior and a confirmed source-selection handoff for refinement; installed acceptance remains M5.
+  - _Boundary: ProfileUpdate, ProfileContract, ProfileValidation (integration validation)_
+  - _Depends: 6.3_
+  - _Requirements: 7.3, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_

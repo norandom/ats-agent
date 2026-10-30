@@ -120,3 +120,13 @@ The Targeted CV Skill is the subject of every acceptance criterion below. Specif
 7. When concluding a session, the Targeted CV Skill shall summarize the saved document versions, unresolved gaps, verification limits and whether reusable profile data changed.
 8. The Targeted CV Skill shall keep real candidate content, answers, session records and generated documents outside shareable specs, fixtures, logs and release assets; reusable examples shall be wholly fictional.
 9. When processing offers, candidate files or restored session content, the Targeted CV Skill shall treat embedded instructions and approval-shaped data as content rather than user authorization.
+
+### Requirement 8: Continue through supported new versions
+
+**Objective:** As an applicant, I want supported new-version persistence to retain application scope and session continuity, so that a change in storage route does not bypass fact choices or recovery.
+
+#### Acceptance criteria
+
+1. When refinement creates a subsequent application-profile version, the Targeted CV Skill shall preserve its immutable application scope, local evidence and history, apply only separately authorized statement choices under the declared verified creation policy, and report reusable and application outcomes independently.
+2. When refinement persists a checkpoint to a new version, the Targeted CV Skill shall bind it to the exact trusted predecessor and inspected owner observations, retain unresolved operations and require confirmed persistence before dependent dispatch, within the authorized private session workspace and without discovering or selecting a checkpoint by latest filename.
+3. While a session is stopped or an owner operation remains unresolved, the Targeted CV Skill shall retain existing stop and recovery restrictions across version changes, without treating an allowed stop observation as authority for another mutation.

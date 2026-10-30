@@ -52,3 +52,7 @@ Reuse existing explicit authorization when it covers the selected destination an
 - Schema migration loses original wording: preserve legacy bytes and sourced alternatives; block silent losses.
 - Reference files become a second application: keep components as bounded protocols; add helper code only if implementation evidence justifies it.
 - Personal facts leak into fixtures: use unrelated synthetic profiles and audit the packaged subtree in the release milestone.
+
+## Ordinary-user versioning research (2026-10-30)
+
+Integration discovery expanded to native creation security and affected consumers. See [the research amendment](ordinary-user-versioning-research.md) for official platform references, current ordinary-user primitive observations, compatibility findings and synthesis. Requirements and independently reviewed designs are approved; all ten prerequisite tasks are approved and implementation is authorized. No runtime or installed support claim follows from these probes.

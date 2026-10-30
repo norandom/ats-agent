@@ -1,5 +1,7 @@
 # Implementation Plan
 
+Ordinary-user versioning requirements, design and new groups 8-10 tasks are approved by the user on 2026-10-30. Earlier checked tasks retain their historical scope. Qualified dependencies name another specification and task. Run profile group 6 first; release hashes may remain stale during owner work until task 10.1. Upstream checks never substitute for fresh M5 installed acceptance.
+
 Implement the approved M4 design as a session-based skill. Markdown runtime instructions and embedded deterministic helpers are implementation assets in this project. Update adopter guidance alongside the entry flow; do not create a separate documentation phase or replacement application.
 
 Tasks run sequentially. Shared profile/strategy contracts, reference helpers and live desktop resources prevent safe parallel implementation here. Independent review still follows each executable task. Each unit below has a bounded deliverable sized for the project's normal 1-3 hour task guideline; this is a planning bound, not an elapsed-time promise. No test or live acceptance item is optional.
@@ -140,6 +142,57 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Boundary: RefinementFlow final validation_
   - _Depends: 7.1, 7.2_
   - _Requirements: 1.2, 1.6, 3.5, 6.1, 6.2, 6.5, 7.2, 7.3, 7.8, 7.9_
+
+- [ ] 8. Persist checkpoints as explicit new versions
+- [ ] 8.1 Define and observe exact checkpoint storage
+  - Add the closed outer format, strict payload decoding and independent outer/payload digest checks; preserve raw session validators and legacy factory.
+  - Produce live unforgeable predecessor observations and a documented retained-payload witness for transition inspection, including explicitly selected legacy predecessors.
+  - Done when valid storage/record pairs inspect correctly and mutated, cloned, foreign, malformed or incorrectly hashed predecessors fail without file writes.
+  - _Boundary: VersionedCheckpointStorage_
+  - _Depends: portable-candidate-profile/6.4_
+  - _Requirements: 7.2, 7.3, 8.2_
+
+- [ ] 8.2 Create, reconcile and resume checkpoint versions safely
+  - Prepare exact wrappers under the existing authorized workspace and persist once through the verified create/inspect lease; advance current refs only on complete confirmation.
+  - Preserve unresolved intents, stop restrictions and current owner observations through errors/restart; no filename-based reset/latest selection or mutation replay.
+  - Done when real ordinary-user checkpoints and injected interruption controls enforce before-dispatch persistence, read-only reconciliation and explicit continuity limits.
+  - _Boundary: VersionedCheckpointStorage_
+  - _Depends: 8.1, portable-candidate-profile/6.4_
+  - _Requirements: 7.2, 7.4, 7.5, 8.2, 8.3_
+
+- [ ] 9. Integrate selected profile versions and current evidence
+- [ ] 9.1 Connect scoped choices to current reasoning and documents
+  - Integrate separately authorized reusable/application successors without changing immutable scope, local evidence, chronology or selected-only promotion.
+  - Rebind current strategy/manifests through directly observed owned continuity; otherwise report a fresh baseline with no invented delta. Preserve unrelated manual document work.
+  - Done when mixed outcomes retain confirmed reusable success, pending reconciliation and correct source eligibility without whole-profile copyback or stale checks.
+  - _Boundary: ScopedProfile, StrategyIntegration, LiveRevision (integration)_
+  - _Depends: 8.2, portable-candidate-profile/6.4_
+  - _Requirements: 8.1, 8.2, 8.3_
+
+- [ ] 9.2 Verify explicitly selected versioned acceptance evidence
+  - Add the closed current index/review and explicit source/storage/chain selections, checking raw/normalized digests, decoded-reference membership and immutable inventory.
+  - Dispatch current versus historical verifier paths explicitly; remove current filename/root-count assumptions without widening retained historical behavior.
+  - Done when the full owner entrypoint validates actual selected current versions and rejects changed, foreign, missing, cyclic or substituted evidence without replay or renamed copies.
+  - _Boundary: VersionedCheckpointStorage (acceptance integration)_
+  - _Depends: 8.2, 9.1_
+  - _Requirements: 7.2, 7.3, 8.1, 8.2, 8.3_
+
+- [ ] 10. Deliver and validate the complete supported route
+- [ ] 10.1 Connect the installed flow and exact release resource closure
+  - Wire supported version choice and private checkpoint behavior into the entrypoint, preserving request reuse and avoiding technical filename prompts.
+  - Update release-owned inventory, current contracts, rights/provenance and maintenance fixtures for all validated changed resources and the added schema; retain historical assets and private exclusions.
+  - Done when actual package definition checks resolve the complete current closure and documented flow, with no publication, legacy removal or acceptance transfer.
+  - _Boundary: RefinementFlow, Definition, Rights (integration)_
+  - _Depends: 9.1, 9.2_
+  - _Requirements: 8.1, 8.2, 8.3_
+
+- [ ] 10.2 Verify the complete owner integration and hand back to installed acceptance
+  - Run current profile/refinement and affected strategy/document/session regressions, complete requirement mapping and privacy checks on the source-bound implementation.
+  - Retain actual ordinary-user reusable/local source, checkpoint and recovery observations plus a scoped WordCraft smoke; keep synthetic negative controls distinct and retain all selected documents.
+  - Done when implementation evidence and the supported native route pass independent verification with historical compatibility preserved; rebuild a fresh candidate before M5 tasks 6.1-6.4 repeat full bilingual/two-applicant acceptance.
+  - _Boundary: ScopedProfile, VersionedCheckpointStorage, StrategyIntegration (integration validation)_
+  - _Depends: 10.1_
+  - _Requirements: 7.2, 7.4, 7.5, 8.1, 8.2, 8.3_
 
 ## Implementation Notes
 

@@ -87,3 +87,7 @@ One closed refinement record stores question dispositions, statements, choices, 
 - [Privacy steering](../../steering/privacy.md) and [roadmap](../../steering/roadmap.md): private data boundary and authorized extension.
 
 The Kiro design workflow supplied discovery, synthesis and review gates. COBESY's composition guidance structured the design around applicant choices and owner responsibilities; Humanizer review kept explanatory prose direct while preserving formal contracts.
+
+## Ordinary-user versioning research (2026-10-30)
+
+Integration discovery expanded to native creation security and affected consumers. See [the research amendment](ordinary-user-versioning-research.md) for official platform references, current ordinary-user primitive observations, compatibility findings and synthesis. Requirements and independently reviewed designs are approved; all ten prerequisite tasks are approved and implementation is authorized. No runtime or installed support claim follows from these probes.

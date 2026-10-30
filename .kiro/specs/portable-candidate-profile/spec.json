@@ -1,9 +1,9 @@
 {
   "feature_name": "portable-candidate-profile",
   "created_at": "2026-10-25T17:53:28+01:00",
-  "updated_at": "2026-10-26T06:51:24.3967972+00:00",
+  "updated_at": "2026-10-30T17:45:58.5848676Z",
   "language": "en",
-  "phase": "implementation-complete",
+  "phase": "tasks-generated",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -20,8 +20,27 @@
   },
   "ready_for_implementation": true,
   "validation": {
-    "decision": "GO",
-    "report": "validation-report.md",
-    "validated_on": "2026-10-26"
+    "decision": "NOT_ASSESSED",
+    "scope": "Ordinary-user versioning amendment: requirements, design and tasks approved; implementation authorized, validation outstanding."
+  },
+  "validation_history": [
+    {
+      "decision": "GO",
+      "report": "validation-report.md",
+      "validated_on": "2026-10-26",
+      "applies_to": "Approved baseline before ordinary-user versioning amendment"
+    }
+  ],
+  "active_revision": "ordinary-user-versioning",
+  "baseline_snapshot_revision": "59a657b035dc447eed7b501588f85ac73b13933d",
+  "design_review": {
+    "decision": "PASS",
+    "report": "../portable-skill-release/ordinary-user-versioning-design-review.md",
+    "criteria_covered": 48
+  },
+  "task_review": {
+    "report": "../portable-skill-release/ordinary-user-versioning-task-review.md",
+    "decision": "PASS",
+    "mode": "independent"
   }
 }

@@ -122,7 +122,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 
 - [ ] 6. Validate the installed replacement candidate A
 - [ ] 6.1 Exercise fresh installed intake and first live documents
-  - _Blocked: Installed ProfileUpdates cannot assess applicable audit semantics on the current ordinary-user Windows host. The upstream persistence requirements amendment is approved; design and implementation remain pending. Unaffected baseline documents are retained, but persistence and task acceptance remain incomplete._
+  - _Blocked: Installed ProfileUpdates cannot assess applicable audit semantics on the current ordinary-user Windows host. The upstream requirements, design and all ten prerequisite tasks are approved; implementation and validation remain outstanding. Unaffected baseline documents are retained, but persistence and task acceptance remain incomplete._
   - Freeze candidate A from a selected source revision, verify its archives and select a fresh installation and separate private working root outside both repositories.
   - Start a fresh host session with only installed guidance and raw applicant A inputs; discover the actual WordCraft MCP connection and record prerequisites/resource reads.
   - Exercise questions, skip, qualitative evidence and local/reusable choices through installed owners, with confirmed persistence; author and retain the English CV and Germany-market letter live.
