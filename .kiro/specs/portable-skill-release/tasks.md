@@ -103,7 +103,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Requirements: 3.3, 3.4, 3.5, 3.6, 4.1, 4.8_
 
 - [ ] 5. Integrate readiness and conditional retirement gates
-- [ ] 5.1 Aggregate artifact-bound readiness without mutation
+- [x] 5.1 Aggregate artifact-bound readiness without mutation
   - Join candidate definition, rights, privacy/integrity, reproducibility, installed support and affected regressions in a read-only result with explicit blocking and unassessed gates.
   - Require the exact archive's operational evidence; matching content or older checkout receipts cannot transfer acceptance between artifacts or hosts.
   - Done when adverse tests reject stale or injected readiness, incomplete reviews and unexplained build differences without publication, installation or application mutation.

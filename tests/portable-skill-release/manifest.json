@@ -133,6 +133,9 @@
     }
   ],
   "maintenance": [
+    "release/readiness.cjs",
+    "release/readiness.md",
+    "tests/portable-skill-release/readiness.test.cjs",
     "LICENSE",
     "release/adopter-guide.md",
     "release/candidate-definition.cjs",

@@ -34,6 +34,18 @@
     },
     {
       "$ref": "#/$defs/installedReview"
+    },
+    {
+      "$ref": "#/$defs/readinessReview"
+    },
+    {
+      "$ref": "#/$defs/readinessRightsReview"
+    },
+    {
+      "$ref": "#/$defs/readinessRegression"
+    },
+    {
+      "$ref": "#/$defs/readinessReport"
     }
   ],
   "$defs": {
@@ -2501,6 +2513,704 @@
         "capabilities",
         "optional_skills",
         "findings"
+      ],
+      "additionalProperties": false
+    },
+    "readinessReview": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "build_input_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "kind": {
+          "const": "readiness-review"
+        },
+        "observation_class": {
+          "enum": [
+            "actual",
+            "control",
+            "host_judgment"
+          ]
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 10
+        },
+        "privacy": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "enum": [
+                "passed",
+                "failed",
+                "not_assessed"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 10
+            }
+          },
+          "required": [
+            "outcome",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "core": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "enum": [
+                "passed",
+                "failed",
+                "not_assessed"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 10
+            }
+          },
+          "required": [
+            "outcome",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "regressions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tests": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "failed": {
+                "const": 0
+              },
+              "skipped": {
+                "const": 0
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 10
+              },
+              "report": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "expected_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "expected_sha256"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "entrypoint",
+              "tests",
+              "failed",
+              "skipped",
+              "reason",
+              "report"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "installed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "index_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "review_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "host": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "connection": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "name",
+                  "version",
+                  "platform",
+                  "connection"
+                ],
+                "additionalProperties": false
+              },
+              "scope": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "two-applicants",
+                    "bilingual-documents",
+                    "intake",
+                    "fact-scopes",
+                    "manual-preservation",
+                    "pending-recovery-stop"
+                  ]
+                },
+                "minItems": 6,
+                "maxItems": 6,
+                "uniqueItems": true
+              },
+              "outcome": {
+                "const": "passed"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 10
+              }
+            },
+            "required": [
+              "target",
+              "artifact_sha256",
+              "index_sha256",
+              "review_sha256",
+              "host",
+              "scope",
+              "outcome",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "archive_variability": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "format": {
+                "enum": [
+                  "portable-zip",
+                  "skill-alias",
+                  "plugin-zip"
+                ]
+              },
+              "left_archive_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "right_archive_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "run_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "uniqueItems": true
+              },
+              "toolchains": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minProperties": 1
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 10
+              }
+            },
+            "required": [
+              "format",
+              "left_archive_sha256",
+              "right_archive_sha256",
+              "run_ids",
+              "toolchains",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "schema_version",
+        "source_revision",
+        "build_input_digest",
+        "artifacts",
+        "kind",
+        "observation_class",
+        "reviewer",
+        "privacy",
+        "core",
+        "regressions",
+        "installed",
+        "archive_variability"
+      ],
+      "additionalProperties": false
+    },
+    "readinessRightsReview": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "build_input_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "kind": {
+          "const": "readiness-rights-review"
+        },
+        "observation_class": {
+          "enum": [
+            "actual",
+            "control",
+            "host_judgment"
+          ]
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 10
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_assessed"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10
+        }
+      },
+      "required": [
+        "schema_version",
+        "source_revision",
+        "build_input_digest",
+        "artifacts",
+        "kind",
+        "observation_class",
+        "reviewer",
+        "outcome",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "readinessRegression": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "build_input_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "kind": {
+          "const": "readiness-regression-result"
+        },
+        "entrypoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "observation_class": {
+          "enum": [
+            "actual",
+            "control"
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "source_revision",
+        "build_input_digest",
+        "artifacts",
+        "kind",
+        "entrypoint",
+        "tests",
+        "failed",
+        "skipped",
+        "command",
+        "observation_class"
+      ],
+      "additionalProperties": false
+    },
+    "readinessReport": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "kind": {
+          "const": "readiness-report"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "blocked",
+            "not_assessed"
+          ]
+        },
+        "candidate": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "source_revision": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "source_epoch": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "build_input_digest": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source_revision",
+                "source_epoch",
+                "build_input_digest",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "definition",
+                  "integrity",
+                  "rights",
+                  "privacy",
+                  "reproducibility",
+                  "installed-acceptance",
+                  "affected-regressions",
+                  "core-preservation"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "not_assessed"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 8,
+          "maxItems": 8
+        },
+        "support": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "layout_verified": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "not_assessed"
+                ]
+              },
+              "host_load_verified": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "not_assessed"
+                ]
+              },
+              "workflow_verified": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "not_assessed"
+                ]
+              },
+              "artifact_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "evidence_index": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "size": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "sha256",
+                      "size"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "target",
+              "layout_verified",
+              "host_load_verified",
+              "workflow_verified",
+              "artifact_sha256",
+              "evidence_index"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "size"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "reproducibility": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "boolean"
+                },
+                "archive_bytes": {
+                  "type": "boolean"
+                },
+                "limits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "content",
+                "archive_bytes",
+                "limits"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mutation_authority": {
+          "const": false
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "kind",
+        "status",
+        "candidate",
+        "artifacts",
+        "gates",
+        "support",
+        "reviews",
+        "reproducibility",
+        "mutation_authority",
+        "limits"
       ],
       "additionalProperties": false
     }

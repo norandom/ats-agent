@@ -46,6 +46,7 @@ function validateRecord(record){
     if(t.javascript_runtime==='external-node'&&!record.prerequisites.some(p=>p.id==='host-node'&&p.role==='applicant'&&p.required&&p.version))return failure('prerequisite',t.id,'Declare the selected external Node runtime as an applicant prerequisite.');
    }
   }
+  if(record.kind==='readiness-report'&&(!exact(record.gates.map(g=>g.id),['definition','integrity','rights','privacy','reproducibility','installed-acceptance','affected-regressions','core-preservation'])||record.status!==require('./readiness.cjs').readinessStatus(record.gates)))return failure('evidence','readiness-status','Derive readiness from all mandatory gates; stored status cannot override evidence.');
   return {status:'passed',value:structuredClone(record),checks:[]};
  }catch{return failure('definition','record','Provide a serializable maintenance record and available schema.');}
  finally{if(directory){try{const input=path.join(directory,'record.json');if(fs.existsSync(input))fs.unlinkSync(input);fs.rmdirSync(directory);}catch{/* Cleanup cannot authorize success or replace the validation result. */}}}
