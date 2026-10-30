@@ -1,0 +1,13 @@
+# Task 4.1 implementation review
+
+Task scope: standalone package routing and safe managed filesystem installation. The package guide and all 31 tested core resources remain unchanged.
+
+The current corrected Linux run passed thirteen tests with zero failures or skips: seven installation tests and six preparation tests. A prior broader M5 run passed 44 of 48 tests. Four preparation failures came from executable modes retained by the test copy on DrvFS; all four passed after the test setup used Dagger's regular-file mode 0644. No product change was needed for that setup error. The current routing test checks every installed Markdown link in a fresh builtin-only child after both fixture source locations have moved.
+
+Two actual Windows checks using the selected group 3 archives passed initial installation, managed update, exact recovery preservation and changed or unmanaged user-file rejection in fresh external test-owned directories. The worker's current flag-free run confirmed 97 installed local Markdown links. These observations cover filesystem operations and resource routing, not host loading or live WordCraft acceptance.
+
+Behavioral evidence includes a disabled-flag run with six failures out of seven tests and an enabled run with seven passes, followed by flag removal. The implementer disclosed that helper text had already been drafted behind the disabled flag before the recorded RED run. This is gated RED/GREEN evidence; strict implementation-text-after-RED chronology is not claimed.
+
+The maintenance helper verifies each archive with the explicitly selected trusted prepared-source verifier. This preserves the prior archive's verification identity during cross-revision updates. It stages beside the destination, promotes only the managed skill folder, rejects changed or additional files and directories, retains exact recovery and displaced managed copies, and restores interrupted promotion only when the destination is still absent. The operator must provide exclusive host filesystem access. A cooperative helper lock cannot exclude arbitrary external writers.
+
+Independent verdict: APPROVED. The reviewer independently ran the full canonical release suite in a fresh allowlisted Linux context: 48 passed, zero failed or skipped, exit code 0. Static, placeholder, secrets and boundary checks found no blocking issue. Parent completion gate: VERIFIED for task 4.1 from that review, current focused tests, actual Windows filesystem observations, unchanged core resources and repository privacy review. No installed-host, live WordCraft or full-release readiness is granted.

@@ -78,7 +78,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Requirements: 2.6, 3.1, 5.4, 6.4, 6.6_
 
 - [ ] 4. Enable verifiable standalone acceptance
-- [ ] 4.1 Verify safe installation and adopter routing
+- [x] 4.1 Verify safe installation and adopter routing
   - Test the existing package-local guidance from the verified archive for facts, offer, questions and live refinement routing.
   - Exercise documented host filesystem installation: absent initial destination, sibling staging, exact verified managed update inventory and retained recovery copy; reject unmanaged or changed user files.
   - Explain runtime prerequisites, WordCraft connection, optional skill installation/embedded fallback choices and candidate versus published/untested availability; keep checkout docs consistent.
