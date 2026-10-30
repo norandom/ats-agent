@@ -332,7 +332,10 @@
     "tests/portable-skill-release/pipeline.test.cjs",
     "tests/portable-skill-release/reproducibility.test.cjs",
     "release/install.cjs",
-    "tests/portable-skill-release/installation.test.cjs"
+    "tests/portable-skill-release/installation.test.cjs",
+    "release/observe.cjs",
+    "tests/portable-skill-release/observation.test.cjs",
+    "release/installed-observation.md"
   ],
   "coverage": [
     {

@@ -87,7 +87,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 3.3, 2.3_
   - _Requirements: 1.6, 3.1, 3.2, 3.4, 3.6, 5.1, 5.2, 5.4, 5.5_
 
-- [ ] 4.2 Collect installed-owner observations and adapters
+- [x] 4.2 Collect installed-owner observations and adapters
   - Provide a bounded observer for exact artifact/install hashes, resource-use traces, host versions, prerequisites, owner receipts and MCP operations.
   - Declare filesystem/transport adapters satisfying stable identity, exclusive writer, security-preserving persistence and exact authorization; load application algorithms only from installed references.
   - Done when collection records selected installed resources and declared adapters without application logic, expected prose or source-owner imports.
