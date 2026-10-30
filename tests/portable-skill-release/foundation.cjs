@@ -32,4 +32,3 @@ function probePrerequisites(run=(command,args)=>spawnSync(command,args,{encoding
 }
 module.exports={checkRegularFile,validateFoundation,probePrerequisites};
 if(require.main===module){if(process.argv[2]==='--probe'){console.log(JSON.stringify(probePrerequisites(),null,2));}else{try{console.log(JSON.stringify(validateFoundation(path.resolve(__dirname,'../..'),require('./manifest.json')),null,2));}catch(error){console.error(error.message);process.exitCode=1;}}}
-

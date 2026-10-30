@@ -24,4 +24,3 @@ test('prerequisite results separate actual availability from baseline compatibil
  assert.equal(report.checks.find(r=>r.id==='node').baseline_match,false);assert.equal(report.checks.find(r=>r.id==='pnpm').baseline_match,true);assert.equal(report.checks.find(r=>r.id==='validator').status,'passed');assert.equal(report.checks.find(r=>r.id==='zip').status,'not_assessed');
  assert.ok(report.checks.every(r=>!('stdout' in r)&&!('stderr' in r)));
 });
-
