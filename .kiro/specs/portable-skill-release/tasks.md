@@ -28,7 +28,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 2.1_
   - _Requirements: 4.2, 4.4, 5.2, 5.3_
 
-- [ ] 2.3 Supply the standalone adopter payload
+- [x] 2.3 Supply the standalone adopter payload
   - Author package-local instructions for private facts, offer/role, questions, live documents, refinement, safe installation/update and optional skill installation or embedded fallback.
   - Explain exact runtime prerequisites, PowerShell/Bash commands, applicant versus maintenance tooling, and candidate versus published or untested availability. Keep checkout routing consistent.
   - Done when the declared package guidance and links validate without source repositories, user data remains external and the guidance can enter the final rights/inventory review.

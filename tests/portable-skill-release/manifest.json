@@ -313,7 +313,9 @@
     "tests/wordcraft-document-session/live-scenarios.cjs",
     "tests/wordcraft-document-session/live-scenarios.test.cjs",
     "tests/wordcraft-document-session/protocol.test.cjs",
-    "tests/wordcraft-document-session/scenarios.md"
+    "tests/wordcraft-document-session/scenarios.md",
+    "release/adopter-guide.md",
+    "tests/portable-skill-release/adopter-guide.test.cjs"
   ],
   "coverage": [
     {

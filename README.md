@@ -18,9 +18,9 @@ This is an agent skill. Your AI host reads the instructions, works with your pri
 
 Before your first application, you need:
 
-- An AI host that supports local skills, file access and MCP tools.
+- An AI host with local skills, session reasoning, trusted JavaScript execution, explicit file selection and hashing, safe private-file persistence, and MCP tools.
 - WordCraft desktop and `wordcraft-cli`, connected to that host through MCP.
-- Node.js, pnpm and uv/uvx for the local deterministic checks. These helpers do not call model APIs.
+- uv/uvx for the pinned validator `uvx --from check-jsonschema==0.38.2 check-jsonschema`. External Node.js and pnpm are needed only when your selected host requires them; Dagger, archive tools and checkout tests are release-maintenance tooling.
 
 Install the `targeted-cv` folder from the [latest alpha release](https://github.com/norandom/ats-agent/releases) in your host's skill directory, or load [SKILL.md](skills/targeted-cv/SKILL.md) from this checkout. Keep the folder's references, schemas and templates together.
 
@@ -32,7 +32,7 @@ You and your AI host -> targeted-cv instructions -> WordCraft MCP -> open docume
 
 The host discovers WordCraft's available tools and uses them to write, read back, render and save your CV or letter. The skill does not start a background Node service. Dagger builds and checks the release; it is not part of your document session.
 
-For your first run, ask: **“Use targeted-cv. Check my WordCraft connection, then help me prepare my private facts file.”** A successful connection check reads the selected document before authoring begins. The alpha supports document creation and bounded edits; the full conversational refinement loop is still planned. See the [roadmap](.kiro/steering/roadmap.md) for scope.
+For your first run, ask: **“Use targeted-cv. Check my WordCraft connection, then help me prepare my private facts file.”** A successful connection check reads the selected document before authoring begins. The published `2.0.0-alpha.1` covers the earlier profile, strategy, document-session and live document scope. This checkout includes validated conversational refinement; the local `2.0.0-alpha.2` candidate still needs installed-workflow acceptance. Host and platform combinations without that evidence remain unvalidated. See the [roadmap](.kiro/steering/roadmap.md) for scope.
 
 ## 1. Prepare your facts once
 
