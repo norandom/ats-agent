@@ -44,7 +44,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Requirements: 1.3, 1.4, 1.5, 2.1, 6.1, 6.2, 6.3_
 
 - [ ] 3. Build and verify exact artifacts
-- [ ] 3.1 Prepare a source-bound generic snapshot
+- [x] 3.1 Prepare a source-bound generic snapshot
   - Make maintenance modules callable without import-time side effects while retaining their command entrypoints.
   - Capture selected full revision, epoch and exact generic input hashes externally before staging; reject source mismatch and label dirty development snapshots non-release-ready.
   - Stage only the declared payload and maintenance closure in a fresh destination, excluding private evidence, credentials and local configuration.
@@ -198,3 +198,5 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 
 - Task 3 must resolve seven pre-existing core checkout/Git line-ending differences without silently changing the tested runtime bytes. Rights currently bind exact checkout bytes; no exact Git-blob or source-bound artifact claim has been made.
 - The manifest is now an explicit mapping record. Preparation and packaging consumers still require their planned task 3 upgrades; definition validation alone does not make their older context/layout usable.
+
+- Task 3.1 preserves payload bytes with Git attributes and selective raw-byte staging. Maintenance inputs use selected Git blobs when checkout differences are CRLF-only. Keep checkout_sha256 observations outside artifact identity; canonical build-input identity uses path, size and sha256 only.

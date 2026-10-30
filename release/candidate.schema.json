@@ -355,18 +355,13 @@
                 "type": "string",
                 "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
               },
-              "destination": {
-                "type": "string",
-                "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
-              },
               "role": {
                 "enum": [
                   "core",
-                  "guidance",
+                  "guide",
                   "sample",
                   "license",
-                  "notice",
-                  "metadata"
+                  "notice"
                 ]
               },
               "size": {
@@ -380,15 +375,53 @@
               "rights_ref": {
                 "type": "string",
                 "minLength": 1
+              },
+              "destinations": {
+                "type": "object",
+                "properties": {
+                  "portable-zip": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "skill-alias": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "plugin-zip": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "portable-zip",
+                  "skill-alias",
+                  "plugin-zip"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
               "source",
-              "destination",
               "role",
               "size",
               "sha256",
-              "rights_ref"
+              "rights_ref",
+              "destinations"
             ],
             "additionalProperties": false
           },
@@ -411,12 +444,17 @@
               "size": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "checkout_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
               }
             },
             "required": [
               "path",
               "sha256",
-              "size"
+              "size",
+              "checkout_sha256"
             ],
             "additionalProperties": false
           },

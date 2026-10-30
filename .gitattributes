@@ -1,2 +1,6 @@
-# Preserve the retained legacy validator byte-for-byte across checkouts.
-skills/targeted-cv/schemas/cv-facts-v1.schema.json -text whitespace=cr-at-eol
+# Preserve the approved payload bytes across Git checkouts; do not normalize runtime files.
+skills/targeted-cv/** -text whitespace=cr-at-eol
+release/adopter-guide.md -text whitespace=cr-at-eol
+tests/portable-skill-release/fixtures/applicant-a.facts.json -text whitespace=cr-at-eol
+LICENSE -text whitespace=cr-at-eol
+THIRD_PARTY_NOTICES.md -text whitespace=cr-at-eol
