@@ -43,7 +43,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: CandidateDefinition_
   - _Requirements: 1.3, 1.4, 1.5, 2.1, 6.1, 6.2, 6.3_
 
-- [ ] 3. Build and verify exact artifacts
+- [x] 3. Build and verify exact artifacts
 - [x] 3.1 Prepare a source-bound generic snapshot
   - Make maintenance modules callable without import-time side effects while retaining their command entrypoints.
   - Capture selected full revision, epoch and exact generic input hashes externally before staging; reject source mismatch and label dirty development snapshots non-release-ready.
@@ -69,7 +69,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: ArtifactPipeline_
   - _Requirements: 1.5, 2.2, 2.3, 2.4, 2.5, 2.7_
 
-- [ ] 3.4 Integrate local and Dagger candidate validation
+- [x] 3.4 Integrate local and Dagger candidate validation
   - Pass explicit source revision/epoch through local preparation, Dagger and CI and compare with the prepared descriptor.
   - Include the new maintenance closure and deterministic gates; keep private desktop evidence outside container contexts and publication separate from candidate preparation.
   - Run two fresh builds and compare payload and archive bytes separately with recorded tool identities; unexplained differences block readiness.
@@ -200,3 +200,5 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 - The manifest is now an explicit mapping record. Preparation and packaging consumers still require their planned task 3 upgrades; definition validation alone does not make their older context/layout usable.
 
 - Task 3.1 preserves payload bytes with Git attributes and selective raw-byte staging. Maintenance inputs use selected Git blobs when checkout differences are CRLF-only. Keep checkout_sha256 observations outside artifact identity; canonical build-input identity uses path, size and sha256 only.
+
+- Task 3.4 builds raw stages on the Linux container filesystem and exports finished archives only; DrvFS modes can differ despite chmod. Keep production /source immutable, tests in /work and unique attempt IDs before validation/production to avoid reusing prior execution evidence.
