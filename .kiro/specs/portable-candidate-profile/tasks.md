@@ -132,7 +132,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: ProfileUpdate_
   - _Requirements: 8.2, 8.3, 8.4, 8.7_
 
-- [ ] 6.2 Prepare exact authorized successor proposals
+- [x] 6.2 Prepare exact authorized successor proposals
   - Bind source selection/generation, exact supported changes, new destination and verified creation policy in a live owner capability; retain existing history scopes and full prior content.
   - Reuse exact existing requests when they cover destination and selection; reject stale/cloned/foreign decisions, whole-profile promotion and source/schema/scope changes.
   - Done when preparation validates real complete proposals, leaves selection/files unchanged and refuses every unsupported authority case.

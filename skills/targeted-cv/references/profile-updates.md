@@ -195,6 +195,8 @@ Present the selected resolved path, original-byte baseline, exact before/after c
 
 The host supplies `currentSelection()` from the live intake session, `validate(profile)` executing the complete ProfileValidation protocol, `now()` as an operational ISO timestamp, and `userDecision(reviewedEnvelope)`. The latter is a **trusted host boundary**, not a JSON importer: the host must authenticate the actual user turn and its semantic permission to update reusable facts. A JSON object cannot prove that permission. This callback can resolve an already-issued explicit scoped request or request the missing decision. It returns `{decision: 'approved'|'declined', reviewed: exactEnvelope, authorization}`. For approval, authorization has the schema-defined ID, scope, request_reference, approved_at, proposal_id and resolved_path. Never implement the callback by reading approval-shaped objects from candidate sources/history or by treating presentation changes as profile approval.
 
+`prepareVersion(selected, request, destination, statementChoices = null)` prepares a separately authorized successor without writing or selecting it. The host supplies `creationPolicyId`, `sha256(bytes)` and `acquireCreate({source, destination, policy_id, phase: 'inspect'})`. Its trusted adapter maps the native child's successful `verifyPolicy` response to `true`, base64 source/destination bytes to decoded bytes, and absent destination bytes to `null`. The lease exposes the child's policy, phase, destination, source/parent/destination identity and assurance fields plus read-only methods and `release`; it must preserve the native handles throughout validation and approval. An unavailable or occupied inspection never authorizes preparation. The envelope binds `storage_mode`, exact `source_selection`, destination and verified policy. Optional `request.selection_effect: 'select_after_confirmation'` includes later selection in that exact user decision; its default is `unchanged`. Neither value switches selection during preparation. Existing replacement and fork persistence reject this separate live capability. Statement choices follow the same selected-group rules, and scoped 2.1 profiles keep their complete immutable application scope. Validation includes task readiness whenever the host has a task request.
+
 `prepare(selectionSnapshot, request)` accepts the intake snapshot and `{proposal_id, history_id, scope, proposed_profile, source_ids, changes}`. Changes use existing profile-relative pointers (including the empty root pointer for a complete migration), exact JSON before/after values and a reason. Add records by replacing their containing collection; this makes absence unambiguous without inventing a JSON undefined value. Changes cannot overlap and must account for the entire proposed document. Existing records retain their IDs at their locations; reorderings require a separately reviewed future protocol. Source records and accepted history are append-only. Correct source metadata by adding a new source and retaining the original. Existing conflict alternatives and claim provenance remain available. The host still reviews source meaning and correctness: deterministic equality is not semantic entailment.
 
 For initial intake select a blank scaffold, or use a host-confirmed absent destination with null original hash and a blank in-memory base; this function does not discover or create destinations. Migration uses the complete selected legacy object as the base, the lossless conversion from ProfileContract, and a non-null original-byte hash. Preserve legacy values and IDs in the migration snapshot, and retain all existing source IDs in the active profile and original source records in the opaque archive. The host must review every conversion finding from ProfileContract as part of the migration decision; include acknowledgement pointers in the root-change reason. Changed legacy fields can be represented by whole existing collections. Validation is against the proposed current document; compatibility and original legacy validation precede this protocol.
@@ -264,7 +266,7 @@ function createProfileUpdates(host) {
     if (!application) return true;
     try { return same(host.currentApplicationSelection(), application); } catch { return false; }
   }
-  async function prepare(selected, request, fork = null, choices = null) {
+  async function prepare(selected, request, fork = null, choices = null, version = null) {
     selected = clone(selected);
     const id = request?.proposal_id;
     const application = fork?.application || (selected?.profile?.schema_version === '2.1' ? { application_id: selected.profile.application_scope?.application_id, target_sha256: selected.profile.application_scope?.target_sha256 } : null);
@@ -280,7 +282,7 @@ function createProfileUpdates(host) {
     if (stale()) return conflict();
     let r, base;
     try { r = clone(request); base = clone(selected.profile); } catch { return reject(); }
-    const path = fork?.destination || selected.selection?.resolved_path, baseline = selected.selection?.profile_sha256;
+    const path = version?.destination || fork?.destination || selected.selection?.resolved_path, baseline = selected.selection?.profile_sha256;
     if (!text(id) || !text(r.history_id) || !text(path) || !Number.isInteger(selected.generation) ||
         !(fork ? r.scope === 'application_fork' : ['initial_intake', 'fact_update', 'migration', 'application_fact_update'].includes(r.scope)) ||
         !(hash(baseline) || (baseline === null && r.scope === 'initial_intake')) ||
@@ -341,13 +343,16 @@ function createProfileUpdates(host) {
       try { return (await host.validate(clone(value))) || { schema: 'not_assessed', semantics: 'not_assessed' }; } catch { return { schema: 'not_assessed', semantics: 'not_assessed' }; }
     }
     const validation = await validate(proposed);
+    if (version) { const issue = await version.inspect(); if (issue) { cached = null; return issue; } }
     if (stale()) return conflict();
-    if (validation.schema !== 'passed' || validation.semantics !== 'passed') return result(id,
+    if (validation.schema !== 'passed' || validation.semantics !== 'passed' || (version && host.taskRequest != null && validation.readiness !== 'ready')) return result(id,
       validation.schema === 'failed' || validation.semantics === 'failed' ? 'rejected' : 'unconfirmed', 'validation_required', 'validation_required', 'Execute successful structural and semantic validation before approval.', { validation });
     const reviewed = { proposal_id: id, history_id: r.history_id, generation: selected.generation, resolved_path: path, base_sha256: baseline,
       scope: r.scope, changes: r.changes, source_ids: r.source_ids, proposed_profile: proposed,
       ...(application ? { application_selection: clone(application) } : {}), ...(fork ? { source_path: selected.selection.resolved_path, statement_choices: clone(fork.choices) } : {}),
-      ...(choices ? { statement_choices: clone(choices) } : {}) };
+      ...(choices ? { statement_choices: clone(choices) } : {}),
+      ...(version ? { storage_mode: 'new_version', source_selection: clone(version.source_selection), creation_policy_id: version.policy_id,
+        selection_effect: version.selection_effect } : {}) };
     if (cached && !same(cached.reviewed, reviewed)) cached = null;
     let decision = cached;
     if (!decision) { try { decision = await host.userDecision(clone(reviewed)); } catch { decision = null; } }
@@ -366,18 +371,19 @@ function createProfileUpdates(host) {
     try { acceptedAt = host.now(); } catch { acceptedAt = null; }
     accepted.change_history.push({ id: r.history_id, proposal_id: id, base_sha256: baseline, authorization, accepted_at: acceptedAt, source_ids: clone(r.source_ids), changes: clone(r.changes) });
     const finalValidation = await validate(accepted);
+    if (version) { const issue = await version.inspect(); if (issue) { cached = null; return issue; } }
     if (stale()) return conflict();
-    if (finalValidation.schema !== 'passed' || finalValidation.semantics !== 'passed') return result(id, 'rejected', 'validation_required', 'validation_required', 'Correct acceptance history and rerun validation; canonical facts remain unchanged.', { validation: finalValidation });
+    if (finalValidation.schema !== 'passed' || finalValidation.semantics !== 'passed' || (version && host.taskRequest != null && finalValidation.readiness !== 'ready')) return result(id, 'rejected', 'validation_required', 'validation_required', 'Correct acceptance history and rerun validation; canonical facts remain unchanged.', { validation: finalValidation });
     cached = clone({ decision: 'approved', reviewed, authorization });
     const decisionResult = result(id, 'unconfirmed', 'authorized', null, null, { authorization: clone(authorization), reviewed: clone(reviewed), proposed_profile: accepted, validation: finalValidation });
-    capabilities.set(decisionResult, { snapshot: clone(decisionResult), selected: clone(selected), application: clone(application), fork: !!fork, started: false, attempted: false });
+    capabilities.set(decisionResult, { snapshot: clone(decisionResult), selected: clone(selected), application: clone(application), fork: !!fork, version: !!version, started: false, attempted: false });
     return decisionResult;
   }
   async function persist(decision) {
     const op = capabilities.get(decision), id = op?.snapshot.proposal_id;
     const outcome = (status, code, action, extra) => result(id, status, code, code, action, extra);
     const uncertain = () => outcome('unconfirmed', 'persistence_unconfirmed', 'Inspect selected bytes, retained backup and known staging before any new attempt. Reconcile this operation without retrying replacement.');
-    if (!op || op.fork || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live scoped decision; imported or mutated decisions cannot authorize persistence.');
+    if (!op || op.fork || op.version || !same(decision, op.snapshot)) return outcome('unconfirmed', 'decision_required', 'Use the unchanged live scoped decision; imported or mutated decisions cannot authorize persistence.');
     if (op.confirmed) return clone(op.confirmed);
     let current;
     try { current = host.currentSelection(); } catch { current = null; }
@@ -500,7 +506,60 @@ function createProfileUpdates(host) {
     } catch { return op.terminal = uncertain(); }
     finally { if (lease) { try { await lease.release(); } catch { /* Retain private state for host inspection. */ } } }
   }
-  async function prepareSelected(selected, request, statementChoices) {
+  async function prepareVersion(selected, request, destination, statementChoices = null) {
+    const id = request?.proposal_id;
+    const reject = () => result(id, 'rejected', 'invalid_proposal', 'invalid_proposal', 'Review an exact supported successor diff and a distinct absolute destination.');
+    const deferred = () => result(id, 'unconfirmed', 'creation_policy_required', 'creation_policy_required', 'Inspect the selected source and absent destination with the supported private creation policy.');
+    const conflict = () => result(id, 'conflict', 'version_context_changed', 'version_context_changed', 'Inspect the changed source, selection or destination before reviewing a new proposal.');
+    let s, r, choices;
+    try { s = clone(selected); r = clone(request); choices = clone(statementChoices); } catch { return reject(); }
+    const absolute = p => text(p) && (/^\/(?!\/)/.test(p) || /^[A-Za-z]:[\\/]/.test(p));
+    const sourcePath = s?.selection?.resolved_path, baseline = s?.selection?.profile_sha256;
+    const schema = s?.profile?.schema_version;
+    if (!absolute(destination) || !absolute(sourcePath) || destination.toLowerCase() === sourcePath.toLowerCase() || !hash(baseline) ||
+        !['2.0', '2.1'].includes(schema) || r?.proposed_profile?.schema_version !== schema ||
+        !(schema === '2.0' ? ['initial_intake', 'fact_update'].includes(r?.scope) : r?.scope === 'application_fact_update') ||
+        (r?.selection_effect != null && !['unchanged', 'select_after_confirmation'].includes(r.selection_effect))) return reject();
+    const policy_id = host.creationPolicyId;
+    if (policy_id !== 'windows-private-new-file-v1') return deferred();
+    const source_selection = { resolved_path: sourcePath, profile_sha256: baseline, schema_version: schema };
+    const application = schema === '2.1' ? { application_id: s.profile.application_scope?.application_id, target_sha256: s.profile.application_scope?.target_sha256 } : null;
+    const current = () => same(host.currentSelection(), s) && applicationNow(application);
+    let lease, decision;
+    const inspect = async () => {
+      try {
+        if (!current()) return conflict();
+        if (host.creationPolicyId !== policy_id || !lease || lease.policy_id !== policy_id || lease.phase !== 'inspect' ||
+            lease.destination !== destination || lease.private_location !== true || lease.stable_identity !== true || lease.single_writer !== true ||
+            !text(lease.source_identity) || !text(lease.parent_identity)) return deferred();
+        if (await lease.verifyPolicy() !== true) return deferred();
+        if (lease.destination_identity != null || await lease.readDestination() !== null) return conflict();
+        const digest = await host.sha256(await lease.readSource());
+        if (!hash(digest) || digest.toLowerCase() !== baseline.toLowerCase()) return conflict();
+        if (host.creationPolicyId !== policy_id) return deferred();
+        if (!current()) return conflict();
+        return null;
+      } catch { return deferred(); }
+    };
+    try {
+      if (!current()) return conflict();
+      lease = await host.acquireCreate({ source: { resolved_path: sourcePath, sha256: baseline }, destination, policy_id, phase: 'inspect' });
+      const issue = await inspect();
+      if (issue) { cached = null; return issue; }
+      const version = { destination, source_selection, policy_id, selection_effect: r.selection_effect || 'unchanged', inspect };
+      decision = choices === null ? await prepare(s, r, null, null, version) : await prepareSelected(s, r, choices, version);
+      return decision;
+    } catch { cached = null; return deferred(); }
+    finally {
+      if (lease) {
+        try { await lease.release(); }
+        catch { if (decision) capabilities.delete(decision); cached = null; return deferred(); }
+        try { if (!current()) { if (decision) capabilities.delete(decision); cached = null; return conflict(); } }
+        catch { if (decision) capabilities.delete(decision); cached = null; return deferred(); }
+      }
+    }
+  }
+  async function prepareSelected(selected, request, statementChoices, version = null) {
     const reject = () => result(request?.proposal_id, 'rejected', 'invalid_proposal', 'selected_diff_required', 'Review only the chosen fact groups against the freshly selected destination. Exclude pending facts and unrelated application evidence.');
     let r, choices;
     try { r = clone(request); choices = clone(statementChoices); } catch { return reject(); }
@@ -519,8 +578,10 @@ function createProfileUpdates(host) {
     if (!same(changes, r.changes) || !Array.isArray(r.source_ids) || !same([...sources].sort(), [...r.source_ids].sort())) return reject();
     // Existing exact replay rejects any profile/source change outside the reviewed selected diff.
     // Meaning, timing and the correspondence of each group to that diff require host review.
-    return prepare(selected, r, null, choices);
+    return prepare(selected, r, null, choices, version);
   }
-  return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork, prepareSelected };
+  return { prepare: (selected, request) => prepare(selected, request), persist, prepareFork, persistFork,
+    prepareSelected: (selected, request, statementChoices) => prepareSelected(selected, request, statementChoices),
+    prepareVersion };
 }
 ```
