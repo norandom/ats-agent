@@ -17,8 +17,8 @@ let checks = 0;
 const check = (a, b) => { assert.deepEqual(a, b); checks++; };
 const output = path.join(root, 'outputs/profile-tests'); fs.mkdirSync(output, { recursive: true });
 const workspace = fs.mkdtempSync(path.join(output, 'persistence-'));
-function ps(script, paths) {
-  const r = spawnSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', '$ErrorActionPreference="Stop"; ' + script], {
+function ps(script, paths, shell = 'pwsh') {
+  const r = spawnSync(shell, ['-NoProfile', '-NonInteractive', '-Command', '$ErrorActionPreference="Stop"; ' + script], {
     encoding: 'utf8', windowsHide: true, env: { ...process.env, ...paths }
   });
   assert.equal(r.status, 0, r.stderr); return r.stdout.trim();
@@ -70,7 +70,87 @@ async function setup(decisionMode = 'approved') {
   if (decisionMode === 'approved') check(decision.decision_state, 'authorized');
   return { api, decision, request, host, selected, selectedPath, original, dir, other, security, decisions: () => decisions, replacements: () => replacements, releases: () => releases };
 }
+async function nativeCreationLease() {
+  const document = fs.readFileSync(path.join(root, 'skills/targeted-cv/references/profile-updates.md'), 'utf8');
+  const script = document.match(/```powershell\r?\n([\s\S]*?)```/);
+  assert.ok(script, 'installed reference supplies a usable native creation lease');
+  if (process.platform !== 'win32') {
+    assert.match(document, /Other hosts remain unassessed/); return;
+  }
+  const scriptPath = path.join(workspace, 'installed-native.ps1');
+  fs.writeFileSync(scriptPath, script[1]);
+  const { spawn } = require('node:child_process');
+  const child = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-File', scriptPath], { windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
+  const lines = require('node:readline').createInterface({ input: child.stdout });
+  const pending = []; let stderr = '';
+  child.stderr.on('data', b => { stderr += b; });
+  lines.on('line', line => { const done = pending.shift(); if (done) done(JSON.parse(line)); });
+  const ask = data => new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(Error('Native lease response timeout: ' + stderr)), 15000);
+    pending.push(value => { clearTimeout(timer); resolve(value); }); child.stdin.write(JSON.stringify(data) + '\n');
+  });
+  const external = (file, action) => {
+    const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+      '$ErrorActionPreference="Stop";try {switch($env:NATIVE_ACTION){read{$s=[IO.File]::Open($env:NATIVE_FILE,"Open","Read","ReadWrite,Delete");$s.Dispose()}write{$s=[IO.File]::Open($env:NATIVE_FILE,"Open","Write","ReadWrite,Delete");$s.Dispose()}delete{[IO.File]::Delete($env:NATIVE_FILE)}rename{[IO.File]::Move($env:NATIVE_FILE,$env:NATIVE_FILE+".moved")}directoryRename{[IO.Directory]::Move($env:NATIVE_FILE,$env:NATIVE_FILE+".moved")}};"allowed"}catch{"denied"}'],
+    { windowsHide: true, encoding: 'utf8', env: { ...process.env, NATIVE_FILE: file, NATIVE_ACTION: action } });
+    assert.equal(r.status, 0, r.stderr); return r.stdout.trim();
+  };
+  try {
+    const source = path.join(workspace, 'fictional-source.json'); fs.writeFileSync(source, '{"fictional":true}');
+    const original = fs.readFileSync(source), sourceAcl = acl(source);
+    const storage = await ask({ op: 'establishRoot', workspace, name: 'fresh-private-' + crypto.randomUUID() });
+    assert.equal(storage.ok, true, JSON.stringify(storage));
+    assert.equal(storage.ordinary_user, true, 'actual native proof requires an ordinary user');
+    const destination = path.join(storage.path, 'successor.json');
+    const request = { op: 'acquire', phase: 'create', policy_id: 'windows-private-new-file-v1', root: storage.capability,
+      source: { resolved_path: source, sha256: hash(original) }, destination };
+    const lease = await ask(request); assert.equal(lease.ok, true, JSON.stringify(lease));
+    for (const action of ['write','delete','rename']) assert.equal(external(source, action), 'denied', 'source ' + action);
+    assert.equal(external(storage.path, 'directoryRename'), 'denied', 'native parent relocation guard');
+    const bytes = Buffer.from(JSON.stringify(base));
+    const created = await ask({ op: 'createNew', lease: lease.lease, bytes: bytes.toString('base64') });
+    assert.equal(created.ok, true, JSON.stringify(created));
+    assert.equal(created.bytes, bytes.toString('base64')); assert.equal(created.reopened, true);
+    const validated = await validate(JSON.parse(Buffer.from(created.bytes, 'base64').toString('utf8')));
+    assert.equal(validated.schema, 'passed'); assert.equal(validated.semantics, 'passed');
+    for (const action of ['write','delete','rename']) assert.equal(external(destination, action), 'denied', 'reopened ' + action);
+    assert.equal(external(destination, 'read'), 'allowed', 'ordinary readers allowed after creation');
+    assert.equal((await ask({ op: 'verifyPolicy', lease: lease.lease })).ok, true);
+    assert.equal((await ask({ op: 'createNew', lease: lease.lease, bytes: bytes.toString('base64') })).ok, false, 'one attempt');
+    assert.equal((await ask({ op: 'release', lease: lease.lease })).ok, true);
+    assert.deepEqual(fs.readFileSync(source), original); assert.equal(acl(source), sourceAcl);
+    assert.equal((await ask(request)).ok, false, 'occupied destination');
+    const inspection = await ask({ ...request, phase: 'inspect' }); assert.equal(inspection.ok, true, JSON.stringify(inspection));
+    assert.equal((await ask({ op: 'readDestination', lease: inspection.lease })).bytes, bytes.toString('base64'));
+    assert.equal((await ask({ op: 'createNew', lease: inspection.lease, bytes: bytes.toString('base64') })).ok, false);
+    await ask({ op: 'release', lease: inspection.lease });
+    const absent = await ask({ ...request, phase: 'inspect', destination: path.join(storage.path, 'absent.json') });
+    assert.equal(absent.ok, true); assert.equal((await ask({ op: 'readDestination', lease: absent.lease })).bytes, null);
+    await ask({ op: 'release', lease: absent.lease });
+    assert.equal((await ask({ ...request, destination: path.join(workspace, 'foreign.json'), root: storage.capability })).ok, false);
+    assert.equal((await ask({ ...request, destination: path.join(storage.path, 'changed.json'), source: { resolved_path: source, sha256: '0'.repeat(64) } })).ok, false);
+    assert.equal((await ask({ op: 'establishRoot', workspace, name: path.basename(storage.path) })).ok, false, 'no root adoption');
+    const link = path.join(workspace, 'hardlink.json'); fs.linkSync(source, link);
+    assert.equal((await ask({ ...request, destination: path.join(storage.path, 'linked-source.json') })).ok, false, 'multiple links rejected');
+    fs.unlinkSync(link);
+    const junction = path.join(workspace, 'redirected');
+    ps('New-Item -ItemType Junction -Path $env:TEST_LINK -Target $env:TEST_TARGET | Out-Null', { TEST_LINK: junction, TEST_TARGET: storage.path });
+    assert.equal((await ask({ op: 'establishRoot', workspace: junction, name: 'redirected-root' })).ok, false, 'reparse parent rejected');
+    const unsafe = await ask({ op: 'establishRoot', workspace, name: 'unsafe-parent-' + crypto.randomUUID() }); assert.equal(unsafe.ok, true);
+    ps('$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value;$a=[Security.AccessControl.DirectorySecurity]::new();$a.SetSecurityDescriptorSddlForm("D:P(A;;FA;;;$sid)(A;;FA;;;SY)",[Security.AccessControl.AccessControlSections]::Access);[IO.Directory]::SetAccessControl($env:TEST_FILE,$a)', { TEST_FILE: unsafe.path }, 'powershell.exe');
+    assert.equal((await ask({ ...request, root: unsafe.capability, destination: path.join(unsafe.path, 'unsafe.json') })).ok, false, 'FullControl parent rejected');
+    const raced = { ...request, destination: path.join(storage.path, 'race.json') };
+    const first = await ask(raced), second = await ask(raced);
+    assert.equal(first.ok, true); assert.equal(second.ok, true);
+    assert.equal((await ask({ op: 'createNew', lease: first.lease, bytes: bytes.toString('base64') })).ok, true);
+    assert.equal((await ask({ op: 'createNew', lease: second.lease, bytes: Buffer.from('{}').toString('base64') })).ok, false, 'atomic race collision');
+    assert.equal((await ask({ op: 'createNew', lease: second.lease, bytes: bytes.toString('base64') })).ok, false, 'failed attempt cannot replay');
+    assert.deepEqual(fs.readFileSync(raced.destination), bytes);
+    await ask({ op: 'release', lease: first.lease }); await ask({ op: 'release', lease: second.lease });
+  } finally { child.stdin.end(); child.kill(); }
+}
 async function run() {
+  await nativeCreationLease();
   const success = await setup();
   assert.equal(typeof success.api.persist, 'function', 'persistence feature must exist');
   const result = await success.api.persist(success.decision);

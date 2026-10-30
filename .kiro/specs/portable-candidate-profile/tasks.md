@@ -125,7 +125,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Requirements: 1.1, 2.6, 4.1, 4.4, 6.6, 7.4, 7.5_
 
 - [ ] 6. Support separately selected ordinary-user profile versions
-- [ ] 6.1 Establish verified private creation and inspection capabilities
+- [x] 6.1 Establish verified private creation and inspection capabilities
   - Provide the installed host's bounded creation policy, native identity/exclusion lease and read-only inspection phase; preserve existing replacement guarantees.
   - Exercise real ordinary-user Windows create-new permissions, sharing, source/parent identity, collision refusal, flushed readback and unsupported-policy deferral. Other hosts retain explicit unassessed support.
   - Done when the complete usable lease remains valid through the guarded operation and real failure controls reject races, redirects, links and unavailable guarantees without touching the source.
@@ -154,3 +154,7 @@ Profile design approved on 2026-10-25. Tasks approved by the user on 2026-10-25;
   - _Boundary: ProfileUpdate, ProfileContract, ProfileValidation (integration validation)_
   - _Depends: 6.3_
   - _Requirements: 7.3, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
+
+## Versioning implementation notes
+
+- Task 6.1: Windows creation requires a freshly owned protected storage child without DeleteChild. Atomic native directory creation supplies its origin handle. Existing source and parent ACLs remain untouched; other hosts remain unassessed. Independent review and current native tests passed; downstream integration remains outstanding.
