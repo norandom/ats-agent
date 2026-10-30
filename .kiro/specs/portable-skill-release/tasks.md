@@ -122,6 +122,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 
 - [ ] 6. Validate the installed replacement candidate A
 - [ ] 6.1 Exercise fresh installed intake and first live documents
+  - _Blocked: Installed ProfileUpdates cannot assess applicable audit semantics on the current ordinary-user Windows host. The upstream persistence requirements amendment is approved; design and implementation remain pending. Unaffected baseline documents are retained, but persistence and task acceptance remain incomplete._
   - Freeze candidate A from a selected source revision, verify its archives and select a fresh installation and separate private working root outside both repositories.
   - Start a fresh host session with only installed guidance and raw applicant A inputs; discover the actual WordCraft MCP connection and record prerequisites/resource reads.
   - Exercise questions, skip, qualitative evidence and local/reusable choices through installed owners, with confirmed persistence; author and retain the English CV and Germany-market letter live.
@@ -206,3 +207,5 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 - Group 4 separates collection, mechanical evidence verification and actual installed-workflow acceptance. Keep independently selected index/review digests and authenticated competent observations; a passed helper result or an old artifact's receipts do not grant readiness for a newly built artifact.
 
 - Group 5 adds the fixed complete-validation runner and exact retirement policy. Future task 7.1 must create a dedicated retirement commit containing only the eight declared removals and five updates. Record its prior revision and diff for scoped recovery; commit task/review metadata separately. Later approved metadata may advance HEAD, while frozen B retains its own exact source and evidence bindings.
+
+- Task 5.2 was reopened and repaired during group 6: the release adapter now runs native test launches through unchanged owner validators. Independent review passed ten focused tests; actual profile dispatch passed eleven suites/eleven native file tests and strategy twenty-four suites/fifty-four native tests. All bad counts were zero. Generic CI had not exercised these branches. A fresh artifact is required for the repaired source; no counts are inferred from printed PASS summaries.
