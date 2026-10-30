@@ -315,7 +315,13 @@
     "tests/wordcraft-document-session/protocol.test.cjs",
     "tests/wordcraft-document-session/scenarios.md",
     "release/adopter-guide.md",
-    "tests/portable-skill-release/adopter-guide.test.cjs"
+    "tests/portable-skill-release/adopter-guide.test.cjs",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "release/check.cjs",
+    "release/manifest.json",
+    "release/rights.json",
+    "tests/portable-skill-release/inventory-rights.test.cjs"
   ],
   "coverage": [
     {

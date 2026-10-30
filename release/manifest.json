@@ -1,27 +1,599 @@
-[
-  "skills/targeted-cv/SKILL.md",
-  "skills/targeted-cv/references/application-documents.md",
-  "skills/targeted-cv/references/application-strategy.md",
-  "skills/targeted-cv/references/candidate-profile.md",
-  "skills/targeted-cv/references/document-presentation.md",
-  "skills/targeted-cv/references/document-session.md",
-  "skills/targeted-cv/references/document-verification.md",
-  "skills/targeted-cv/references/germany-cover-letter.md",
-  "skills/targeted-cv/references/profile-contract.md",
-  "skills/targeted-cv/references/profile-updates.md",
-  "skills/targeted-cv/references/profile-validation.md",
-  "skills/targeted-cv/references/strategy-contract.md",
-  "skills/targeted-cv/references/strategy-editorial.md",
-  "skills/targeted-cv/references/strategy-evidence.md",
-  "skills/targeted-cv/references/strategy-review.md",
-  "skills/targeted-cv/references/wordcraft-capabilities.md",
-  "skills/targeted-cv/references/wordcraft-operations.md",
-  "skills/targeted-cv/schemas/application-documents-v1.schema.json",
-  "skills/targeted-cv/schemas/application-documents.schema.json",
-  "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
-  "skills/targeted-cv/schemas/application-strategy.schema.json",
-  "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
-  "skills/targeted-cv/schemas/cv-facts.schema.json",
-  "skills/targeted-cv/schemas/document-session.schema.json",
-  "skills/targeted-cv/templates/cv-facts.blank.json"
-]
+{
+  "schema_version": "1.0",
+  "kind": "release-inventory",
+  "assets": [
+    {
+      "source": "skills/targeted-cv/SKILL.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/SKILL.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/SKILL.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/SKILL.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/SKILL.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/application-documents.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/application-documents.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/application-documents.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/application-documents.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/application-documents.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/application-refinement.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/application-refinement.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/application-refinement.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/application-refinement.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/application-refinement.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/application-strategy.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/application-strategy.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/application-strategy.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/application-strategy.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/application-strategy.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/candidate-profile.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/candidate-profile.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/candidate-profile.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/candidate-profile.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/candidate-profile.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/document-presentation.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/document-presentation.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/document-presentation.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/document-presentation.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/document-presentation.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/document-session.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/document-session.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/document-session.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/document-session.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/document-session.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/document-verification.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/document-verification.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/document-verification.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/document-verification.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/document-verification.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/germany-cover-letter.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/germany-cover-letter.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/germany-cover-letter.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/germany-cover-letter.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/germany-cover-letter.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/profile-contract.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/profile-contract.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/profile-contract.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/profile-contract.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/profile-contract.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/profile-updates.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/profile-updates.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/profile-updates.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/profile-updates.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/profile-updates.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/profile-validation.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/profile-validation.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/profile-validation.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/profile-validation.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/profile-validation.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/refinement-session.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/refinement-session.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/refinement-session.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/refinement-session.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/refinement-session.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/strategy-contract.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/strategy-contract.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/strategy-contract.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/strategy-contract.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/strategy-contract.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/strategy-editorial.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/strategy-editorial.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/strategy-editorial.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/strategy-editorial.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/strategy-editorial.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/strategy-evidence.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/strategy-evidence.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/strategy-evidence.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/strategy-evidence.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/strategy-evidence.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/strategy-review.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/strategy-review.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/strategy-review.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/strategy-review.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/strategy-review.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/wordcraft-capabilities.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/wordcraft-capabilities.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/wordcraft-capabilities.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/wordcraft-capabilities.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/wordcraft-capabilities.md"
+    },
+    {
+      "source": "skills/targeted-cv/references/wordcraft-operations.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/references/wordcraft-operations.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/references/wordcraft-operations.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/references/wordcraft-operations.md"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/references/wordcraft-operations.md"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-documents-v1.1.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-documents-v1.1.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-documents-v1.1.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-documents-v1.1.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-documents-v1.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-documents-v1.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-documents-v1.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-documents-v1.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-documents-v1.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-documents.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-documents.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-documents.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-documents.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-documents.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-strategy-v1.1.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-strategy-v1.1.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-strategy-v1.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-strategy-v1.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-strategy-v1.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-strategy-v1.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/application-strategy.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/application-strategy.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/application-strategy.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/application-strategy.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/application-strategy.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/cv-facts-application.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/cv-facts-application.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/cv-facts-application.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/cv-facts-application.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/cv-facts-application.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/cv-facts-v1.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/cv-facts-v1.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/cv-facts-v1.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/cv-facts-v1.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/cv-facts.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/cv-facts.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/cv-facts.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/cv-facts.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/cv-facts.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/document-session.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/document-session.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/document-session.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/document-session.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/document-session.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/schemas/refinement-session.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/refinement-session.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/refinement-session.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/refinement-session.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/refinement-session.schema.json"
+    },
+    {
+      "source": "skills/targeted-cv/templates/cv-facts.blank.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/templates/cv-facts.blank.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/templates/cv-facts.blank.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/templates/cv-facts.blank.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/templates/cv-facts.blank.json"
+    },
+    {
+      "source": "release/adopter-guide.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/README.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/README.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/README.md"
+        ]
+      },
+      "role": "guide",
+      "rights_ref": "release/adopter-guide.md"
+    },
+    {
+      "source": "tests/portable-skill-release/fixtures/applicant-a.facts.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/examples/sample-facts.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/examples/sample-facts.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/examples/sample-facts.json"
+        ]
+      },
+      "role": "sample",
+      "rights_ref": "tests/portable-skill-release/fixtures/applicant-a.facts.json"
+    },
+    {
+      "source": "LICENSE",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/LICENSE"
+        ],
+        "skill-alias": [
+          "targeted-cv/LICENSE"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/LICENSE",
+          "LICENSE"
+        ]
+      },
+      "role": "license",
+      "rights_ref": "LICENSE"
+    },
+    {
+      "source": "THIRD_PARTY_NOTICES.md",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/THIRD_PARTY_NOTICES.md"
+        ],
+        "skill-alias": [
+          "targeted-cv/THIRD_PARTY_NOTICES.md"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/THIRD_PARTY_NOTICES.md",
+          "THIRD_PARTY_NOTICES.md"
+        ]
+      },
+      "role": "notice",
+      "rights_ref": "THIRD_PARTY_NOTICES.md"
+    }
+  ],
+  "generated": [
+    {
+      "role": "release-metadata",
+      "generator": "release/package.cjs",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/RELEASE.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/RELEASE.json"
+        ],
+        "plugin-zip": [
+          "RELEASE.json"
+        ]
+      }
+    },
+    {
+      "role": "host-metadata",
+      "generator": "release/candidate-definition.cjs#hostMetadata",
+      "destinations": {
+        "portable-zip": [],
+        "skill-alias": [],
+        "plugin-zip": [
+          "plugin.json",
+          ".codex-plugin/plugin.json",
+          ".claude-plugin/plugin.json",
+          ".gemini-plugin/plugin.json"
+        ]
+      }
+    }
+  ]
+}

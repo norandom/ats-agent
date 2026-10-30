@@ -10,7 +10,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: ArtifactPipeline_
   - _Requirements: 1.4, 2.2, 3.1, 3.5, 6.4_
 
-- [ ] 2. Define the distributable candidate
+- [x] 2. Define the distributable candidate
 - [x] 2.1 Declare identity, contracts and supported targets
   - Create closed versioned declaration and maintenance-record validation, including prepared snapshots, artifacts, observations, readiness and retirement variants.
   - Select a new alpha version relative to the published baseline; align VERSION, package metadata and generated host identities without adding a core entrypoint version.
@@ -36,7 +36,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Depends: 2.1, 2.2_
   - _Requirements: 3.1, 3.2, 3.6, 5.1, 5.2, 5.4, 5.5_
 
-- [ ] 2.4 Establish exact inventory and redistribution rights
+- [x] 2.4 Establish exact inventory and redistribution rights
   - Map all core and package-extra source/destination assets, roles and hash-bound rights references, including templates and duplicated plugin-root notices.
   - Add the selected MIT license for project-owned content and required notices; review each asset's origin separately and keep optional skills and publisher material link-only.
   - Done when missing resources, unresolved rights, omitted notices or undeclared assets block distributable verification, and all 31 core bytes remain unchanged.
@@ -195,3 +195,6 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
 ## Implementation notes
 
 - Before the next candidate version, derive the root-version test assertion from VERSION; fixed fictional record examples can retain explicit versions.
+
+- Task 3 must resolve seven pre-existing core checkout/Git line-ending differences without silently changing the tested runtime bytes. Rights currently bind exact checkout bytes; no exact Git-blob or source-bound artifact claim has been made.
+- The manifest is now an explicit mapping record. Preparation and packaging consumers still require their planned task 3 upgrades; definition validation alone does not make their older context/layout usable.

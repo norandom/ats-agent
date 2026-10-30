@@ -1,0 +1,537 @@
+{
+  "schema_version": "1.0",
+  "kind": "asset-rights",
+  "authorization": {
+    "id": "owner-selected-MIT-project-content",
+    "basis": "Explicit project owner selection of MIT for project-owned code and skill content; does not grant third-party or franchise rights.",
+    "license_file": "LICENSE",
+    "notice_file": "THIRD_PARTY_NOTICES.md"
+  },
+  "assets": [
+    {
+      "id": "skills/targeted-cv/SKILL.md",
+      "source": "skills/targeted-cv/SKILL.md",
+      "source_sha256": "34e7c87cb61bc81106ef8cd87f67840716fdc707d0e7a00a4bc5066e1cd16fd3",
+      "origin": "project-authored",
+      "origin_ref": "git:029f0f6eb4e3cc63014f2bbce60b7cc6cd9694fa:skills/targeted-cv/SKILL.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/application-documents.md",
+      "source": "skills/targeted-cv/references/application-documents.md",
+      "source_sha256": "8e86fd1133b70d92a6457e4d40963a7ebb3d0af6ef45a5584463ad13929d8bf1",
+      "origin": "project-authored",
+      "origin_ref": "git:5f0c550019fe907d6506990d5129f080a4842e72:skills/targeted-cv/references/application-documents.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/application-refinement.md",
+      "source": "skills/targeted-cv/references/application-refinement.md",
+      "source_sha256": "9031987c4685b475df1e516e85f43e3ece93e5b8bbf98d3c2059f982fe29e148",
+      "origin": "project-authored",
+      "origin_ref": "git:029f0f6eb4e3cc63014f2bbce60b7cc6cd9694fa:skills/targeted-cv/references/application-refinement.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/application-strategy.md",
+      "source": "skills/targeted-cv/references/application-strategy.md",
+      "source_sha256": "ebeda4ede3ada71241488888c561402626d1cd71f8b6e6e86d1b365a292e8e32",
+      "origin": "project-authored",
+      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/application-strategy.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/candidate-profile.md",
+      "source": "skills/targeted-cv/references/candidate-profile.md",
+      "source_sha256": "f2deb9580c70cc06b5d03e7fb8d22247f066c43b6285b6ce9aa43f7f032bd627",
+      "origin": "project-authored",
+      "origin_ref": "git:cb72efa75b106182e0502f450a0a4533452c3c95:skills/targeted-cv/references/candidate-profile.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/document-presentation.md",
+      "source": "skills/targeted-cv/references/document-presentation.md",
+      "source_sha256": "e03ec637fb27c496016ca8c57ccfbb1b34d0db0ba94552dc27a18c6881f97881",
+      "origin": "project-authored",
+      "origin_ref": "git:aa7cdcbd3ebd7346bc724a272a1be4270560f03e:skills/targeted-cv/references/document-presentation.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/document-session.md",
+      "source": "skills/targeted-cv/references/document-session.md",
+      "source_sha256": "089904894289c2993caafd99b2bdde56bd754bdf84edd030bc42c854a2545f57",
+      "origin": "project-authored",
+      "origin_ref": "git:fb03ed7e1aea126f06fc49d2a6ea744275c82a3c:skills/targeted-cv/references/document-session.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/document-verification.md",
+      "source": "skills/targeted-cv/references/document-verification.md",
+      "source_sha256": "3ad1f81915c558e3c2b851a91732998f17975a8bc67bc3da5fc9f6f7f657ec51",
+      "origin": "project-authored",
+      "origin_ref": "git:92dbfc7680ea0241d026132a88f6c9fe91088aaa:skills/targeted-cv/references/document-verification.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/germany-cover-letter.md",
+      "source": "skills/targeted-cv/references/germany-cover-letter.md",
+      "source_sha256": "f471fbc92cff33e681bf7234ddb96396fa9060d0a5788fc99614f7660e9e4361",
+      "origin": "project-authored",
+      "origin_ref": "git:1e05c9b0f1246ff88c6b84f02688ca6a7cd8e5e7:skills/targeted-cv/references/germany-cover-letter.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored recipe and factual geometry checklist with attributed publisher links. No publisher PDF, template or normative DIN text included."
+    },
+    {
+      "id": "skills/targeted-cv/references/profile-contract.md",
+      "source": "skills/targeted-cv/references/profile-contract.md",
+      "source_sha256": "af44e60f0c504db053994e28fc65e71c40f4c0207f75af9150ef49bcd9566408",
+      "origin": "project-authored",
+      "origin_ref": "git:595aa7115379e6ff0f08348daf0e79a94a6589a7:skills/targeted-cv/references/profile-contract.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/profile-updates.md",
+      "source": "skills/targeted-cv/references/profile-updates.md",
+      "source_sha256": "4ab168ceadf74548c3c2b56ac8571660618ea76461f63daa79d943d41fbcf385",
+      "origin": "project-authored",
+      "origin_ref": "git:cb72efa75b106182e0502f450a0a4533452c3c95:skills/targeted-cv/references/profile-updates.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/profile-validation.md",
+      "source": "skills/targeted-cv/references/profile-validation.md",
+      "source_sha256": "86f39c791827cf21d4601951733301bed01abf0e1329e561b27bbe3a5f6b2193",
+      "origin": "project-authored",
+      "origin_ref": "git:595aa7115379e6ff0f08348daf0e79a94a6589a7:skills/targeted-cv/references/profile-validation.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/refinement-session.md",
+      "source": "skills/targeted-cv/references/refinement-session.md",
+      "source_sha256": "f5392711f15d5a54d0ca9a27cae0976604ba13b92830fffd75e1be6943e77ecd",
+      "origin": "project-authored",
+      "origin_ref": "git:4126cf67b39d35dbd7bac5bd83cf94909585cfe2:skills/targeted-cv/references/refinement-session.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/strategy-contract.md",
+      "source": "skills/targeted-cv/references/strategy-contract.md",
+      "source_sha256": "90956309bc0e3e5fb736446693f76f9a4cfc435c44cfe690445a2ab2d35fcb76",
+      "origin": "project-authored",
+      "origin_ref": "git:904efd53f7b18368d7ee692da7196b740e6d3cb4:skills/targeted-cv/references/strategy-contract.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/strategy-editorial.md",
+      "source": "skills/targeted-cv/references/strategy-editorial.md",
+      "source_sha256": "08ad8787d8ae254b121199d475b25aea3ba64322cc2e355124a14dc239d065da",
+      "origin": "project-authored",
+      "origin_ref": "git:30511b50a63c160fedbabcdcf5d3157fe997c5a4:skills/targeted-cv/references/strategy-editorial.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored editorial rules and optional-skill integration. COBESY and Humanizer are linked, not bundled."
+    },
+    {
+      "id": "skills/targeted-cv/references/strategy-evidence.md",
+      "source": "skills/targeted-cv/references/strategy-evidence.md",
+      "source_sha256": "f3233a0dafdaec6955c06f3a35b3a23f77a6ba718be18955d48773ca188f2a10",
+      "origin": "project-authored",
+      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/strategy-evidence.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/strategy-review.md",
+      "source": "skills/targeted-cv/references/strategy-review.md",
+      "source_sha256": "de556bf71347db2ea4b8888d3668f9a185433f8501854731292a32538e86604c",
+      "origin": "project-authored",
+      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/strategy-review.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/wordcraft-capabilities.md",
+      "source": "skills/targeted-cv/references/wordcraft-capabilities.md",
+      "source_sha256": "7349ca72362970209b56db5edf9c168bc5d2187541c035381fb2c0b4045b10fd",
+      "origin": "project-authored",
+      "origin_ref": "git:e47b4ea4e7a526b6d843dbc4055fce0bd110ac22:skills/targeted-cv/references/wordcraft-capabilities.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/references/wordcraft-operations.md",
+      "source": "skills/targeted-cv/references/wordcraft-operations.md",
+      "source_sha256": "4040f046c20477c5fd7e6309a64e8f784b5bb1f14f90486c7a43f9586a9ecf08",
+      "origin": "project-authored",
+      "origin_ref": "git:1642ad80b3a04a78251741351f12738d0fd72565:skills/targeted-cv/references/wordcraft-operations.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored instructions and owner algorithms; external names and links identify integration sources without bundling external packages."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+      "source": "skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+      "source_sha256": "8dad05ff7ec5c7c12d23f3f84a210bf5bf834a8592bb00d1744e489f63fb3783",
+      "origin": "project-authored",
+      "origin_ref": "git:5f0c550019fe907d6506990d5129f080a4842e72:skills/targeted-cv/schemas/application-documents-v1.1.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-documents-v1.schema.json",
+      "source": "skills/targeted-cv/schemas/application-documents-v1.schema.json",
+      "source_sha256": "a11561561645924a82fcd47aa31161bceedfba1add08bea56ab4d3dd561ff9ce",
+      "origin": "project-authored",
+      "origin_ref": "git:b0ddf3247959d5a265791524ed7fabb9ad727466:skills/targeted-cv/schemas/application-documents-v1.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-documents.schema.json",
+      "source": "skills/targeted-cv/schemas/application-documents.schema.json",
+      "source_sha256": "af7d1e95527eb12aa15f3dd8ec2681bdec7d9df48c823f22ba5633d16f4281e5",
+      "origin": "project-authored",
+      "origin_ref": "git:5f0c550019fe907d6506990d5129f080a4842e72:skills/targeted-cv/schemas/application-documents.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+      "source": "skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+      "source_sha256": "5ca6aaef1d7251f42dbab83702045ed5ba095f68bd31b92196dcde5c9276efbb",
+      "origin": "project-authored",
+      "origin_ref": "git:904efd53f7b18368d7ee692da7196b740e6d3cb4:skills/targeted-cv/schemas/application-strategy-v1.1.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+      "source": "skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+      "source_sha256": "1a93d54179856bc2eb8205d744d836e66d6f6057deeb8b3cab3a3fc2228aa728",
+      "origin": "project-authored",
+      "origin_ref": "git:56b9512444c46b95cc102d0cfe481aeee446ae4f:skills/targeted-cv/schemas/application-strategy-v1.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/application-strategy.schema.json",
+      "source": "skills/targeted-cv/schemas/application-strategy.schema.json",
+      "source_sha256": "c8272bb564263c80843481f734e2467c931bae8c454d256c109bdbb13e747d60",
+      "origin": "project-authored",
+      "origin_ref": "git:904efd53f7b18368d7ee692da7196b740e6d3cb4:skills/targeted-cv/schemas/application-strategy.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/cv-facts-application.schema.json",
+      "source": "skills/targeted-cv/schemas/cv-facts-application.schema.json",
+      "source_sha256": "71398ec8949b839cff6fb8bbc908c92f02e7cf7db51219b8e309d996e7837b3e",
+      "origin": "project-authored",
+      "origin_ref": "git:595aa7115379e6ff0f08348daf0e79a94a6589a7:skills/targeted-cv/schemas/cv-facts-application.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+      "source": "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+      "source_sha256": "83ff6c5aafe7d507905cfa2a0638bd4350b4b4bae3f8d48c58a0f430fe1c53a3",
+      "origin": "project-authored",
+      "origin_ref": "git:06e7520dd97df25fd495dfd788375c5dcf8546e5:skills/targeted-cv/schemas/cv-facts-v1.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/cv-facts.schema.json",
+      "source": "skills/targeted-cv/schemas/cv-facts.schema.json",
+      "source_sha256": "8f6657fa9ec8675c81313db91691c4e5961138a6955554c319593b717a13ef37",
+      "origin": "project-authored",
+      "origin_ref": "git:06e7520dd97df25fd495dfd788375c5dcf8546e5:skills/targeted-cv/schemas/cv-facts.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/document-session.schema.json",
+      "source": "skills/targeted-cv/schemas/document-session.schema.json",
+      "source_sha256": "e287c1d2738fab0640e0a41b3f9638f2284da806b2132940b602ba1f9f9a4b15",
+      "origin": "project-authored",
+      "origin_ref": "git:581b69dd287ff5e62819e6e6ba24f39e80874567:skills/targeted-cv/schemas/document-session.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/refinement-session.schema.json",
+      "source": "skills/targeted-cv/schemas/refinement-session.schema.json",
+      "source_sha256": "2760519b2cf63278ae23d9bec56c1f0d53830e2e287c4a0e73f0011386fb620d",
+      "origin": "project-authored",
+      "origin_ref": "git:678bf2adb606539445ffd77106805a0429df9e1f:skills/targeted-cv/schemas/refinement-session.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/templates/cv-facts.blank.json",
+      "source": "skills/targeted-cv/templates/cv-facts.blank.json",
+      "source_sha256": "20586b6d032cf09ff8a93eefed46949013a6b8e1a37c79ed6f0986a8478da938",
+      "origin": "project-authored",
+      "origin_ref": "git:06e7520dd97df25fd495dfd788375c5dcf8546e5:skills/targeted-cv/templates/cv-facts.blank.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored blank intake scaffold with no candidate instance or third-party template."
+    },
+    {
+      "id": "release/adopter-guide.md",
+      "source": "release/adopter-guide.md",
+      "source_sha256": "199eebcdf9561d4c0b9276ec820e469ee7bcc0fba60d6db2eb203077b61eefc5",
+      "origin": "project-authored",
+      "origin_ref": "git:0c47900949297229a60c1f3aea852aa97a10e03a:release/adopter-guide.md",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored standalone guide. Source and setup links refer to external prerequisites and optional skills; no external packages included."
+    },
+    {
+      "id": "tests/portable-skill-release/fixtures/applicant-a.facts.json",
+      "source": "tests/portable-skill-release/fixtures/applicant-a.facts.json",
+      "source_sha256": "ec2953dcbde956ae3566356d31421315b6f8642a0032b313443be37b006c0b8b",
+      "origin": "project-authored",
+      "origin_ref": "git:398b9d822c93bf8a1afa20c84dc6634126b0ba8b:tests/portable-skill-release/fixtures/applicant-a.facts.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Original project-authored fictional fixture. Men in Black is a franchise reference, with no copied publisher text. MIT covers original project text only; see fictional-example notice."
+    },
+    {
+      "id": "LICENSE",
+      "source": "LICENSE",
+      "source_sha256": "05c226cf9a0ec394ec084be7af4d33ab137c49af7e60830f90c6a1f4e285c512",
+      "origin": "project-authored",
+      "origin_ref": "owner-selected-license-and-notice:addition",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Distribution license or notices prepared under the explicit owner selection of MIT for project-owned content."
+    },
+    {
+      "id": "THIRD_PARTY_NOTICES.md",
+      "source": "THIRD_PARTY_NOTICES.md",
+      "source_sha256": "118d29ffed23e47be8d3fd079facce4f9c2fe2fb62ffc897a328d068bbf04294",
+      "origin": "project-authored",
+      "origin_ref": "owner-selected-license-and-notice:addition",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Distribution license or notices prepared under the explicit owner selection of MIT for project-owned content."
+    }
+  ]
+}
