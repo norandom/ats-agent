@@ -325,7 +325,9 @@
     "tests/wordcraft-document-session/live-scenarios.test.cjs",
     "tests/wordcraft-document-session/protocol.test.cjs",
     "tests/wordcraft-document-session/scenarios.md",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "release/verify.cjs",
+    "tests/portable-skill-release/archive-verification.test.cjs"
   ],
   "coverage": [
     {

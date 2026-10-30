@@ -61,7 +61,7 @@ Each executable task is a 1 to 3 hour work unit, including its focused checks. C
   - _Boundary: ArtifactPipeline_
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.5, 6.6_
 
-- [ ] 3.3 Independently verify archive contents and extraction
+- [x] 3.3 Independently verify archive contents and extraction
   - Inspect actual archive entries, bytes and metadata before extraction, separately from staging assertions.
   - Reject traversal, absolute paths, duplicate/case-colliding entries, redirects, links, unsupported types, unexpected modes and omitted/changed/extra payloads.
   - Verify selected hashes, extract into an absent explicit destination and recheck containment and full installed inventory; retain privacy review without sending private scanning context into builds.
