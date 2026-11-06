@@ -1,9 +1,0 @@
-{
-  "schema_version": "1.1",
-  "kind": "retirement-declaration",
-  "remove": ["main.py", "ats_agent.py", "cv_parser.py", "ats_industry_standards.py", "german_cv_knowledge.py", "example.py", "requirements.txt", ".env.example"],
-  "update": ["docs/README.md", "docs/legacy-cli.md", ".kiro/steering/product.md", ".kiro/steering/tech.md", ".kiro/steering/structure.md"],
-  "recovery_policy": "prior-revision-and-dedicated-diff-only",
-  "preserve_ignored": true,
-  "execution_task": "7.1"
-}
