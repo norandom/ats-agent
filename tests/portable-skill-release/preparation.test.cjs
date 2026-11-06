@@ -13,7 +13,7 @@ function fixture(t){
 }
 test('module import is side-effect-free and snapshot stages exact closed generic inventory without Git',t=>{
  const f=fixture(t),captured=f.capture();assert.equal(captured.status,'passed');const snapshot=captured.value;
- assert.equal(snapshot.source_revision,f.sourceRevision);assert.equal(snapshot.assets.length,35);assert.equal(snapshot.development_snapshot,false);
+ assert.equal(snapshot.source_revision,f.sourceRevision);assert.equal(snapshot.assets.length,require('../../release/manifest.json').assets.length);assert.equal(snapshot.development_snapshot,false);
  const externalSnapshot=path.join(f.base,'snapshot.json');
  const cli=JSON.parse(execFileSync(process.execPath,[path.join(root,'release/prepare.cjs'),'capture','--root',f.repo,'--source-revision',f.sourceRevision,'--source-epoch',String(f.sourceEpoch),'--snapshot',externalSnapshot],{encoding:'utf8',windowsHide:true}));assert.equal(cli.status,'passed');assert.deepEqual(JSON.parse(fs.readFileSync(externalSnapshot,'utf8')),snapshot);
  const destination=path.join(f.base,'prepared');const result=preparation.prepareCandidate({root:f.repo,snapshot},destination);assert.equal(result.status,'passed');
