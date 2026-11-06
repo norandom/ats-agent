@@ -243,6 +243,7 @@
     "tests/portable-skill-release/inventory-rights.test.cjs",
     "tests/portable-skill-release/manifest.json",
     "tests/portable-skill-release/preparation.test.cjs",
+    "tests/portable-skill-release/scenarios.md",
     "tests/targeted-application-strategy/acceptance-coverage.json",
     "tests/targeted-application-strategy/application-context.test.cjs",
     "tests/targeted-application-strategy/comparison.test.cjs",
