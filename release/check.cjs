@@ -32,7 +32,7 @@ const core=[
  "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
  "skills/targeted-cv/schemas/cv-facts.schema.json",
  "skills/targeted-cv/schemas/document-session.schema.json",
-   "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+  "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
   "skills/targeted-cv/schemas/refinement-session.schema.json",
  "skills/targeted-cv/templates/cv-facts.blank.json"
 ];
