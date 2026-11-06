@@ -161,7 +161,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 7.2, 7.4, 7.5, 8.2, 8.3_
 
 - [ ] 9. Integrate selected profile versions and current evidence
-- [ ] 9.1 Connect scoped choices to current reasoning and documents
+- [x] 9.1 Connect scoped choices to current reasoning and documents
   - Integrate separately authorized reusable/application successors without changing immutable scope, local evidence, chronology or selected-only promotion.
   - Rebind current strategy/manifests through directly observed owned continuity; otherwise report a fresh baseline with no invented delta. Preserve unrelated manual document work.
   - Done when mixed outcomes retain confirmed reusable success, pending reconciliation and correct source eligibility without whole-profile copyback or stale checks.

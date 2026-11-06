@@ -14,7 +14,7 @@ Create `createStrategyWorkflow(host, modules)` once per live session. `modules` 
 2. Read the current evidence and follow planning and composition. Call `editorialMethods()` with the editorial host callbacks; carry its actual `methods` into the handoff and retain setup handoffs privately. This reuses the session's existing optional-method choice, without installing anything. Host reviews must refer to the current binding, exact draft hashes and inventories.
 3. Give `assemble(handoff, {previous?})` the complete schema-shaped private working draft. It freezes the offer population, runs the question planner, withholds unsupported selected realizations, checks composition, executes arithmetic and editorial review, and validates the final immutable snapshot. Questions, rejected alternatives and findings remain private. A blocking review produces `needs_revision`; incomplete readiness produces `bounded`; otherwise the state is `ready_for_document_draft`. Only selected supported realizations may enter document authoring. Unassessed document observations remain unassessed.
 4. For a factual answer, call `prepareUpdate(request)` using the upstream exact proposed-profile/change envelope. The answer remains pending and strategy consumption stops even after authorization. Only `persistUpdate(theExactReturnedDecision)` calls upstream persistence. A confirmed result triggers one fresh selection; call `bind` again to execute validation on the reopened canonical profile. Failed persistence or an arbitrary selection discards reasoning. No caller-supplied confirmation report establishes continuity.
-5. `observeConfirmedUpdate` produces the comparison receipt only for the directly observed old binding, confirmed resulting hash and matching fresh generation. Same-profile 2.1 updates additionally require unchanged immutable scope and profile version. An initial fork or unobserved restart is a non-comparable baseline. Call `restoreDispositions()` separately to reassess interaction history as described below. Rebuild mappings, claims, language reviews and diagnostics from current evidence regardless.
+5. `observeConfirmedUpdate` produces the comparison receipt only for the directly observed old binding, confirmed resulting hash and matching fresh generation. Same-profile 2.1 updates additionally require unchanged immutable scope and profile version. An initial fork or unobserved restart is a non-comparable baseline. `selectSuccessor(request, observation)` recognizes an exact owned source-to-successor selection: the trusted host observation's source must equal the prior binding's path and hash, its destination must be a distinct confirmed new file that the live intake snapshot actually selects with the expected resulting hash and generation+1, application identity and immutable 2.1 scope must be unchanged, and changed fields must be explicit JSON pointers. Stored receipts alone cannot mint this proof; without this directly observed chain a successor selection is a fresh non-comparable baseline and no numerical delta is reported. Call `restoreDispositions()` separately to reassess interaction history as described below. Rebuild mappings, claims, language reviews and diagnostics from current evidence regardless.
 6. Call `save(snapshot, destination)` only for an explicitly selected or already authorized private output. `host.authorizePrivateOutput(destination)` must resolve and check the exact destination as ignored or outside the repository, verify private access and actual user authorization, and return `{authorized:true,private_location:true,resolved_path}`. It performs no directory search. `host.writePrivate(resolvedPath, serializedSnapshot)` must preserve that checked destination and privacy through writing. The coordinator rechecks live binding after validation and authorization. Retain returned schema/deterministic checks separately from the host review and external observations. Resume through explicit selection and validation; reading saved `state` never restores authority.
 
 ## Reassess interaction history
@@ -79,7 +79,9 @@ function createStrategyWorkflow(host, modules) {
       question_plan:['evidence','The question batch or disposition records failed planning checks.','Rebuild questions and eligible dispositions against the current binding and declared batch limit.'],
       composition:['positioning','The composition or factual inventory failed inspection.','Repair the private composition findings, exact spans and selected realization inventory.'],
       handoff_integrity:['input','The assembled private handoff failed schema or deterministic integrity checks.','Repair the reported handoff inconsistencies and rerun assembly against current evidence.'],
-      private_output_denied:['privacy','The requested output destination lacks verified private authorization.','Select or authorize the exact private destination in an ignored directory or outside the repository.']
+      private_output_denied:['privacy','The requested output destination lacks verified private authorization.','Select or authorize the exact private destination in an ignored directory or outside the repository.'],
+      successor_observation_invalid:['input','The observed successor operation does not exactly match the prior binding and a distinct confirmed destination.','Supply the trusted host observation of the owned source-to-successor operation: source path/hash equal to the prior binding, a new destination path/hash, unchanged application identity and immutable scope, and explicit changed fields.'],
+      successor_selection_unobserved:['input','The fresh live selection does not show the exact successor destination, resulting hash and next generation.','The intake snapshot must move to the confirmed successor destination with its exact hash and generation+1 before continuity is recognized.']
     };
     const rationales={
       pending_update:'An authorized or proposed answer is not canonical support until persistence, reselection and validation complete.',
@@ -93,7 +95,9 @@ function createStrategyWorkflow(host, modules) {
       question_plan:'Finite batches and disposition suppression depend on valid distinctions and current candidate binding.',
       composition:'Selected wording must agree with the actual factual inventory and its reviewed language realizations.',
       handoff_integrity:'A structurally inconsistent snapshot cannot safely guide downstream document drafting or comparison.',
-      private_output_denied:'Candidate reasoning must remain at an explicitly authorized private destination.'
+      private_output_denied:'Candidate reasoning must remain at an explicitly authorized private destination.',
+      successor_observation_invalid:'Stored receipts, matching names and old ready flags cannot mint an owned source-to-successor transition.',
+      successor_selection_unobserved:'A successor destination that the live selection did not actually adopt supplies no continuity.'
     };
     const [category,observed_issue,correction]=conditions[code];
     return {status:'blocked',issues:[{id:`finding:workflow-${code}`,category,severity:'blocking',check_kind:'deterministic',status:'failed',
@@ -108,7 +112,8 @@ function createStrategyWorkflow(host, modules) {
     const result=await context.bindStrategy({...input,snapshot:host.intake.snapshot()});
     if(chain) {
       const c=context.current(),b=c?.binding;
-      if(!b || b.application_id!==chain.previous_binding.application_id || b.target_sha256!==chain.previous_binding.target_sha256 || b.generation!==chain.generation || b.resolved_path!==chain.previous_binding.resolved_path || b.canonical_sha256!==chain.resulting_sha256 || b.profile_version!==chain.previous_binding.profile_version || (b.profile_version==='2.1' && !same(c.evidence.profile.application_scope,chain.previous_profile.application_scope))) chain=null;
+      const pathOk=!!b&&b.canonical_sha256===chain.resulting_sha256&&(chain.successor?b.resolved_path===chain.successor.resolved_path:b.resolved_path===chain.previous_binding.resolved_path);
+      if(!b || !pathOk || b.application_id!==chain.previous_binding.application_id || b.target_sha256!==chain.previous_binding.target_sha256 || b.generation!==chain.generation || b.profile_version!==chain.previous_binding.profile_version || (b.profile_version==='2.1' && !same(c.evidence.profile.application_scope,chain.previous_profile.application_scope))) chain=null;
       else chain.current_binding=clone(b);
     }
     return result;
@@ -146,6 +151,25 @@ function createStrategyWorkflow(host, modules) {
       chain={previous_binding:clone(old.before.binding),previous_profile:clone(old.before.evidence.profile),previous:old.previous,
         resulting_sha256:result.resulting_sha256,generation:s.generation,changed_fields:clone(old.changed_fields),current_binding:null};
     return result;
+  }
+  function selectSuccessor(request,observation) {
+    const before=current();
+    if(!before)return blocked('context_unavailable');
+    if(pending)return blocked('pending_update');
+    const o=observation,b=before.binding;
+    const pointer=p=>typeof p==='string'&&/^\/(?:[^~]|~[01])+$/.test(p);
+    if(!o||!o.source||!o.destination||o.source.resolved_path!==b.resolved_path||o.source.sha256!==b.canonical_sha256||typeof o.destination.resolved_path!=='string'||!/^[a-f0-9]{64}$/.test(o.destination.sha256)||o.destination.resolved_path===b.resolved_path||o.destination.sha256===b.canonical_sha256)return blocked('successor_observation_invalid');
+    if(o.application_id!==undefined&&o.application_id!==b.application_id)return blocked('successor_observation_invalid');
+    if(b.profile_version==='2.1'&&o.application_scope&&!same(o.application_scope,before.evidence.profile.application_scope))return blocked('successor_observation_invalid');
+    if(!Array.isArray(o.changed_fields)||!o.changed_fields.length||!o.changed_fields.every(pointer))return blocked('successor_observation_invalid');
+    if(!sameApplication(before))return blocked('selection_changed');
+    const prevSaved=saved&&same(saved.binding,b)?saved:null;
+    pending=null;chain=null;saved=null;selectionRequest=clone(request);
+    host.intake.select(request);
+    const s=host.intake.snapshot();
+    if(s.selection?.resolved_path!==o.destination.resolved_path||s.selection?.profile_sha256!==o.destination.sha256||s.generation!==b.generation+1||s.pending_proposal!==null){chain=null;return blocked('successor_selection_unobserved');}
+    chain={previous_binding:clone(b),previous_profile:clone(before.evidence.profile),previous:prevSaved,resulting_sha256:o.destination.sha256,generation:s.generation,changed_fields:clone(o.changed_fields),successor:{resolved_path:o.destination.resolved_path,sha256:o.destination.sha256},current_binding:null};
+    return {status:'selected',destination:{resolved_path:o.destination.resolved_path,sha256:o.destination.sha256},generation:s.generation};
   }
   async function observeConfirmedUpdate(previousBinding,currentBinding) {
     const c=current();
@@ -248,7 +272,7 @@ function createStrategyWorkflow(host, modules) {
     return {status:'saved',checks};
   }
   const editorialMethods = () => modules.applyEditorialMethods(methodSession,host);
-  return {select,bind,current,prepareUpdate,persistUpdate,observeConfirmedUpdate,observeStrategySources,restoreDispositions,editorialMethods,assemble,save};
+  return {select,selectSuccessor,bind,current,prepareUpdate,persistUpdate,observeConfirmedUpdate,observeStrategySources,restoreDispositions,editorialMethods,assemble,save};
 }
 
 function createStrategyContext(host, contracts) {
