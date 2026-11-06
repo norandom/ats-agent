@@ -72,7 +72,6 @@ None in this discovery step. Existing schema/template/ignore changes remain prel
 - `../specs/targeted-cv-skill/research.md`: professional and practitioner source register.
 - `../specs/targeted-cv-skill/presentation-decisions.md`: visual, language and DIN decisions → documents.
 - `../specs/targeted-cv-skill/data-and-refinement-decisions.md`: portability → profile/release; tool behavior → session; rubric/questions → strategy; iteration → refinement.
-- `../specs/targeted-cv-skill/brief.md`: employer-first narrative and original migration scope → all milestones.
 - Private input/reference files are read only by tasks that need them; never copied into committed specs or review prompts.
 
 ## Review and Next Step

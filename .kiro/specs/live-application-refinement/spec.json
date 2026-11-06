@@ -41,15 +41,5 @@
     }
   ],
   "active_revision": "ordinary-user-versioning",
-  "baseline_snapshot_revision": "59a657b035dc447eed7b501588f85ac73b13933d",
-  "design_review": {
-    "decision": "PASS",
-    "report": "../portable-skill-release/ordinary-user-versioning-design-review.md",
-    "criteria_covered": 59
-  },
-  "task_review": {
-    "report": "../portable-skill-release/ordinary-user-versioning-task-review.md",
-    "decision": "PASS",
-    "mode": "independent"
-  }
+  "baseline_snapshot_revision": "59a657b035dc447eed7b501588f85ac73b13933d"
 }
