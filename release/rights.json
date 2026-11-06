@@ -11,9 +11,9 @@
     {
       "id": "skills/targeted-cv/SKILL.md",
       "source": "skills/targeted-cv/SKILL.md",
-      "source_sha256": "34e7c87cb61bc81106ef8cd87f67840716fdc707d0e7a00a4bc5066e1cd16fd3",
+      "source_sha256": "ee6df6749cf5577c68739e0447d92aacc8f72522d6c854ffe9ae3c8cc95e3247",
       "origin": "project-authored",
-      "origin_ref": "git:029f0f6eb4e3cc63014f2bbce60b7cc6cd9694fa:skills/targeted-cv/SKILL.md",
+      "origin_ref": "git:6df4a367beff85471b3db1ff55b4dcb23f70d207:skills/targeted-cv/SKILL.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -56,9 +56,9 @@
     {
       "id": "skills/targeted-cv/references/application-strategy.md",
       "source": "skills/targeted-cv/references/application-strategy.md",
-      "source_sha256": "ebeda4ede3ada71241488888c561402626d1cd71f8b6e6e86d1b365a292e8e32",
+      "source_sha256": "d941cb05db9f0f918d9d1a9b757ecd64e8e4562bb4a5aaf56bad8cab89ef09af",
       "origin": "project-authored",
-      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/application-strategy.md",
+      "origin_ref": "git:aab5c9ad01c834197f55282e766cedb56b768ae6:skills/targeted-cv/references/application-strategy.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -71,9 +71,9 @@
     {
       "id": "skills/targeted-cv/references/candidate-profile.md",
       "source": "skills/targeted-cv/references/candidate-profile.md",
-      "source_sha256": "f2deb9580c70cc06b5d03e7fb8d22247f066c43b6285b6ce9aa43f7f032bd627",
+      "source_sha256": "0be12b317facacb5eedee60f2b898d4d1ff55568d6e57a7ba7cdcb99dc215141",
       "origin": "project-authored",
-      "origin_ref": "git:cb72efa75b106182e0502f450a0a4533452c3c95:skills/targeted-cv/references/candidate-profile.md",
+      "origin_ref": "git:9c0a4263288a163eb2ec9c9e8e9253e335d002e9:skills/targeted-cv/references/candidate-profile.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -103,7 +103,7 @@
       "source": "skills/targeted-cv/references/document-session.md",
       "source_sha256": "089904894289c2993caafd99b2bdde56bd754bdf84edd030bc42c854a2545f57",
       "origin": "project-authored",
-      "origin_ref": "git:fb03ed7e1aea126f06fc49d2a6ea744275c82a3c:skills/targeted-cv/references/document-session.md",
+      "origin_ref": "git:2b949551b9327f9d0d85054e0fce10e6f2a51e55:skills/targeted-cv/references/document-session.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -161,9 +161,9 @@
     {
       "id": "skills/targeted-cv/references/profile-updates.md",
       "source": "skills/targeted-cv/references/profile-updates.md",
-      "source_sha256": "4ab168ceadf74548c3c2b56ac8571660618ea76461f63daa79d943d41fbcf385",
+      "source_sha256": "7a90ab04af3e3cdf07265d56314f9c3487591300737b79b2a412b33771a03e23",
       "origin": "project-authored",
-      "origin_ref": "git:cb72efa75b106182e0502f450a0a4533452c3c95:skills/targeted-cv/references/profile-updates.md",
+      "origin_ref": "git:d94aa53d0ad5972dd907110d743ddfc3b8533d6e:skills/targeted-cv/references/profile-updates.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -191,9 +191,9 @@
     {
       "id": "skills/targeted-cv/references/refinement-session.md",
       "source": "skills/targeted-cv/references/refinement-session.md",
-      "source_sha256": "f5392711f15d5a54d0ca9a27cae0976604ba13b92830fffd75e1be6943e77ecd",
+      "source_sha256": "d1dca4a20e8a8ebd5bb9e4b5f7ba5d63342e0d43de65d574dfaf4540f965076b",
       "origin": "project-authored",
-      "origin_ref": "git:4126cf67b39d35dbd7bac5bd83cf94909585cfe2:skills/targeted-cv/references/refinement-session.md",
+      "origin_ref": "git:2fe9199f189a849f4fc6ee0a6c1f5569528ce045:skills/targeted-cv/references/refinement-session.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -223,7 +223,7 @@
       "source": "skills/targeted-cv/references/strategy-editorial.md",
       "source_sha256": "08ad8787d8ae254b121199d475b25aea3ba64322cc2e355124a14dc239d065da",
       "origin": "project-authored",
-      "origin_ref": "git:30511b50a63c160fedbabcdcf5d3157fe997c5a4:skills/targeted-cv/references/strategy-editorial.md",
+      "origin_ref": "git:2b949551b9327f9d0d85054e0fce10e6f2a51e55:skills/targeted-cv/references/strategy-editorial.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -238,7 +238,7 @@
       "source": "skills/targeted-cv/references/strategy-evidence.md",
       "source_sha256": "f3233a0dafdaec6955c06f3a35b3a23f77a6ba718be18955d48773ca188f2a10",
       "origin": "project-authored",
-      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/strategy-evidence.md",
+      "origin_ref": "git:2b949551b9327f9d0d85054e0fce10e6f2a51e55:skills/targeted-cv/references/strategy-evidence.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -253,7 +253,7 @@
       "source": "skills/targeted-cv/references/strategy-review.md",
       "source_sha256": "de556bf71347db2ea4b8888d3668f9a185433f8501854731292a32538e86604c",
       "origin": "project-authored",
-      "origin_ref": "git:de1ce7d99cb27b322e0e877b0e323595a1474d95:skills/targeted-cv/references/strategy-review.md",
+      "origin_ref": "git:2b949551b9327f9d0d85054e0fce10e6f2a51e55:skills/targeted-cv/references/strategy-review.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -283,7 +283,7 @@
       "source": "skills/targeted-cv/references/wordcraft-operations.md",
       "source_sha256": "4040f046c20477c5fd7e6309a64e8f784b5bb1f14f90486c7a43f9586a9ecf08",
       "origin": "project-authored",
-      "origin_ref": "git:1642ad80b3a04a78251741351f12738d0fd72565:skills/targeted-cv/references/wordcraft-operations.md",
+      "origin_ref": "git:2b949551b9327f9d0d85054e0fce10e6f2a51e55:skills/targeted-cv/references/wordcraft-operations.md",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
@@ -434,6 +434,21 @@
       "source_sha256": "e287c1d2738fab0640e0a41b3f9638f2284da806b2132940b602ba1f9f9a4b15",
       "origin": "project-authored",
       "origin_ref": "git:581b69dd287ff5e62819e6e6ba24f39e80874567:skills/targeted-cv/schemas/document-session.schema.json",
+      "license": "MIT",
+      "authorization_ref": "owner-selected-MIT-project-content",
+      "required_notices": [
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "review_status": "reviewed",
+      "review": "Project-authored current or retained historical JSON schema. JSON Schema vocabulary URI is a reference, not a bundled external schema package."
+    },
+    {
+      "id": "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+      "source": "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+      "source_sha256": "c377b4caaf96fa288e7963d8f4aacf072046928d2285a2cc2b84ada7c4e5919d",
+      "origin": "project-authored",
+      "origin_ref": "git:4b42ed2cbd8a5ded405aa09b0206995989946334:skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
       "license": "MIT",
       "authorization_ref": "owner-selected-MIT-project-content",
       "required_notices": [
