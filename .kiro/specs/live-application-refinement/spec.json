@@ -20,8 +20,9 @@
   },
   "ready_for_implementation": true,
   "validation": {
-    "decision": "NOT_ASSESSED",
-    "scope": "Ordinary-user versioning amendment: requirements, design and tasks approved; implementation authorized, validation outstanding."
+    "decision": "GO",
+    "report": "ordinary-user-versioning-validation-report.md",
+    "scope": "Ordinary-user versioning amendment complete: tasks 8.1-10.2 implemented, independently reviewed and integration-validated; installed acceptance, publication and legacy retirement remain M5."
   },
   "validation_history": [
     {
@@ -30,6 +31,13 @@
       "validated_on": "2026-10-29",
       "scope": "M4 complete: 15 tasks, 56 criteria, 69 relocated suites and 186 tests; actual bilingual refinement and interruption recovery; installed acceptance remains M5.",
       "applies_to": "Approved baseline before ordinary-user versioning amendment"
+    },
+    {
+      "decision": "GO",
+      "report": "ordinary-user-versioning-validation-report.md",
+      "validated_on": "2026-11-06",
+      "scope": "Ordinary-user versioning amendment: 6 tasks, 199-test integration regression, reviewed semantic re-record, release definition closure; scoped WordCraft smoke not assessed in this environment; fresh candidate rebuild required before M5 group 6.",
+      "applies_to": "Ordinary-user versioning amendment on the validated M4 baseline"
     }
   ],
   "active_revision": "ordinary-user-versioning",

@@ -186,7 +186,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 9.1, 9.2_
   - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 10.2 Verify the complete owner integration and hand back to installed acceptance
+- [x] 10.2 Verify the complete owner integration and hand back to installed acceptance
   - Run current profile/refinement and affected strategy/document/session regressions, complete requirement mapping and privacy checks on the source-bound implementation.
   - Retain actual ordinary-user reusable/local source, checkpoint and recovery observations plus a scoped WordCraft smoke; keep synthetic negative controls distinct and retain all selected documents.
   - Done when implementation evidence and the supported native route pass independent verification with historical compatibility preserved; rebuild a fresh candidate before M5 tasks 6.1-6.4 repeat full bilingual/two-applicant acceptance.
