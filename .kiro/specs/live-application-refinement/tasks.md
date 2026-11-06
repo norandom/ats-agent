@@ -178,7 +178,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 7.2, 7.3, 8.1, 8.2, 8.3_
 
 - [ ] 10. Deliver and validate the complete supported route
-- [ ] 10.1 Connect the installed flow and exact release resource closure
+- [x] 10.1 Connect the installed flow and exact release resource closure
   - Wire supported version choice and private checkpoint behavior into the entrypoint, preserving request reuse and avoiding technical filename prompts.
   - Update release-owned inventory, current contracts, rights/provenance and maintenance fixtures for all validated changed resources and the added schema; retain historical assets and private exclusions.
   - Done when actual package definition checks resolve the complete current closure and documented flow, with no publication, legacy removal or acceptance transfer.

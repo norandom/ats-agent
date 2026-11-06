@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const foundation=require('./foundation.cjs');
 const root=path.resolve(__dirname,'../..'),manifest=require('./manifest.json');
 test('explicit closure and all 44 planned criteria validate without claiming live acceptance',()=>{
- const result=foundation.validateFoundation(root,manifest);assert.equal(result.status,'passed');assert.equal(result.core_count,31);assert.equal(result.criteria_count,44);assert.equal(result.installed_acceptance,'not_assessed');
+ const result=foundation.validateFoundation(root,manifest);assert.equal(result.status,'passed');assert.equal(result.core_count,manifest.core.length);assert.equal(result.criteria_count,44);assert.equal(result.installed_acceptance,'not_assessed');
  assert.ok(manifest.coverage.every(r=>r.status==='not_assessed'));assert.deepEqual(manifest.observation_classes,['actual','control','host_judgment']);
  assert.ok(manifest.regressions.some(r=>r.entrypoint==='tests/live-application-refinement/full-acceptance.cjs'&&r.required_inputs.length===3));
 });

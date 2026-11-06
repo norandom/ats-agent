@@ -62,4 +62,6 @@ You receive the saved editable DOCX location after read-back and reopen checks, 
 
 Save the offer, drafts, questions and review notes with this application, apart from your reusable facts. In this checkout, personal inputs belong under ignored `private/` and generated documents under ignored `outputs/`.
 
+Progress checkpoints are also private and versioned: each confirmed checkpoint is a new private file in your authorized workspace, never an overwrite, and you never have to approve a technical filename. If the session is interrupted, resume by explicitly selecting the exact checkpoint and sources; the newest filename alone never establishes continuity.
+
 When you switch offers or update your facts, ask for a fresh review. Earlier scores may no longer be comparable. Before sending an application, read the final wording and inspect every page yourself.

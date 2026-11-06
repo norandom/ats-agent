@@ -19,7 +19,7 @@ function validateRecord(record){
   if(check.status!==0)return failure('definition',record?.kind||'record','Correct the closed maintenance record; validator details are withheld to avoid echoing private inputs.');
   if(record.kind==='candidate-declaration'){
    if(!exact(record.scope,['profile','strategy','document-session','documents','refinement']))return failure('definition','scope','Retain all approved capabilities.');
-   const contracts={profile:['1.0','2.0','2.1'],strategy:['1.0','1.1','1.2'],documents:['1.0','1.1','1.2'],document_session:['1.0'],refinement_session:['1.0']};
+   const contracts={profile:['1.0','2.0','2.1'],strategy:['1.0','1.1','1.2'],documents:['1.0','1.1','1.2'],document_session:['1.0'],refinement_session:['1.0'],refinement_checkpoint_storage:['1.0']};
    for(const [key,value]of Object.entries(contracts))if(!exact(record.contracts[key],value))return failure('definition','contracts','Retain the current and compatibility contract versions.');
    const ids=record.prerequisites.map(p=>p.id);if(new Set(ids).size!==ids.length)return failure('prerequisite','prerequisites','Remove duplicate prerequisite identities.');
    const required={

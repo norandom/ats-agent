@@ -9,7 +9,7 @@
   "core": [
     {
       "path": "skills/targeted-cv/SKILL.md",
-      "sha256": "34e7c87cb61bc81106ef8cd87f67840716fdc707d0e7a00a4bc5066e1cd16fd3"
+      "sha256": "ee6df6749cf5577c68739e0447d92aacc8f72522d6c854ffe9ae3c8cc95e3247"
     },
     {
       "path": "skills/targeted-cv/references/application-documents.md",
@@ -21,11 +21,11 @@
     },
     {
       "path": "skills/targeted-cv/references/application-strategy.md",
-      "sha256": "ebeda4ede3ada71241488888c561402626d1cd71f8b6e6e86d1b365a292e8e32"
+      "sha256": "d941cb05db9f0f918d9d1a9b757ecd64e8e4562bb4a5aaf56bad8cab89ef09af"
     },
     {
       "path": "skills/targeted-cv/references/candidate-profile.md",
-      "sha256": "f2deb9580c70cc06b5d03e7fb8d22247f066c43b6285b6ce9aa43f7f032bd627"
+      "sha256": "0be12b317facacb5eedee60f2b898d4d1ff55568d6e57a7ba7cdcb99dc215141"
     },
     {
       "path": "skills/targeted-cv/references/document-presentation.md",
@@ -49,7 +49,7 @@
     },
     {
       "path": "skills/targeted-cv/references/profile-updates.md",
-      "sha256": "4ab168ceadf74548c3c2b56ac8571660618ea76461f63daa79d943d41fbcf385"
+      "sha256": "7a90ab04af3e3cdf07265d56314f9c3487591300737b79b2a412b33771a03e23"
     },
     {
       "path": "skills/targeted-cv/references/profile-validation.md",
@@ -57,7 +57,7 @@
     },
     {
       "path": "skills/targeted-cv/references/refinement-session.md",
-      "sha256": "f5392711f15d5a54d0ca9a27cae0976604ba13b92830fffd75e1be6943e77ecd"
+      "sha256": "d1dca4a20e8a8ebd5bb9e4b5f7ba5d63342e0d43de65d574dfaf4540f965076b"
     },
     {
       "path": "skills/targeted-cv/references/strategy-contract.md",
@@ -124,6 +124,10 @@
       "sha256": "e287c1d2738fab0640e0a41b3f9638f2284da806b2132940b602ba1f9f9a4b15"
     },
     {
+      "path": "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+      "sha256": "c377b4caaf96fa288e7963d8f4aacf072046928d2285a2cc2b84ada7c4e5919d"
+    },
+    {
       "path": "skills/targeted-cv/schemas/refinement-session.schema.json",
       "sha256": "2760519b2cf63278ae23d9bec56c1f0d53830e2e287c4a0e73f0011386fb620d"
     },
@@ -171,7 +175,10 @@
     "tests/live-application-refinement/bilingual-live.cjs",
     "tests/live-application-refinement/bilingual-profile.cjs",
     "tests/live-application-refinement/bilingual-report.cjs",
+    "tests/live-application-refinement/checkpoint-create.test.cjs",
+    "tests/live-application-refinement/checkpoint-storage.test.cjs",
     "tests/live-application-refinement/document-revision.test.cjs",
+    "tests/live-application-refinement/evidence-index.schema.json",
     "tests/live-application-refinement/fixtures.json",
     "tests/live-application-refinement/foundation.cjs",
     "tests/live-application-refinement/foundation.test.cjs",
@@ -203,6 +210,7 @@
     "tests/live-application-refinement/scoped-strategy.test.cjs",
     "tests/live-application-refinement/selective-promotion.test.cjs",
     "tests/live-application-refinement/strategy-continuity.test.cjs",
+    "tests/live-application-refinement/versioned-acceptance.test.cjs",
     "tests/portable-candidate-profile/acceptance-evidence.cjs",
     "tests/portable-candidate-profile/contract.test.cjs",
     "tests/portable-candidate-profile/edge-cases.cjs",

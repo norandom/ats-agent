@@ -467,6 +467,22 @@
       "rights_ref": "skills/targeted-cv/schemas/document-session.schema.json"
     },
     {
+      "source": "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+      "destinations": {
+        "portable-zip": [
+          "targeted-cv/schemas/refinement-checkpoint-storage.schema.json"
+        ],
+        "skill-alias": [
+          "targeted-cv/schemas/refinement-checkpoint-storage.schema.json"
+        ],
+        "plugin-zip": [
+          "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json"
+        ]
+      },
+      "role": "core",
+      "rights_ref": "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json"
+    },
+    {
       "source": "skills/targeted-cv/schemas/refinement-session.schema.json",
       "destinations": {
         "portable-zip": [

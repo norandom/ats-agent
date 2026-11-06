@@ -150,6 +150,14 @@
               },
               "minItems": 1,
               "uniqueItems": true
+            },
+            "refinement_checkpoint_storage": {
+              "type": "array",
+              "items": {
+                "const": "1.0"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
@@ -157,7 +165,8 @@
             "strategy",
             "documents",
             "document_session",
-            "refinement_session"
+            "refinement_session",
+            "refinement_checkpoint_storage"
           ],
           "additionalProperties": false
         },

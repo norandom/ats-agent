@@ -32,7 +32,8 @@ const core=[
  "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
  "skills/targeted-cv/schemas/cv-facts.schema.json",
  "skills/targeted-cv/schemas/document-session.schema.json",
- "skills/targeted-cv/schemas/refinement-session.schema.json",
+   "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
+  "skills/targeted-cv/schemas/refinement-session.schema.json",
  "skills/targeted-cv/templates/cv-facts.blank.json"
 ];
 const extras=[['release/adopter-guide.md','README.md','guide'],['tests/portable-skill-release/fixtures/applicant-a.facts.json','examples/sample-facts.json','sample'],['LICENSE','LICENSE','license'],['THIRD_PARTY_NOTICES.md','THIRD_PARTY_NOTICES.md','notice']];

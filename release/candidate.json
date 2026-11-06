@@ -31,6 +31,9 @@
     ],
     "refinement_session": [
       "1.0"
+    ],
+    "refinement_checkpoint_storage": [
+      "1.0"
     ]
   },
   "targets": [

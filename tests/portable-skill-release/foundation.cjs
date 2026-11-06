@@ -12,7 +12,7 @@ function validateFoundation(root,manifest){
  if(manifest.schema_version!=='1.0'||manifest.kind!=='release-test-foundation')throw Error('Unknown foundation contract');
  const prior=JSON.parse(fs.readFileSync(path.join(root,'tests/live-application-refinement/acceptance-manifest.json')));
  const expectedCore=[...prior.runtime].sort(),actualCore=manifest.core.map(a=>a.path).sort();
- if(JSON.stringify(actualCore)!==JSON.stringify(expectedCore)||actualCore.length!==31)throw Error('Incomplete core inventory');
+ if(JSON.stringify(actualCore)!==JSON.stringify(expectedCore)||actualCore.length!==prior.runtime.length)throw Error('Incomplete core inventory');
  const expectedMaintenance=[...prior.tests,...own].sort();
  if(JSON.stringify([...manifest.maintenance].sort())!==JSON.stringify(expectedMaintenance))throw Error('Incomplete or unexpected maintenance inventory');
  const all=[...actualCore,...manifest.maintenance];if(new Set(all).size!==all.length)throw Error('Duplicate closure asset');
