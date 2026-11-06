@@ -204,15 +204,48 @@ function inspectRefinement(record, previousObservedRecord, currentOwnerObservati
   return result();
 }
 function createVersionedRefinementCheckpoint(host) {
-  const registry=new Map(),hex=/^[a-f0-9]{64}$/;
+  const registry=new Map(),caps=new Map(),hex=/^[a-f0-9]{64}$/;
   const stable=x=>x===null||typeof x!=='object'?JSON.stringify(x):Array.isArray(x)?'['+x.map(stable).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+stable(x[k])).join(',')+'}';
   const freeze=x=>{if(x&&typeof x==='object'&&!(x instanceof Uint8Array)){Object.freeze(x);Object.values(x).forEach(freeze);}return x;};
   const fail=finding=>({status:'failed',finding});
   const refShape=r=>r&&typeof r==='object'&&!Array.isArray(r)&&typeof r.resolved_path==='string'&&r.resolved_path.length>0&&hex.test(r.sha256)?{resolved_path:r.resolved_path,sha256:r.sha256}:null;
-  const capabilities=()=>!!host&&['sha256','encode','decode','toBase64','fromBase64','parseJson','validateStorage','validateRecord','readArtifact'].every(k=>typeof host[k]==='function')&&typeof host.application_id==='string'&&typeof host.session_id==='string';
+  const baseCaps=()=>!!host&&['sha256','encode','decode','toBase64','fromBase64','parseJson','validateStorage','validateRecord','readArtifact'].every(k=>typeof host[k]==='function')&&typeof host.application_id==='string'&&typeof host.session_id==='string';
+  const writeCaps=()=>baseCaps()&&typeof host.inspect==='function'&&typeof host.acquireCreate==='function'&&typeof host.creationPolicyId==='string'&&typeof host.authorizedCheckpointDestination==='function';
+  async function inspectBytes(bytes,outerHash) {
+    let text;
+    try{text=host.decode(bytes);}catch{return fail('storage_not_utf8');}
+    let parsed;
+    try{parsed=host.parseJson(text);}catch{return fail('storage_not_json');}
+    let mode,payload,payloadHash,record;
+    if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)&&parsed.kind==='refinement-checkpoint-storage') {
+      mode='refinement-checkpoint-storage';
+      const sv=host.validateStorage(parsed);
+      if(sv===false)return fail('storage_schema');
+      if(sv!==true)return fail('storage_validation_unavailable');
+      try{payload=host.fromBase64(parsed.record_utf8_base64);}catch{return fail('payload_encoding_malformed');}
+      if(host.toBase64(payload)!==parsed.record_utf8_base64)return fail('payload_encoding_noncanonical');
+      payloadHash=await host.sha256(payload);
+      if(payloadHash!==parsed.record_sha256)return fail('payload_hash_mismatch');
+      let recordText;
+      try{recordText=host.decode(payload);}catch{return fail('payload_not_utf8');}
+      try{record=host.parseJson(recordText);}catch{return fail('payload_not_json');}
+      const rv=host.validateRecord(record);
+      if(rv===false)return fail('record_schema');
+      if(rv!==true)return fail('record_validation_unavailable');
+    } else {
+      mode='legacy-raw';
+      record=parsed;
+      const rv=host.validateRecord(record);
+      if(rv!==true)return fail('unrecognized_storage_format');
+      payload=bytes;
+      payloadHash=outerHash;
+    }
+    if(record.application_id!==host.application_id||record.session_id!==host.session_id)return fail('source_identity_mismatch');
+    return {mode,payload,payloadHash,record};
+  }
   async function observe(selectedRef) {
     try {
-      if(!capabilities())return fail('observation_capability_unavailable');
+      if(!baseCaps())return fail('observation_capability_unavailable');
       const ref=refShape(selectedRef);
       if(!ref)return fail('invalid_selection_ref');
       let bytes;
@@ -220,45 +253,18 @@ function createVersionedRefinementCheckpoint(host) {
       if(bytes===null||bytes===undefined)return fail('artifact_unavailable');
       const outerHash=await host.sha256(bytes);
       if(outerHash!==ref.sha256)return fail('storage_hash_mismatch');
-      let text;
-      try{text=host.decode(bytes);}catch{return fail('storage_not_utf8');}
-      let parsed;
-      try{parsed=host.parseJson(text);}catch{return fail('storage_not_json');}
-      let mode,payload,payloadHash,record;
-      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)&&parsed.kind==='refinement-checkpoint-storage') {
-        mode='refinement-checkpoint-storage';
-        const sv=host.validateStorage(parsed);
-        if(sv===false)return fail('storage_schema');
-        if(sv!==true)return fail('storage_validation_unavailable');
-        try{payload=host.fromBase64(parsed.record_utf8_base64);}catch{return fail('payload_encoding_malformed');}
-        if(host.toBase64(payload)!==parsed.record_utf8_base64)return fail('payload_encoding_noncanonical');
-        payloadHash=await host.sha256(payload);
-        if(payloadHash!==parsed.record_sha256)return fail('payload_hash_mismatch');
-        let recordText;
-        try{recordText=host.decode(payload);}catch{return fail('payload_not_utf8');}
-        try{record=host.parseJson(recordText);}catch{return fail('payload_not_json');}
-        const rv=host.validateRecord(record);
-        if(rv===false)return fail('record_schema');
-        if(rv!==true)return fail('record_validation_unavailable');
-      } else {
-        mode='legacy-raw';
-        record=parsed;
-        const rv=host.validateRecord(record);
-        if(rv!==true)return fail('unrecognized_storage_format');
-        payload=bytes;
-        payloadHash=outerHash;
-      }
-      if(record.application_id!==host.application_id||record.session_id!==host.session_id)return fail('source_identity_mismatch');
+      const inspected=await inspectBytes(bytes,outerHash);
+      if(inspected.status==='failed')return inspected;
       const artifact=freeze({resolved_path:ref.resolved_path,sha256:outerHash});
       // cap keeps the witness nonserializable (structuredClone fails) without exposing the registry.
-      const witness={mode,artifact,payload:freeze(Buffer.from(payload)),payloadSha256:payloadHash,record:freeze(record),cap:()=>null};
-      registry.set(witness,{mode,artifactKey:stable(artifact),payloadSha256:payloadHash,recordKey:stable(record)});
-      return {status:'observed',mode,witness};
+      const witness={mode:inspected.mode,artifact,payload:freeze(Buffer.from(inspected.payload)),payloadSha256:inspected.payloadHash,record:freeze(inspected.record),cap:()=>null};
+      registry.set(witness,{mode:inspected.mode,artifactKey:stable(artifact),payloadSha256:inspected.payloadHash,recordKey:stable(inspected.record)});
+      return {status:'observed',mode:inspected.mode,witness};
     }catch{return fail('observation_failed');}
   }
   async function payloadWitness(witness) {
     try {
-      if(!capabilities())return fail('observation_capability_unavailable');
+      if(!baseCaps())return fail('observation_capability_unavailable');
       const snap=witness&&typeof witness==='object'?registry.get(witness):null;
       if(!snap)return fail('foreign_or_unknown_witness');
       if(witness.mode!==snap.mode||stable(witness.artifact)!==snap.artifactKey||stable(witness.record)!==snap.recordKey||witness.payloadSha256!==snap.payloadSha256||await host.sha256(witness.payload)!==snap.payloadSha256){registry.delete(witness);return fail('witness_tampered');}
@@ -267,7 +273,7 @@ function createVersionedRefinementCheckpoint(host) {
   }
   async function wrap(recordPayloadBytes,previous) {
     try {
-      if(!capabilities())return fail('wrap_capability_unavailable');
+      if(!baseCaps())return fail('wrap_capability_unavailable');
       if(!(recordPayloadBytes instanceof Uint8Array))return fail('payload_bytes_required');
       const prev=previous===null||previous===undefined?null:refShape(previous);
       if(previous!==null&&previous!==undefined&&!prev)return fail('invalid_previous_ref');
@@ -276,7 +282,84 @@ function createVersionedRefinementCheckpoint(host) {
       return host.encode(JSON.stringify(wrapper));
     }catch{return fail('wrap_failed');}
   }
-  return {observe,payloadWitness,wrap};
+  async function prepare(record,observedPredecessor,destination) {
+    try {
+      if(!writeCaps())return fail('prepare_capability_unavailable');
+      if(host.validateRecord(record)!==true)return fail('record_schema_unconfirmed');
+      if(record.application_id!==host.application_id||record.session_id!==host.session_id)return fail('source_identity_mismatch');
+      let previousRef=null,prevObs=null;
+      if(observedPredecessor!==null&&observedPredecessor!==undefined) {
+        const pw=await payloadWitness(observedPredecessor);
+        if(pw.status==='failed')return pw;
+        previousRef=freeze({resolved_path:observedPredecessor.artifact.resolved_path,sha256:observedPredecessor.artifact.sha256});
+        prevObs={record:pw.record,sha256:pw.sha256,hashRecord:pw.hashRecord};
+      }
+      if(typeof destination!=='string'||!destination.length)return fail('destination_required');
+      if(host.authorizedCheckpointDestination(destination)!==true)return fail('destination_outside_authorized_workspace');
+      if((await host.inspect(record,prevObs))?.state!=='passed')return fail('owner_inspection_unconfirmed');
+      const payload=host.encode(JSON.stringify(record));
+      const wrapperBytes=await wrap(payload,previousRef);
+      if(wrapperBytes&&wrapperBytes.status==='failed')return wrapperBytes;
+      const capability={record:freeze(record),payload,wrapperBytes,wrapperSha256:await host.sha256(wrapperBytes),previous:previousRef,destination,attempted:false,confirmed:false,receipt:null};
+      caps.set(capability,{recordKey:stable(record),wrapperSha256:capability.wrapperSha256,destination});
+      return {status:'prepared',capability};
+    }catch{return fail('prepare_failed');}
+  }
+  function leaseOk(lease,phase,destination) {
+    return !!lease&&lease.phase===phase&&lease.destination===destination&&lease.policy_id===host.creationPolicyId&&lease.single_writer===true&&lease.private_location===true&&lease.stable_identity===true&&typeof lease.readSource==='function'&&typeof lease.readDestination==='function'&&typeof lease.verifyPolicy==='function'&&typeof lease.release==='function'&&(phase==='create'?(lease.exclusive_create===true&&typeof lease.createNew==='function'&&typeof lease.creationOrigin==='function'):true);
+  }
+  async function persist(capability) {
+    const unresolved=finding=>({status:'unconfirmed',finding,next_action:'Keep in-memory progress; reconcile the exact planned destination read-only. Never replay, overwrite, adopt or clean up an uncertain file.'});
+    let lease=null;
+    try {
+      if(!writeCaps())return fail('persist_capability_unavailable');
+      const snap=capability&&typeof capability==='object'?caps.get(capability):null;
+      if(!snap)return fail('foreign_or_unknown_capability');
+      if(stable(capability.record)!==snap.recordKey||capability.wrapperSha256!==snap.wrapperSha256||capability.destination!==snap.destination){caps.delete(capability);return fail('capability_tampered');}
+      if(capability.confirmed)return {status:'confirmed',ref:{resolved_path:capability.destination,sha256:capability.wrapperSha256},record:capability.record,previous:capability.previous};
+      const source=capability.previous;
+      if(!capability.attempted) {
+        lease=await host.acquireCreate({source,destination:capability.destination,policy_id:host.creationPolicyId,phase:'create'});
+        if(lease&&lease.conflict)return {status:'conflict',finding:lease.conflict,next_action:'Inspect the exact planned destination; do not overwrite or adopt an existing file.'};
+        if(!lease)return unresolved('create_lease_unavailable');
+        if(!leaseOk(lease,'create',capability.destination))return unresolved('create_lease_unverified');
+        capability.attempted=true;
+        try {
+          const created=await lease.createNew(capability.wrapperBytes);
+          if(!created||created.ok!==true)throw Error('create failed');
+          const receipt=await lease.creationOrigin();
+          if(!receipt)throw Error('creation origin receipt unavailable');
+          capability.receipt=receipt;
+        } catch { /* Effect uncertain: reconcile read-only below; never repeat the create. */ }
+        try{await lease.release();}catch{return unresolved('lease_release_uncertain');}
+        lease=null;
+      }
+      lease=await host.acquireCreate({source,destination:capability.destination,policy_id:host.creationPolicyId,phase:'inspect',...(capability.receipt?{origin_receipt:capability.receipt}:{})});
+      if(lease&&lease.conflict)return {status:'conflict',finding:lease.conflict,next_action:'Inspect the exact planned destination read-only.'};
+      if(!lease)return unresolved('inspect_lease_unavailable');
+      if(!leaseOk(lease,'inspect',capability.destination))return unresolved('inspect_lease_unverified');
+      let bytes;
+      try{bytes=await lease.readDestination();}catch{return unresolved('destination_unreadable');}
+      if(bytes===null||bytes===undefined)return unresolved('checkpoint_absent');
+      if(await host.sha256(bytes)!==capability.wrapperSha256)return unresolved('checkpoint_readback_mismatch');
+      const inspected=await inspectBytes(bytes,capability.wrapperSha256);
+      if(inspected.status==='failed')return unresolved(inspected.finding);
+      if(stable(inspected.record)!==snap.recordKey)return unresolved('checkpoint_record_mismatch');
+      if(source) {
+        let srcBytes;
+        try{srcBytes=await lease.readSource();}catch{return unresolved('source_unreadable');}
+        if(srcBytes===null||await host.sha256(srcBytes)!==source.sha256)return unresolved('source_continuity_unconfirmed');
+      }
+      if(await lease.verifyPolicy()!==true)return unresolved('creation_policy_unconfirmed');
+      if(!capability.receipt)return unresolved('creation_receipt_unavailable');
+      try{await lease.release();}catch{return unresolved('lease_release_uncertain');}
+      lease=null;
+      capability.confirmed=true;
+      return {status:'confirmed',ref:{resolved_path:capability.destination,sha256:capability.wrapperSha256},record:capability.record,previous:capability.previous};
+    } catch { return unresolved(capability&&typeof capability==='object'&&capability.attempted?'checkpoint_effect_uncertain':'persist_prewrite_failed'); }
+    finally { if(lease&&typeof lease.release==='function'){try{await lease.release();}catch{/* already reported */}} }
+  }
+  return {observe,payloadWitness,wrap,prepare,persist};
 }
 ```
 
@@ -309,6 +392,10 @@ The wrapper is closed (`additionalProperties: false`):
 `wrap(recordPayloadBytes, previous)` builds the exact wrapper bytes in memory and performs no I/O. `observe(selectedRef)` is read-only and never writes a file. It verifies the selected raw bytes and outer hash, parses inert JSON, validates the closed wrapper, strictly decodes canonical base64 and UTF-8 (rejecting malformed or noncanonical encoding), checks the payload digest against `record_sha256`, then runs the unchanged 1.0 record validator and the current application/session identity observation. Never rely on a schema annotation to validate JSON hidden inside a string, and reject unknown wrapper properties and unsupported versions. A directly selected legacy raw 1.0 checkpoint is also a permitted predecessor; in that case the payload and storage hashes coincide.
 
 Observation returns a live, nonserializable witness holding the outer artifact reference, the exact retained payload, its digest and the parsed record. The authoritative snapshot stays in the factory's private registry: mutation, cloning or another factory's witness fails. `payloadWitness(witness)` authenticates the witness against that registry and returns the retained prior record, its payload digest, and a `hashRecord` adapter that proves the exact retained payload parses to that record (it returns the payload digest only for the identical record, null otherwise). Never return an outer wrapper hash as if it hashed a raw inner record, and never fabricate prior checkpoint bytes by reserializing an object. Instances and all decoded content remain private.
+
+`prepare(record, observedPredecessor, destination)` builds one exact wrapper in memory and retains its bytes in a live capability; it never writes. It requires the unchanged 1.0 record validator, the current application/session identity, an authorized destination inside the already authorized private session workspace (no per-filename applicant prompt), the exact trusted predecessor witness (or null only after a complete passed current baseline inspection through `host.inspect`), and a passed current owner inspection. A fresh-chain null predecessor cannot clear pending operations, convert uncertain members to pending, revive a stopped session or manufacture continuity.
+
+`persist(capability)` makes at most one `createNew` attempt per capability through the shared `host.acquireCreate({source, destination, policy_id, phase})` lease, marking the capability attempted before dispatch. The create phase runs before the first attempt; every later call acquires only a read-only `inspect` phase for the exact planned destination. Confirmation requires the child-local creation-origin receipt, exact reopened wrapper bytes, wrapper/payload/record validation, predecessor source continuity and creation-policy verification; only then does the host advance its current reference to the returned storage reference and record identity. An occupied destination or changed source baseline is a conflict even with identical bytes; an identical competing file without the receipt stays unconfirmed. Once attempted, later calls reconcile read-only: no replay, overwrite, adoption or cleanup of an uncertain file. A pre-dispatch checkpoint failure blocks dependent dispatch; a post-dispatch failure routes to owner reconciliation. Child or factory restart loses operation authority: retained files may be explicitly selected and observed as data, but stored history cannot reconstruct approval or prove the interrupted operation succeeded.
 
 ## Resume from observations
 

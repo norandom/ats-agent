@@ -152,7 +152,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: portable-candidate-profile/6.4_
   - _Requirements: 7.2, 7.3, 8.2_
 
-- [ ] 8.2 Create, reconcile and resume checkpoint versions safely
+- [x] 8.2 Create, reconcile and resume checkpoint versions safely
   - Prepare exact wrappers under the existing authorized workspace and persist once through the verified create/inspect lease; advance current refs only on complete confirmation.
   - Preserve unresolved intents, stop restrictions and current owner observations through errors/restart; no filename-based reset/latest selection or mutation replay.
   - Done when real ordinary-user checkpoints and injected interruption controls enforce before-dispatch persistence, read-only reconciliation and explicit continuity limits.
