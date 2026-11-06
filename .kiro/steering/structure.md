@@ -8,7 +8,7 @@ Separate reusable instructions and contracts from runtime candidate data, docume
 
 ## Existing Directory Patterns
 
-- Root Python modules form the current CLI/scorer/parser application. Modules use snake_case names and direct local imports, such as `from ats_agent import ATSCVAgent`. This is a legacy pattern to retire, not the intended skill layout.
+- `skills/targeted-cv/` is the product: session-based instructions, references, schemas and templates. The retired Python CLI was removed after replacement validation; Git history retains it.
 - `README.md` guides users through the intended application flow; it is not a development status report. `docs/` separates reusable candidate facts from per-application workflow and optional writing-skill setup. Link requirements and roadmap for technical detail and availability rather than duplicating them. Use COBESY composition for documentation structure and Humanizer for authored prose by default. Preserve technical identifiers, evidence limits and required Kiro templates. See `docs/writing-guide.md`.
 - `skills/targeted-cv/schemas/` holds identity-free reusable data contracts: current `cv-facts.schema.json` and retained legacy `cv-facts-v1.schema.json`.
 - `skills/targeted-cv/templates/` holds empty reusable inputs, such as `cv-facts.blank.json`. A blank scaffold is not a complete candidate profile.

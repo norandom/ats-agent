@@ -10,4 +10,4 @@ Keep your career facts reusable, then tailor each application to its employer.
 | Add optional writing support | [Writing skills and setup](writing-skills.md) |
 | Understand the evidence behind the approach | [Recruiting signals in 2026](recruiting-signals-2026.md) |
 
-These guides describe the intended user experience. Project progress and technical decisions live in the [roadmap](../.kiro/steering/roadmap.md) and [requirements](../.kiro/specs/targeted-application-strategy/requirements.md). Contributor references cover [writing conventions](writing-guide.md) and [the legacy scorer](legacy-cli.md).
+These guides describe the intended user experience. Project progress and technical decisions live in the [roadmap](../.kiro/steering/roadmap.md) and [requirements](../.kiro/specs/targeted-application-strategy/requirements.md). Contributor references cover [writing conventions](writing-guide.md).

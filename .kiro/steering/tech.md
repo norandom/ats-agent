@@ -4,9 +4,7 @@ Updated: 2026-10-26
 
 ## Current Implementation
 
-The legacy application is a flat Python 3.10+ CLI. `main.py` calls `ATSCVAgent`; `cv_parser.py` extracts PDF/DOCX text and detects language. OpenAI provides model-assisted analysis; PyMuPDF, python-docx and langdetect support extraction and language handling. Environment configuration uses python-dotenv. The code defaults to `gpt-4o`, overridable by configuration. The user-facing README describes the intended skill workflow; legacy CLI instructions are separate.
-
-These describe existing code, not the target skill's runtime contract. No vendor-specific ranking behavior is established by legacy heuristics.
+The legacy Python CLI was retired on 2026-11-06 after the replacement skill workflow was validated (M4 GO plus the ordinary-user versioning amendment). Its files remain recoverable in Git history. No Python runtime is required anymore.
 
 ## Target Architecture
 
