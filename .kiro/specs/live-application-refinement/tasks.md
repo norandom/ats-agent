@@ -144,7 +144,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Requirements: 1.2, 1.6, 3.5, 6.1, 6.2, 6.5, 7.2, 7.3, 7.8, 7.9_
 
 - [ ] 8. Persist checkpoints as explicit new versions
-- [ ] 8.1 Define and observe exact checkpoint storage
+- [x] 8.1 Define and observe exact checkpoint storage
   - Add the closed outer format, strict payload decoding and independent outer/payload digest checks; preserve raw session validators and legacy factory.
   - Produce live unforgeable predecessor observations and a documented retained-payload witness for transition inspection, including explicitly selected legacy predecessors.
   - Done when valid storage/record pairs inspect correctly and mutated, cloned, foreign, malformed or incorrectly hashed predecessors fail without file writes.

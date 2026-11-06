@@ -30,6 +30,7 @@
     "skills/targeted-cv/schemas/cv-facts-v1.schema.json",
     "skills/targeted-cv/schemas/cv-facts.schema.json",
     "skills/targeted-cv/schemas/document-session.schema.json",
+    "skills/targeted-cv/schemas/refinement-checkpoint-storage.schema.json",
     "skills/targeted-cv/schemas/refinement-session.schema.json",
     "skills/targeted-cv/templates/cv-facts.blank.json"
   ],
@@ -48,6 +49,7 @@
     "tests/live-application-refinement/bilingual-live.cjs",
     "tests/live-application-refinement/bilingual-profile.cjs",
     "tests/live-application-refinement/bilingual-report.cjs",
+    "tests/live-application-refinement/checkpoint-storage.test.cjs",
     "tests/live-application-refinement/document-revision.test.cjs",
     "tests/live-application-refinement/fixtures.json",
     "tests/live-application-refinement/foundation.cjs",
@@ -202,6 +204,7 @@
     "tests/live-application-refinement/acceptance-check.test.cjs",
     "tests/live-application-refinement/bilingual-evidence.test.cjs",
     "tests/live-application-refinement/bilingual-followup-evidence.test.cjs",
+    "tests/live-application-refinement/checkpoint-storage.test.cjs",
     "tests/live-application-refinement/document-revision.test.cjs",
     "tests/live-application-refinement/foundation.test.cjs",
     "tests/live-application-refinement/recovery-evidence.test.cjs",

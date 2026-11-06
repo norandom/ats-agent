@@ -203,6 +203,81 @@ function inspectRefinement(record, previousObservedRecord, currentOwnerObservati
   }
   return result();
 }
+function createVersionedRefinementCheckpoint(host) {
+  const registry=new Map(),hex=/^[a-f0-9]{64}$/;
+  const stable=x=>x===null||typeof x!=='object'?JSON.stringify(x):Array.isArray(x)?'['+x.map(stable).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+stable(x[k])).join(',')+'}';
+  const freeze=x=>{if(x&&typeof x==='object'&&!(x instanceof Uint8Array)){Object.freeze(x);Object.values(x).forEach(freeze);}return x;};
+  const fail=finding=>({status:'failed',finding});
+  const refShape=r=>r&&typeof r==='object'&&!Array.isArray(r)&&typeof r.resolved_path==='string'&&r.resolved_path.length>0&&hex.test(r.sha256)?{resolved_path:r.resolved_path,sha256:r.sha256}:null;
+  const capabilities=()=>!!host&&['sha256','encode','decode','toBase64','fromBase64','parseJson','validateStorage','validateRecord','readArtifact'].every(k=>typeof host[k]==='function')&&typeof host.application_id==='string'&&typeof host.session_id==='string';
+  async function observe(selectedRef) {
+    try {
+      if(!capabilities())return fail('observation_capability_unavailable');
+      const ref=refShape(selectedRef);
+      if(!ref)return fail('invalid_selection_ref');
+      let bytes;
+      try{bytes=await host.readArtifact(ref);}catch{return fail('artifact_unreadable');}
+      if(bytes===null||bytes===undefined)return fail('artifact_unavailable');
+      const outerHash=await host.sha256(bytes);
+      if(outerHash!==ref.sha256)return fail('storage_hash_mismatch');
+      let text;
+      try{text=host.decode(bytes);}catch{return fail('storage_not_utf8');}
+      let parsed;
+      try{parsed=host.parseJson(text);}catch{return fail('storage_not_json');}
+      let mode,payload,payloadHash,record;
+      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)&&parsed.kind==='refinement-checkpoint-storage') {
+        mode='refinement-checkpoint-storage';
+        const sv=host.validateStorage(parsed);
+        if(sv===false)return fail('storage_schema');
+        if(sv!==true)return fail('storage_validation_unavailable');
+        try{payload=host.fromBase64(parsed.record_utf8_base64);}catch{return fail('payload_encoding_malformed');}
+        if(host.toBase64(payload)!==parsed.record_utf8_base64)return fail('payload_encoding_noncanonical');
+        payloadHash=await host.sha256(payload);
+        if(payloadHash!==parsed.record_sha256)return fail('payload_hash_mismatch');
+        let recordText;
+        try{recordText=host.decode(payload);}catch{return fail('payload_not_utf8');}
+        try{record=host.parseJson(recordText);}catch{return fail('payload_not_json');}
+        const rv=host.validateRecord(record);
+        if(rv===false)return fail('record_schema');
+        if(rv!==true)return fail('record_validation_unavailable');
+      } else {
+        mode='legacy-raw';
+        record=parsed;
+        const rv=host.validateRecord(record);
+        if(rv!==true)return fail('unrecognized_storage_format');
+        payload=bytes;
+        payloadHash=outerHash;
+      }
+      if(record.application_id!==host.application_id||record.session_id!==host.session_id)return fail('source_identity_mismatch');
+      const artifact=freeze({resolved_path:ref.resolved_path,sha256:outerHash});
+      // cap keeps the witness nonserializable (structuredClone fails) without exposing the registry.
+      const witness={mode,artifact,payload:freeze(Buffer.from(payload)),payloadSha256:payloadHash,record:freeze(record),cap:()=>null};
+      registry.set(witness,{mode,artifactKey:stable(artifact),payloadSha256:payloadHash,recordKey:stable(record)});
+      return {status:'observed',mode,witness};
+    }catch{return fail('observation_failed');}
+  }
+  async function payloadWitness(witness) {
+    try {
+      if(!capabilities())return fail('observation_capability_unavailable');
+      const snap=witness&&typeof witness==='object'?registry.get(witness):null;
+      if(!snap)return fail('foreign_or_unknown_witness');
+      if(witness.mode!==snap.mode||stable(witness.artifact)!==snap.artifactKey||stable(witness.record)!==snap.recordKey||witness.payloadSha256!==snap.payloadSha256||await host.sha256(witness.payload)!==snap.payloadSha256){registry.delete(witness);return fail('witness_tampered');}
+      return {record:witness.record,sha256:snap.payloadSha256,hashRecord(value){try{return stable(value)===snap.recordKey?snap.payloadSha256:null;}catch{return null;}}};
+    }catch{return fail('witness_check_failed');}
+  }
+  async function wrap(recordPayloadBytes,previous) {
+    try {
+      if(!capabilities())return fail('wrap_capability_unavailable');
+      if(!(recordPayloadBytes instanceof Uint8Array))return fail('payload_bytes_required');
+      const prev=previous===null||previous===undefined?null:refShape(previous);
+      if(previous!==null&&previous!==undefined&&!prev)return fail('invalid_previous_ref');
+      const payloadHash=await host.sha256(recordPayloadBytes);
+      const wrapper={schema_version:'1.0',kind:'refinement-checkpoint-storage',previous:prev?freeze(prev):null,record_utf8_base64:host.toBase64(recordPayloadBytes),record_sha256:payloadHash};
+      return host.encode(JSON.stringify(wrapper));
+    }catch{return fail('wrap_failed');}
+  }
+  return {observe,payloadWitness,wrap};
+}
 ```
 
 ## Checkpoint before dependent work
@@ -218,6 +293,22 @@ The lease provides `read()` returning reopened exact bytes, or null only for pro
 Only a `confirmed` result with the exact reopened artifact reference establishes durable progress. Validate the reopened schema, intended bytes, previous baseline/backup and destination security before reporting success. Release the writer interval on every path. A release failure requires host inspection before more work. The helper returns no profile or document authority. Repeated calls after an attempted checkpoint mutation inspect the same destination and backup without creating or replacing again. Changed intended bytes remain blocked while that attempt is unresolved. After process loss inspect the retained files under renewed guarantees; do not reconstruct authority or automatically retry from disk history.
 
 Checkpoint the observed record before a dependent profile or document dispatch, in addition to the owner's own persisted decision/intent requirements. A pre-dispatch checkpoint failure blocks that dispatch. After dispatch, a failed outcome checkpoint leaves durable progress unconfirmed even if an in-memory owner result exists. Retain the result privately, report the saved intent as potentially dispatched, and invoke the existing owner recovery. A wrapper checkpoint failure never permits replay. It does not roll back a confirmed reusable-profile update or declare a document saved.
+
+## Versioned checkpoint storage
+
+The raw 1.0 checkpoint route above stays unchanged. The versioned route adds one closed outer storage schema, [refinement-checkpoint-storage.schema.json](../schemas/refinement-checkpoint-storage.schema.json), and a separate `createVersionedRefinementCheckpoint(host)` factory. The factory creates one new storage file per confirmed checkpoint and never overwrites a previous checkpoint or a latest-pointer file; the create/inspect persistence route is added with that step.
+
+The wrapper is closed (`additionalProperties: false`):
+
+- `schema_version`: exactly `1.0` for this separate storage contract.
+- `kind`: exactly `refinement-checkpoint-storage`.
+- `previous`: null for an inspected fresh-chain baseline, otherwise the exact `{resolved_path, sha256}` of the independently trusted predecessor storage artifact. A stored `previous` field is data, not predecessor authority.
+- `record_utf8_base64`: canonical base64 of the actual retained UTF-8 bytes of a refinement-session 1.0 record. Encoding is not encryption.
+- `record_sha256`: SHA-256 of the decoded payload bytes, independent of the outer storage-file hash.
+
+`wrap(recordPayloadBytes, previous)` builds the exact wrapper bytes in memory and performs no I/O. `observe(selectedRef)` is read-only and never writes a file. It verifies the selected raw bytes and outer hash, parses inert JSON, validates the closed wrapper, strictly decodes canonical base64 and UTF-8 (rejecting malformed or noncanonical encoding), checks the payload digest against `record_sha256`, then runs the unchanged 1.0 record validator and the current application/session identity observation. Never rely on a schema annotation to validate JSON hidden inside a string, and reject unknown wrapper properties and unsupported versions. A directly selected legacy raw 1.0 checkpoint is also a permitted predecessor; in that case the payload and storage hashes coincide.
+
+Observation returns a live, nonserializable witness holding the outer artifact reference, the exact retained payload, its digest and the parsed record. The authoritative snapshot stays in the factory's private registry: mutation, cloning or another factory's witness fails. `payloadWitness(witness)` authenticates the witness against that registry and returns the retained prior record, its payload digest, and a `hashRecord` adapter that proves the exact retained payload parses to that record (it returns the payload digest only for the identical record, null otherwise). Never return an outer wrapper hash as if it hashed a raw inner record, and never fabricate prior checkpoint bytes by reserializing an object. Instances and all decoded content remain private.
 
 ## Resume from observations
 
