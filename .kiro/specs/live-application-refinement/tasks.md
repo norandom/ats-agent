@@ -169,7 +169,7 @@ Tasks run sequentially. Shared profile/strategy contracts, reference helpers and
   - _Depends: 8.2, portable-candidate-profile/6.4_
   - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 9.2 Verify explicitly selected versioned acceptance evidence
+- [x] 9.2 Verify explicitly selected versioned acceptance evidence
   - Add the closed current index/review and explicit source/storage/chain selections, checking raw/normalized digests, decoded-reference membership and immutable inventory.
   - Dispatch current versus historical verifier paths explicitly; remove current filename/root-count assumptions without widening retained historical behavior.
   - Done when the full owner entrypoint validates actual selected current versions and rejects changed, foreign, missing, cyclic or substituted evidence without replay or renamed copies.

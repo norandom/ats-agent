@@ -10,7 +10,10 @@ function environment(directory,index){const env={};for(const [k,v]of Object.entr
 function runSuite(directory,suite,index){return new Promise(resolve=>{const child=spawn(process.execPath,['--test',suite],{cwd:directory,env:environment(directory,index),windowsHide:true});let output='';child.stdout.on('data',b=>output+=b);child.stderr.on('data',b=>output+=b);const timer=setTimeout(()=>child.kill(),900000);child.on('error',e=>{clearTimeout(timer);resolve({suite,exit_code:null,error:e.code,skipped:null});});child.on('close',code=>{clearTimeout(timer);fs.mkdirSync(path.join(directory,'logs'),{recursive:true});fs.writeFileSync(path.join(directory,'logs',suite.replaceAll('/','_')+'.txt'),output);resolve({suite,exit_code:code,skipped:Number(output.match(/(?:#|ℹ) skipped (\d+)/)?.[1]??NaN),tests:Number(output.match(/(?:#|ℹ) tests (\d+)/)?.[1]??NaN)});});});}
 async function run(indexFile,digest,{smoke=false,reviewFile}={}){
  assert.ok(indexFile&&digest,'Explicit actual evidence index and trusted digest required');indexFile=path.resolve(indexFile);gate.verify(indexFile,digest);const index=JSON.parse(fs.readFileSync(indexFile));
- assert.ok(reviewFile,'Explicit independent index selection review required');const reviewBytes=fs.readFileSync(reviewFile),review=JSON.parse(reviewBytes);assert.equal(review.reviewer,'actual host');assert.equal(review.selected_index,indexFile);assert.equal(review.normalized_index_sha256,digest);assert.equal(review.selected_roots_reviewed,true);assert.equal(review.file_hashes_reviewed,index.files.length);assert.equal(review.reference_membership_reviewed,index.references.length);checkInventory();checkCoverage();
+ assert.ok(reviewFile,'Explicit independent index selection review required');const reviewBytes=fs.readFileSync(reviewFile),review=JSON.parse(reviewBytes);
+ if(review?.kind==='m4-versioned-selection-review')checkSelectionReview(review,index,indexFile,digest,gate.hash);
+ else{assert.equal(review.reviewer,'actual host');assert.equal(review.selected_index,indexFile);assert.equal(review.normalized_index_sha256,digest);assert.equal(review.selected_roots_reviewed,true);assert.equal(review.file_hashes_reviewed,index.files.length);assert.equal(review.reference_membership_reviewed,index.references.length);}
+ checkInventory();checkCoverage();
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'m4-acceptance-')),hashes={};for(const file of allowlist){assert.ok(!path.isAbsolute(file)&&!file.includes('..'));const source=path.join(root,file),dest=path.join(directory,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(source,dest,fs.constants.COPYFILE_EXCL);hashes[file]=gate.hash(fs.readFileSync(source));}
  assert.ok(!directory.startsWith(root+path.sep));
  fs.writeFileSync(path.join(directory,'.strategy-acceptance.json'),JSON.stringify({kind:'synthetic-relocation',manifest:hashes}));
@@ -19,5 +22,18 @@ async function run(indexFile,digest,{smoke=false,reviewFile}={}){
  for(const [f,h]of Object.entries(hashes)){assert.equal(gate.hash(fs.readFileSync(path.join(root,f))),h,'Source changed during validation');assert.equal(gate.hash(fs.readFileSync(path.join(directory,f))),h,'Relocated asset changed');}gate.verify(indexFile,digest);assert.deepEqual(fs.readFileSync(reviewFile),reviewBytes,'Index review changed');
  const report={mode:smoke?'smoke':'full',directory,hashes,index_digest:digest,index_review_sha256:gate.hash(reviewBytes),results,coverage:smoke?[]:manifest.coverage,limits:['Selected immutable fictional evidence remains explicit external input. Runtime code uses only the declared relocated assets.','No new live authoring, publishing or legacy removal.','Allowlisted process environment is not an OS sandbox.']};fs.mkdirSync(path.join(root,'outputs/m4-task73-validation'),{recursive:true});fs.writeFileSync(path.join(root,'outputs/m4-task73-validation',smoke?'smoke.json':'full.json'),JSON.stringify(report,null,2)+'\n');checkResults(results,suites);if(!smoke)checkCoverage(results);return report;
 }
-module.exports={allowlist,environment,runSuite,run,checkCoverage,checkResults,checkInventory};
+// Current closed selection review: pins exact index bytes, normalized digest, exact selections and real counts.
+function checkSelectionReview(review,index,indexFile,digest,hash){
+ assert.equal(review.schema_version,'1.0');assert.equal(review.kind,'m4-versioned-selection-review');
+ assert.ok(review.reviewer.trim().length&&review.observation.trim().length,'Nonempty reviewer and observation required');
+ assert.equal(review.selected_index,indexFile);
+ assert.equal(review.index_file_sha256,hash(fs.readFileSync(indexFile)),'Exact index-file bytes pinned');
+ assert.equal(review.normalized_index_sha256,digest,'Normalized index digest mismatch');
+ assert.deepEqual(review.input_selections,index.input_selections,'Review must pin the exact input selections');
+ assert.equal(review.selected_roots_reviewed,true);
+ assert.equal(review.file_hashes_reviewed,index.files.length,'Counts must match actual reviewed files');
+ assert.equal(review.reference_membership_reviewed,index.references.length,'Counts must match actual reviewed references');
+ return true;
+}
+module.exports={allowlist,environment,runSuite,run,checkCoverage,checkResults,checkInventory,checkSelectionReview};
 if(require.main===module){const args=process.argv.slice(2),smoke=args.includes('--smoke'),pos=args.filter(a=>a!=='--smoke');run(pos[0],pos[1],{smoke,reviewFile:pos[2]}).catch(e=>{console.error(e.stack);process.exitCode=1;});}

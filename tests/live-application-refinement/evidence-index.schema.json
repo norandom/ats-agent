@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:targeted-cv:test:evidence-index:1.0",
+  "title": "Versioned M4 evidence index and selection review 1.0 (maintenance-only test contract)",
+  "description": "Closed current contracts for versioned acceptance evidence. The index selects exact current artifacts; enumeration establishes inventory only and never chooses a latest version. Hashes and an index version never establish semantic truth or write authority. Not bundled into the runtime skill.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/versionedIndex"
+    },
+    {
+      "$ref": "#/$defs/selectionReview"
+    }
+  ],
+  "$defs": {
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resolved_path", "sha256"],
+      "properties": {
+        "resolved_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?:[A-Za-z]:[\\\\/]|/)"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "inputSelections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reusable_profile", "application_profile", "checkpoint", "strategy", "manifest", "final_report", "checkpoint_chain"],
+      "properties": {
+        "reusable_profile": { "$ref": "#/$defs/artifactRef" },
+        "application_profile": { "$ref": "#/$defs/artifactRef" },
+        "checkpoint": { "$ref": "#/$defs/artifactRef" },
+        "strategy": { "$ref": "#/$defs/artifactRef" },
+        "manifest": { "$ref": "#/$defs/artifactRef" },
+        "final_report": { "$ref": "#/$defs/artifactRef" },
+        "checkpoint_chain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifactRef" }
+        }
+      }
+    },
+    "versionedIndex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "kind", "inputs", "input_selections", "roots", "references", "files"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "kind": { "const": "m4-versioned-evidence-index" },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["previousReceipt", "previousReview", "currentReceipt", "currentReview", "recoveryReceipt", "controls"],
+          "properties": {
+            "previousReceipt": { "type": "string", "minLength": 1 },
+            "previousReview": { "type": "string", "minLength": 1 },
+            "currentReceipt": { "type": "string", "minLength": 1 },
+            "currentReview": { "type": "string", "minLength": 1 },
+            "recoveryReceipt": { "type": "string", "minLength": 1 },
+            "controls": { "type": "string", "minLength": 1 }
+          }
+        },
+        "input_selections": { "$ref": "#/$defs/inputSelections" },
+        "roots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            }
+          }
+        }
+      }
+    },
+    "selectionReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "kind", "reviewer", "observation", "selected_index", "index_file_sha256", "normalized_index_sha256", "input_selections", "selected_roots_reviewed", "file_hashes_reviewed", "reference_membership_reviewed"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "kind": { "const": "m4-versioned-selection-review" },
+        "reviewer": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "observation": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "selected_index": { "type": "string", "minLength": 1 },
+        "index_file_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "normalized_index_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "input_selections": { "$ref": "#/$defs/inputSelections" },
+        "selected_roots_reviewed": { "const": true },
+        "file_hashes_reviewed": { "type": "integer", "minimum": 1 },
+        "reference_membership_reviewed": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

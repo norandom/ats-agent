@@ -35,5 +35,41 @@ function checkControlsEvidence(t){
  for(const state of ['paused','accepted','declined','exhausted'])for(const prefix of ['stopped ','continuation alone cannot reactivate ']){const c=t.controls.find(c=>c.name===prefix+state);assert.equal(c?.dispatches,0);assert.deepEqual(c.attempts.map(a=>a.action),actions);assert.ok(c.attempts.every(a=>!a.gate.questions&&!a.gate.mutations));}
  return {state:'passed',controls:t.controls.length};
 }
-module.exports={checkRecoveryEvidence,checkControlsEvidence,readRef};
+function unwrapCheckpointStorage(bytes){
+  const wrapper=JSON.parse(bytes.toString('utf8'));
+  assert.equal(wrapper?.kind,'refinement-checkpoint-storage','Selected checkpoint must be versioned storage');
+  assert.equal(wrapper.schema_version,'1.0');
+  const payload=Buffer.from(wrapper.record_utf8_base64,'base64');
+  assert.equal(payload.toString('base64'),wrapper.record_utf8_base64,'Canonical payload encoding required');
+  assert.equal(sha256(payload),wrapper.record_sha256,'Retained payload digest mismatch');
+  const record=JSON.parse(payload.toString('utf8'));
+  return {wrapper,payload,record};
+}
+function readChainMember(ref){
+  assert.ok(ref?.resolved_path&&/^[a-f0-9]{64}$/.test(ref.sha256),'Invalid chain ref');
+  const bytes=fs.readFileSync(ref.resolved_path);
+  assert.equal(sha256(bytes),ref.sha256,'Chain evidence changed');
+  let parsed;try{parsed=JSON.parse(bytes.toString('utf8'));}catch{assert.fail('Chain member is not JSON');}
+  if(parsed?.kind==='refinement-checkpoint-storage')return {kind:'storage',...unwrapCheckpointStorage(bytes)};
+  assert.ok(parsed?.schema_version==='1.0'&&!parsed.kind,'Chain member is neither versioned storage nor a legacy raw 1.0 checkpoint');
+  return {kind:'legacy',record:parsed};
+}
+// Current selection dispatch: exact ordered refs, exact previous links, no duplicates/cycles,
+// legacy raw predecessor only as the oldest terminal baseline. Never scans filenames.
+function verifyCheckpointChain(currentRef,chainRefs){
+  assert.ok(currentRef?.resolved_path&&/^[a-f0-9]{64}$/.test(currentRef.sha256),'Invalid current checkpoint ref');
+  assert.ok(Array.isArray(chainRefs),'Chain must be an explicit ordered ref array');
+  const refs=[...chainRefs,currentRef];
+  assert.equal(new Set(refs.map(r=>r.resolved_path)).size,refs.length,'Duplicate chain path');
+  assert.equal(new Set(refs.map(r=>r.sha256)).size,refs.length,'Duplicate or cyclic chain member');
+  const members=refs.map(readChainMember);
+  assert.equal(members.at(-1).kind,'storage','Current checkpoint must be versioned storage');
+  for(let i=0;i<members.length;i++){
+    const m=members[i],expectedPrev=i===0?null:refs[i-1];
+    if(m.kind==='legacy')assert.equal(i,0,'Legacy raw predecessor is permitted only as the oldest terminal baseline');
+    else assert.deepEqual(m.wrapper.previous,expectedPrev,'Checkpoint previous link mismatch');
+  }
+  return members.map(m=>m.record);
+}
+module.exports={checkRecoveryEvidence,checkControlsEvidence,readRef,unwrapCheckpointStorage,readChainMember,verifyCheckpointChain};
 if(require.main===module){try{console.log(checkRecoveryEvidence(JSON.parse(fs.readFileSync(process.argv[2]))));}catch(e){console.error(e.stack);process.exitCode=1;}}
