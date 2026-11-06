@@ -17,6 +17,21 @@ The legacy Python CLI was retired on 2026-11-06 after the replacement skill work
 - Use WordCraft MCP for document interaction and desktop inspection. Do not use computer-use skills for this workflow. If foreground control is unavailable through MCP, use the applicant's foreground confirmation and respect later focus changes.
 - Preserve document identity and manual user edits during refinement. Inspect current document state first; if required WordCraft capabilities are absent, retain private draft state and report the missing capability.
 
+## Live WordCraft connection (the key feature)
+
+Documents are authored live in the visible desktop WordCraft session; the applicant watches creation, edits and saves happen. Headless generation followed by opening the finished file does not satisfy this feature. Concrete connection sequence on Windows:
+
+1. Launch the desktop app with a control endpoint (raises the visible window):
+   `& "C:\Program Files\WordCraft\wordcraft.exe" --control <port>`
+2. Bridge the CLI to the live app (MCP server on stdio, forwarded to the desktop session):
+   `wordcraft-cli mcp --connect 127.0.0.1:<port> [--automation-read-root DIR] [--automation-write-root DIR]`
+   The automation roots confine the files agent commands may read and write; point them at the selected private output folder.
+3. Speak MCP over the CLI's stdio (`initialize`, then `tools/call`). Verify the bridge read-only first (`get_text` / `inspect_document` on the currently selected document) before any create, edit or save. Never replay a failed write.
+
+The CLI installs at `C:\Program Files\WordCraft\wordcraft-cli.exe`; it may not be on PATH, so set `WORDCRAFT_CLI` for the test drivers. The retained live scenario driver is `tests/wordcraft-document-session/live-acceptance.cjs <cli-executable> <127.0.0.1:port> <private-output-directory> <fixture.json> <desktop-executable>`. `tests/fantasy-cv/` is the headless regression fixture and explicitly does not attach to the live GUI bridge; it is not the live feature.
+
+Live rules: keep the app in the foreground at authoring start, respect later user focus changes, inspect current document state before targeted edits, and preserve manual edits (see product steering for the full live-authoring experience).
+
 ## Data Contract
 
 `skills/targeted-cv/schemas/cv-facts.schema.json` defines the current 2.0 portable candidate input; `skills/targeted-cv/templates/cv-facts.blank.json` is an all-null intake scaffold. The unchanged 1.0 validator is `skills/targeted-cv/schemas/cv-facts-v1.schema.json`; existing private instances require explicit authorized migration. Structural conformance alone does not establish semantic validity or task readiness. Accept an explicit runtime facts-file path, with at most a workspace-relative default. Keep application language, market, offer, chosen documents and output destination separate from reusable candidate facts.
